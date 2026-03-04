@@ -1,0 +1,16 @@
+name: "Enterprise Team"
+description: "Full lifecycle with security and deployment"
+agents:
+  - analyst
+  - pm
+  - architect
+  - ux-designer
+  - sm
+  - dev-*
+  - qa
+  - tech-writer
+  - devops
+  - security
+use_case: "Full lifecycle with security and deployment (Phase 3+)"
+phases: [1-analysis, 2-planning, 3-solutioning, 4-implementation, 5-deployment]
+note: "devops and security agents built in Phase 3"

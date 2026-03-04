@@ -1,0 +1,25 @@
+<workflow name="edit-prd">
+<critical>
+  <mandate>Preserve existing content not being changed</mandate>
+  <mandate>Add version note documenting what changed and why</mandate>
+</critical>
+<step n="1" title="Load PRD">
+  <action>Read current {planning_artifacts}/prd.md</action>
+  <action>Display current structure summary to user</action>
+</step>
+<step n="2" title="Identify Changes">
+  <ask>What sections need to change?</ask>
+  <ask>Why are these changes needed?</ask>
+  <action>Confirm scope of changes before proceeding</action>
+</step>
+<step n="3" title="Apply Edits">
+  <action>Make requested changes while preserving unchanged content</action>
+  <action>Validate consistency with remaining sections</action>
+  <action>Add version note at top: date, changes made, reason</action>
+</step>
+<step n="4" title="Save Updated PRD">
+  <template-output file="{planning_artifacts}/prd.md">
+    Save updated PRD with version note prepended
+  </template-output>
+</step>
+</workflow>

@@ -1,0 +1,23 @@
+<workflow name="traceability">
+<critical>
+  <mandate>Map every requirement to at least one test</mandate>
+  <mandate>Identify requirements without test coverage as gaps</mandate>
+</critical>
+<step n="1" title="Load Requirements">
+  <action>Read requirements from PRD, stories, and acceptance criteria</action>
+</step>
+<step n="2" title="Load Test Inventory">
+  <action>Scan existing test files and test descriptions</action>
+</step>
+<step n="3" title="Build Matrix">
+  <action>Map requirements → tests → test results</action>
+</step>
+<step n="4" title="Gap Analysis">
+  <action>Identify requirements without test coverage</action>
+  <action>Prioritize gaps by risk level</action>
+</step>
+<step n="5" title="Generate Matrix">
+  <action>Generate traceability matrix with requirement-to-test mapping and gap analysis</action>
+  <template-output file="{test_artifacts}/traceability-matrix.md" />
+</step>
+</workflow>

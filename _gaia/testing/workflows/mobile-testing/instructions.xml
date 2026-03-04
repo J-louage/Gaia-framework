@@ -1,0 +1,41 @@
+<workflow name="mobile-testing">
+<critical>
+  <mandate>Device matrix must cover top 90% of target user base</mandate>
+  <mandate>Platform-specific behaviors must be tested on real devices or emulators</mandate>
+</critical>
+<step n="1" title="Platform Matrix">
+  <action>Define target devices by OS version, screen size, and market share</action>
+  <action>Include minimum supported versions for iOS and Android</action>
+  <action>Document screen size breakpoints and orientation requirements</action>
+  <action>Identify device-specific features used (camera, GPS, biometrics)</action>
+</step>
+<step n="2" title="Appium Setup">
+  <action>Load testing/knowledge/mobile-testing/appium-patterns.md</action>
+  <action>Design Appium test infrastructure and capabilities</action>
+  <action>Configure device farm integration (BrowserStack, SauceLabs, or local emulators)</action>
+  <action>Define element location strategies and wait patterns</action>
+</step>
+<step n="3" title="React Native Testing">
+  <action>Load testing/knowledge/mobile-testing/react-native-testing.md</action>
+  <action>Design Jest + React Native Testing Library unit test patterns</action>
+  <action>Configure Detox for E2E testing if applicable</action>
+  <action>Define native module mocking strategies</action>
+</step>
+<step n="4" title="Responsive Testing">
+  <action>Load testing/knowledge/mobile-testing/responsive-testing.md</action>
+  <action>Define viewport testing matrix across target breakpoints</action>
+  <action>Design touch interaction tests (swipe, pinch, long press)</action>
+  <action>Configure visual regression testing for mobile viewports</action>
+</step>
+<step n="5" title="Platform-Specific Checks">
+  <action>Test permission handling flows (camera, location, notifications)</action>
+  <action>Verify deep linking behavior on both platforms</action>
+  <action>Test push notification delivery and handling</action>
+  <action>Validate platform gesture differences (back button on Android, swipe-back on iOS)</action>
+  <action>Check app lifecycle handling (background, foreground, kill, restore)</action>
+</step>
+<step n="6" title="Generate Output">
+  <action>Generate mobile test plan with device matrix, Appium setup, and responsive checks</action>
+  <template-output file="{test_artifacts}/mobile-test-plan-{date}.md" />
+</step>
+</workflow>

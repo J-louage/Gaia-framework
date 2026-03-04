@@ -1,0 +1,25 @@
+<workflow name="quick-dev">
+<critical>
+  <mandate>Check for WIP checkpoint before starting</mandate>
+</critical>
+<step n="1" title="Load Spec">
+  <action>Read quick spec file</action>
+  <action>Check for WIP checkpoint at _memory/checkpoints/quick-dev-{spec_name}.yaml</action>
+</step>
+<step n="2" title="Check WIP">
+  <check if="checkpoint_exists">Offer to resume from last checkpoint or start fresh</check>
+</step>
+<step n="3" title="Implement">
+  <action>Follow spec implementation steps</action>
+  <action>Apply TDD where practical</action>
+  <action>Write checkpoint after each step</action>
+</step>
+<step n="4" title="Verify">
+  <action>Run tests</action>
+  <action>Validate against spec acceptance criteria</action>
+</step>
+<step n="5" title="Complete">
+  <action>Archive checkpoint to completed/</action>
+  <action>Report implementation complete with files changed</action>
+</step>
+</workflow>

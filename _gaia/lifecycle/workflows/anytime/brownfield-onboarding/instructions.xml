@@ -1,0 +1,31 @@
+<workflow name="brownfield-onboarding">
+<critical>
+  <mandate>Document existing state before proposing changes</mandate>
+  <mandate>Stories should only cover gaps, not re-implement existing features</mandate>
+</critical>
+<step n="1" title="Document Existing Project">
+  <action>Invoke document-project workflow to scan codebase</action>
+  <action>Capture: tech stack, architecture, existing features, code quality</action>
+</step>
+<step n="2" title="Create PRD for Gaps">
+  <action>Invoke create-prd in brownfield mode</action>
+  <action>Start from existing features, identify gaps and improvements</action>
+  <action>Focus on what's MISSING, not what EXISTS</action>
+</step>
+<step n="3" title="Map Architecture">
+  <action>Invoke create-architecture in discovery mode</action>
+  <action>Document as-is architecture first</action>
+  <action>Then propose target architecture for gaps</action>
+</step>
+<step n="4" title="Create Epics/Stories">
+  <action>Invoke create-epics-stories for gap features only</action>
+  <action>Do NOT create stories for existing implemented features</action>
+</step>
+<step n="5" title="Onboard Developer">
+  <action>Generate developer onboarding brief</action>
+  <action>Include: tech stack, conventions, patterns, open stories</action>
+  <template-output file="{planning_artifacts}/brownfield-onboarding.md">
+    Generate onboarding document with: existing project summary, gap analysis, architecture (as-is and target), stories for gaps, developer quick-start guide.
+  </template-output>
+</step>
+</workflow>

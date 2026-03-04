@@ -1,0 +1,55 @@
+skills:
+  - file: git-workflow.md
+    sections:
+      - { id: branching, line_range: [14, 46], description: "Branch naming, trunk-based dev, release branches" }
+      - { id: commits, line_range: [47, 90], description: "Conventional commit format, types, scopes" }
+      - { id: pull-requests, line_range: [91, 126], description: "PR template, review checklist, merge strategies" }
+      - { id: conflict-resolution, line_range: [127, 157], description: "Merge vs rebase, conflict markers, resolution" }
+
+  - file: api-design.md
+    sections:
+      - { id: rest-conventions, line_range: [14, 63], description: "REST naming, HTTP methods, status codes" }
+      - { id: graphql, line_range: [64, 104], description: "GraphQL schema design, queries, mutations" }
+      - { id: openapi, line_range: [105, 156], description: "OpenAPI specification, documentation" }
+      - { id: versioning, line_range: [157, 194], description: "API versioning strategies" }
+      - { id: error-standards, line_range: [195, 229], description: "RFC 7807 error responses" }
+
+  - file: database-design.md
+    sections:
+      - { id: schema-design, line_range: [14, 51], description: "Naming conventions, normalization" }
+      - { id: migrations, line_range: [52, 99], description: "Forward-only migration strategies" }
+      - { id: indexing, line_range: [100, 131], description: "Index optimization, covering indexes" }
+      - { id: orm-patterns, line_range: [132, 172], description: "N+1 prevention, ORM best practices" }
+
+  - file: docker-workflow.md
+    sections:
+      - { id: multi-stage-builds, line_range: [14, 93], description: "Multi-stage Dockerfile patterns" }
+      - { id: compose, line_range: [94, 157], description: "Docker Compose for development" }
+      - { id: security-scanning, line_range: [158, 222], description: "Image scanning, secrets handling" }
+
+  - file: testing-patterns.md
+    sections:
+      - { id: tdd-cycle, line_range: [14, 51], description: "Red-green-refactor cycle" }
+      - { id: unit-testing, line_range: [52, 102], description: "Unit test structure (AAA), test pyramid" }
+      - { id: integration-testing, line_range: [103, 170], description: "Integration test patterns" }
+      - { id: test-doubles, line_range: [171, 232], description: "Mock, stub, spy, fake strategies" }
+
+  - file: code-review-standards.md
+    sections:
+      - { id: review-checklist, line_range: [14, 59], description: "Universal code review checklist" }
+      - { id: solid-principles, line_range: [60, 132], description: "SOLID violation detection" }
+      - { id: complexity-metrics, line_range: [133, 226], description: "Cyclomatic and cognitive complexity" }
+
+  - file: documentation-standards.md
+    sections:
+      - { id: readme-template, line_range: [14, 81], description: "README structure and sections" }
+      - { id: adr-format, line_range: [82, 144], description: "Architecture Decision Record template" }
+      - { id: inline-comments, line_range: [145, 196], description: "When and how to comment code" }
+      - { id: api-docs, line_range: [197, 256], description: "API documentation conventions" }
+
+  - file: security-basics.md
+    sections:
+      - { id: owasp-top-10, line_range: [14, 68], description: "OWASP Top 10 prevention patterns" }
+      - { id: input-validation, line_range: [69, 118], description: "Validation at system boundaries" }
+      - { id: secrets-management, line_range: [119, 166], description: "Environment-based secrets" }
+      - { id: cors-csrf, line_range: [167, 230], description: "CORS and CSRF configuration, protection" }

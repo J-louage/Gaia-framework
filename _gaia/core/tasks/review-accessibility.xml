@@ -1,0 +1,39 @@
+<task id="review-accessibility" name="Accessibility Review Task">
+<objective>Review code and UI for WCAG 2.1 compliance</objective>
+
+<critical>
+  <mandate>Check ARIA attributes and roles</mandate>
+  <mandate>Verify keyboard navigation support</mandate>
+  <mandate>Evaluate color contrast and screen reader support</mandate>
+</critical>
+
+<flow>
+  <step n="1" title="Scope">
+    <action>Ask user for code/component to review</action>
+    <action>Read the target files</action>
+  </step>
+  <step n="2" title="Semantic HTML and ARIA">
+    <action>Check for proper semantic HTML elements</action>
+    <action>Verify ARIA attributes, roles, and labels</action>
+    <action>Check for alt text on images, labels on form inputs</action>
+  </step>
+  <step n="3" title="Keyboard and Focus">
+    <action>Verify keyboard navigation support</action>
+    <action>Check focus management and tab order</action>
+    <action>Verify skip navigation links</action>
+  </step>
+  <step n="4" title="Visual and Screen Reader">
+    <action>Evaluate color contrast ratios (4.5:1 for text, 3:1 for large text)</action>
+    <action>Check screen reader compatibility</action>
+    <action>Verify text scaling support</action>
+  </step>
+  <step n="5" title="Report">
+    <action>Generate findings with WCAG success criteria references</action>
+  </step>
+</flow>
+
+<output>
+  <format>Markdown accessibility findings with WCAG criteria</format>
+  <location>Displayed to user (not saved unless requested)</location>
+</output>
+</task>

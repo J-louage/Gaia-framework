@@ -1,0 +1,46 @@
+<task id="review-adversarial" name="Adversarial Review">
+<objective>Perform a cynical, critical review to find flaws, gaps, and weaknesses in any document or design</objective>
+
+<critical>
+  <mandate>Be deliberately skeptical — assume nothing works as claimed</mandate>
+  <mandate>Attack from multiple angles: technical, business, user, security, scale</mandate>
+  <mandate>Produce a ranked findings report with severity and confidence levels</mandate>
+  <mandate>Do NOT suggest fixes — only identify problems. Fixing is a separate step.</mandate>
+</critical>
+
+<flow>
+  <step n="1" title="Load Target">
+    <action>Ask user for the document/design/code to review</action>
+    <action>Read the entire target</action>
+    <action>Identify what type of artifact it is (PRD, architecture, story, code, etc.)</action>
+  </step>
+
+  <step n="2" title="Adversarial Analysis">
+    <action>Attack from these perspectives:
+      - Feasibility: can this actually be built as described?
+      - Completeness: what's missing that should be there?
+      - Contradictions: do any sections contradict each other?
+      - Assumptions: what unstated assumptions could be wrong?
+      - Scale: will this work at 10x/100x the expected load?
+      - Failure modes: what happens when things go wrong?
+      - Dependencies: what external factors could break this?
+      - Security: what attack surfaces are exposed?
+      - User impact: where will users get confused or frustrated?
+      - Business risk: what could make this commercially unviable?
+    </action>
+  </step>
+
+  <step n="3" title="Generate Report">
+    <action>Produce adversarial findings with:
+      - Threat summary: top 3 most critical issues
+      - Full findings table: severity (critical/high/medium/low), confidence (certain/likely/possible), category, description
+      - Risk assessment: overall risk level for proceeding as-is
+    </action>
+  </step>
+</flow>
+
+<output>
+  <format>Markdown adversarial review report</format>
+  <location>Displayed to user (not saved unless requested)</location>
+</output>
+</task>

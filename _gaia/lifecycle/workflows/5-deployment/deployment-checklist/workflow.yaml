@@ -1,0 +1,22 @@
+name: deployment-checklist
+description: 'Pre-deployment verification checklist'
+module: lifecycle
+agent: devops
+config_resolved: "{project-root}/_gaia/lifecycle/.resolved/deployment-checklist.yaml"
+config_source: "{project-root}/_gaia/lifecycle/config.yaml"
+installed_path: "{project-root}/_gaia/lifecycle/workflows/5-deployment/deployment-checklist"
+instructions: "{installed_path}/instructions.xml"
+validation: "{installed_path}/checklist.md"
+input_file_patterns:
+  architecture:
+    whole: "{planning_artifacts}/architecture.md"
+    load_strategy: "FULL_LOAD"
+  infrastructure:
+    whole: "{planning_artifacts}/infrastructure-design.md"
+    load_strategy: "FULL_LOAD"
+on_error:
+  missing_file: "ask_user"
+  unresolved_variable: "halt"
+
+output:
+  primary: "{implementation_artifacts}/deployment-checklist-{date}.md"

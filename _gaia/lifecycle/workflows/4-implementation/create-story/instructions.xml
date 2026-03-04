@@ -1,0 +1,30 @@
+<workflow name="create-story">
+<critical>
+  <mandate>Story files must include YAML frontmatter with key, status, dependencies</mandate>
+  <mandate>Check web access availability if story references external APIs</mandate>
+</critical>
+<step n="1" title="Select Story">
+  <ask>Which story do you want to detail? (provide story key from sprint plan or epics)</ask>
+</step>
+<step n="2" title="Load Context">
+  <action>Read story summary from epics-and-stories.md</action>
+  <action>Read architecture.md for technical context</action>
+</step>
+<step n="3" title="Web Access Guard">
+  <check if="story_references_external_apis">Check if web tools available for API documentation lookup</check>
+  <check if="no_web_access">Note limitation in story file</check>
+</step>
+<step n="4" title="Elaborate Story">
+  <action>Expand acceptance criteria with detailed test conditions</action>
+  <action>Add technical notes from architecture context</action>
+  <action>Define subtasks for implementation</action>
+</step>
+<step n="5" title="Definition of Done">
+  <action>Append DoD checklist: all AC met, tests pass, code reviewed, docs updated</action>
+</step>
+<step n="6" title="Generate Output">
+  <template-output file="{implementation_artifacts}/{story_key}.md">
+    Generate story file with YAML frontmatter (key, title, epic, status: ready-for-dev, sprint, assignee, depends_on) and sections: Acceptance Criteria, Technical Notes, Subtasks, Definition of Done.
+  </template-output>
+</step>
+</workflow>

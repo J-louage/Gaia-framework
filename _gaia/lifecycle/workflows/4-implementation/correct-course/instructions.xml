@@ -1,0 +1,31 @@
+<workflow name="correct-course">
+<critical>
+  <mandate>Document the reason for course correction</mandate>
+  <mandate>Update sprint plan and status files after adjustment</mandate>
+</critical>
+<step n="1" title="Load Sprint Context">
+  <action>Read current sprint plan and sprint-status.yaml</action>
+</step>
+<step n="2" title="Identify Change">
+  <ask>What needs to change and why?</ask>
+  <action>Classify: scope change, priority shift, blocker resolution, resource change</action>
+</step>
+<step n="3" title="Impact Analysis">
+  <action>Identify affected stories</action>
+  <action>Assess dependency implications</action>
+  <action>Estimate impact on sprint timeline</action>
+</step>
+<step n="4" title="Propose Adjustment">
+  <action>Re-scope sprint: add/remove/reprioritize stories</action>
+  <action>Propose updated timeline</action>
+  <action>Get user approval for changes</action>
+</step>
+<step n="5" title="Generate Updated Plan">
+  <action>Update sprint plan document</action>
+  <action>Update sprint-status.yaml with changes</action>
+  <action>Log course correction reason and changes made</action>
+  <template-output file="{implementation_artifacts}/sprint-status.yaml">
+    Update sprint plan and status files with course correction changes and rationale.
+  </template-output>
+</step>
+</workflow>

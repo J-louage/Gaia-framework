@@ -1,0 +1,15 @@
+# GAIA Framework — runtime artifacts
+_gaia/_memory/checkpoints/*.yaml
+_gaia/_memory/*-sidecar/*.md
+_gaia/_memory/*-sidecar/*.yaml
+_gaia/**/.resolved/*.yaml
+!_gaia/**/.resolved/.gitkeep
+
+# Internal planning docs — not for distribution
+docs/phases/
+
+# Node
+node_modules/
+
+# OS
+.DS_Store

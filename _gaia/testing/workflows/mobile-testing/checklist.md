@@ -1,0 +1,13 @@
+# Mobile Testing Checklist
+- [ ] Device matrix defined covering top 90% of user base
+- [ ] Minimum supported OS versions documented
+- [ ] Appium test infrastructure configured
+- [ ] Device farm integration set up
+- [ ] React Native unit test patterns defined (if applicable)
+- [ ] Detox E2E configured (if applicable)
+- [ ] Responsive viewport testing matrix created
+- [ ] Touch interaction tests designed
+- [ ] Permission handling flows tested
+- [ ] Deep linking verified on both platforms
+- [ ] Push notification handling tested
+- [ ] App lifecycle transitions validated

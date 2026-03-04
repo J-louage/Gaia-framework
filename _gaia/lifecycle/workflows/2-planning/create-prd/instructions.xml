@@ -1,0 +1,50 @@
+<workflow name="create-prd">
+<critical>
+  <mandate>Product brief must exist before starting</mandate>
+  <mandate>Requirements must be discoverable, not guessed</mandate>
+  <mandate>Each requirement must have testable acceptance criteria</mandate>
+</critical>
+<step n="1" title="Load Product Brief">
+  <action>Read {planning_artifacts}/product-brief.md</action>
+  <action>Extract vision, target users, problem statement, proposed solution</action>
+</step>
+<step n="2" title="User Interviews">
+  <ask>Who are the primary user types?</ask>
+  <ask>What are their top 3 needs?</ask>
+  <ask>What frustrates them most about current solutions?</ask>
+  <action>Structure responses into user need statements</action>
+</step>
+<step n="3" title="Functional Requirements">
+  <action>List features organized by priority: Must-Have, Should-Have, Nice-to-Have</action>
+  <action>Each feature needs: description, user story format, acceptance criteria</action>
+</step>
+<step n="4" title="Non-Functional Requirements">
+  <action>Define: performance targets, security requirements, accessibility standards</action>
+  <action>Define: scalability needs, reliability targets, compliance requirements</action>
+</step>
+<step n="5" title="User Journeys">
+  <action>Map key user flows with happy path and error paths</action>
+  <action>Include: entry point, steps, decision points, exit conditions</action>
+</step>
+<step n="6" title="Data Requirements">
+  <action>Identify data stored, processed, and exchanged</action>
+  <action>Define data retention, privacy, and security policies</action>
+</step>
+<step n="7" title="Integration Requirements">
+  <action>List external systems, APIs, and third-party services</action>
+  <action>Define integration patterns and data exchange formats</action>
+</step>
+<step n="8" title="Constraints and Assumptions">
+  <action>Document technical, budget, timeline, and team constraints</action>
+  <action>List all assumptions that requirements depend on</action>
+</step>
+<step n="9" title="Success Criteria">
+  <action>Define measurable acceptance criteria for each feature</action>
+  <action>Define overall product success metrics</action>
+</step>
+<step n="10" title="Generate Output">
+  <template-output file="{planning_artifacts}/prd.md">
+    Generate PRD with all sections: overview, user personas, functional requirements (prioritized), non-functional requirements, user journeys, data requirements, integrations, constraints, assumptions, success criteria.
+  </template-output>
+</step>
+</workflow>

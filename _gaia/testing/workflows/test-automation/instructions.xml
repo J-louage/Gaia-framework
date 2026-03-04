@@ -1,0 +1,23 @@
+<workflow name="test-automation">
+<critical>
+  <mandate>Identify coverage gaps before writing new tests</mandate>
+  <mandate>Load unit testing knowledge for the project stack</mandate>
+</critical>
+<step n="1" title="Identify Coverage Gaps">
+  <action>Analyze existing tests vs code paths</action>
+</step>
+<step n="2" title="Load Knowledge">
+  <action>Load unit test patterns for the project's stack from {knowledge_path}/</action>
+</step>
+<step n="3" title="Generate Tests">
+  <action>Write tests for uncovered code paths</action>
+  <action>Follow AAA pattern and naming conventions</action>
+</step>
+<step n="4" title="Run and Validate">
+  <action>Execute tests, verify they pass and cover intended paths</action>
+</step>
+<step n="5" title="Generate Report">
+  <action>Generate automation report with coverage gaps filled and test results</action>
+  <template-output file="{test_artifacts}/automation-report.md" />
+</step>
+</workflow>

@@ -1,0 +1,21 @@
+---
+title: 'Dev Story Validation'
+validation-target: 'Story implementation'
+---
+## Pre-conditions
+- [ ] Story loaded successfully
+- [ ] Status verified as ready-for-dev
+- [ ] No unresolved blockers
+## Implementation
+- [ ] Each AC has corresponding test
+- [ ] Each subtask completed
+- [ ] TDD cycle followed (red/green/refactor)
+## Quality
+- [ ] All tests pass
+- [ ] No lint errors
+- [ ] Code follows conventions
+## Completion
+- [ ] Status updated to review
+- [ ] sprint-status.yaml updated
+- [ ] Files changed list in story file
+- [ ] Checkpoint archived

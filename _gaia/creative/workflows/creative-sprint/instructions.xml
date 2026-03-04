@@ -1,0 +1,40 @@
+<workflow name="creative-sprint">
+<critical>
+  <mandate>Execute phases sequentially — each phase builds on the previous output</mandate>
+  <mandate>Synthesize all three agent contributions into a unified creative brief</mandate>
+</critical>
+<step n="1" title="Sprint Briefing">
+  <action>Define the creative challenge in a clear problem statement</action>
+  <action>Identify constraints: budget, timeline, technology, brand guidelines</action>
+  <action>Define success criteria: what does a good outcome look like?</action>
+  <action>Identify target audience and key stakeholders</action>
+</step>
+<step n="2" title="Empathize Phase">
+  <action>Invoke design-thinking workflow (Lyra) in focused mode</action>
+  <action>Focus on empathize and define phases: user research, personas, journey maps</action>
+  <action>Capture key insights: user needs, pain points, opportunities</action>
+  <action>Output: empathy map and problem definition document</action>
+</step>
+<step n="3" title="Solve Phase">
+  <action>Invoke problem-solving workflow (Nova) using design thinking outputs as input</action>
+  <action>Apply systematic problem-solving methodologies to the defined problem</action>
+  <action>Generate multiple solution approaches with trade-off analysis</action>
+  <action>Output: ranked solution proposals with feasibility assessment</action>
+</step>
+<step n="4" title="Innovate Phase">
+  <action>Invoke innovation-strategy workflow (Orion) building on the solutions</action>
+  <action>Identify disruption opportunities and business model innovations</action>
+  <action>Assess strategic fit and competitive differentiation</action>
+  <action>Output: innovation roadmap with prioritized initiatives</action>
+</step>
+<step n="5" title="Synthesize">
+  <action>Combine insights from empathize, solve, and innovate phases</action>
+  <action>Create unified creative brief with: problem, user insights, solutions, innovations</action>
+  <action>Map solutions to user needs identified in empathy phase</action>
+  <action>Define next steps and implementation priorities</action>
+</step>
+<step n="6" title="Generate Output">
+  <action>Generate unified creative brief synthesizing empathy, solutions, and innovations</action>
+  <template-output file="{creative_artifacts}/creative-sprint-{date}.md" />
+</step>
+</workflow>

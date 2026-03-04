@@ -1,0 +1,35 @@
+<task id="review-security" name="Security Review Task">
+<objective>Perform OWASP-focused security review on provided code or document</objective>
+
+<critical>
+  <mandate>Check against all OWASP Top 10 categories</mandate>
+  <mandate>Flag hardcoded secrets, API keys, credentials</mandate>
+  <mandate>Check authentication and authorization patterns</mandate>
+</critical>
+
+<flow>
+  <step n="1" title="Scope">
+    <action>Ask user what code/doc to review</action>
+    <action>Read the target files</action>
+  </step>
+  <step n="2" title="OWASP Scan">
+    <action>Check each OWASP Top 10 category: Broken Access Control, Cryptographic Failures, Injection, Insecure Design, Security Misconfiguration, Vulnerable Components, Auth Failures, Data Integrity Failures, Logging Failures, SSRF</action>
+  </step>
+  <step n="3" title="Secrets Scan">
+    <action>Look for hardcoded secrets, API keys, credentials</action>
+    <action>Verify secrets management approach</action>
+  </step>
+  <step n="4" title="Auth Review">
+    <action>Verify authentication and authorization patterns</action>
+    <action>Check for privilege escalation paths</action>
+  </step>
+  <step n="5" title="Report">
+    <action>Generate findings with severity levels: critical, high, medium, low</action>
+  </step>
+</flow>
+
+<output>
+  <format>Markdown findings report with severity: critical/high/medium/low</format>
+  <location>Displayed to user (not saved unless requested)</location>
+</output>
+</task>

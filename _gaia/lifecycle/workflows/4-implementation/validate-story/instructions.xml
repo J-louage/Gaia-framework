@@ -1,0 +1,25 @@
+<workflow name="validate-story">
+<critical>
+  <mandate>Append validation results to the story file</mandate>
+</critical>
+<step n="1" title="Load Story">
+  <ask>Which story to validate? (provide story key)</ask>
+  <action>Read {implementation_artifacts}/{story_key}.md</action>
+</step>
+<step n="2" title="Completeness">
+  <action>Verify all sections present: AC, technical notes, subtasks, DoD</action>
+</step>
+<step n="3" title="Clarity">
+  <action>Check each AC is testable and unambiguous</action>
+  <action>Verify subtasks are actionable</action>
+</step>
+<step n="4" title="Dependencies">
+  <action>Verify all declared dependencies exist and are resolvable</action>
+</step>
+<step n="5" title="Generate Validation Report">
+  <action>Append validation result (PASS/FAIL with findings) to story file</action>
+  <template-output file="{implementation_artifacts}/{story_key}.md">
+    Append validation results (PASS/FAIL with detailed findings) to the story file.
+  </template-output>
+</step>
+</workflow>

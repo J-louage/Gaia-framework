@@ -1,0 +1,21 @@
+<workflow name="test-review">
+<critical>
+  <mandate>Check for flaky test patterns — they are critical technical debt</mandate>
+</critical>
+<step n="1" title="Load Tests">
+  <action>Read test files for the target area</action>
+</step>
+<step n="2" title="Quality Assessment">
+  <action>Check: determinism, isolation, naming, assertions, coverage</action>
+</step>
+<step n="3" title="Flakiness Analysis">
+  <action>Identify potentially flaky tests: timing, state, network dependencies</action>
+</step>
+<step n="4" title="Recommendations">
+  <action>Provide specific, actionable improvement findings</action>
+</step>
+<step n="5" title="Generate Report">
+  <action>Generate test review report with quality assessment and flakiness findings</action>
+  <template-output file="{test_artifacts}/test-review.md" />
+</step>
+</workflow>

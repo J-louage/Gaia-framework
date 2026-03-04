@@ -1,0 +1,37 @@
+<workflow name="market-research">
+<critical>
+  <mandate>Check web access availability before proceeding with research</mandate>
+  <mandate>If no web access, proceed with user-provided data and general knowledge only</mandate>
+</critical>
+<step n="1" title="Scope Definition">
+  <ask>What market or industry do you want to research?</ask>
+  <ask>Are there specific competitors you want analyzed?</ask>
+  <ask>What geographic scope? (global, regional, local)</ask>
+</step>
+<step n="2" title="Web Access Check">
+  <action>Check if MCP web tools are available for live research</action>
+  <check if="web_access_available">Proceed with live web research in subsequent steps</check>
+  <check if="no_web_access">Notify user: "Web access unavailable. Proceeding with user-provided data and general knowledge. Results may be less comprehensive."</check>
+</step>
+<step n="3" title="Competitive Analysis">
+  <action>Identify and analyze competitors (direct and indirect)</action>
+  <action>For each competitor: strengths, weaknesses, market position, pricing model</action>
+  <action>Create competitive positioning matrix</action>
+</step>
+<step n="4" title="Customer Research">
+  <action>Define target customer segments</action>
+  <action>Analyze user behavior patterns and needs</action>
+  <action>Identify underserved needs and market gaps</action>
+</step>
+<step n="5" title="Market Sizing">
+  <action>Estimate Total Addressable Market (TAM)</action>
+  <action>Estimate Serviceable Addressable Market (SAM)</action>
+  <action>Estimate Serviceable Obtainable Market (SOM)</action>
+  <action>State all assumptions clearly</action>
+</step>
+<step n="6" title="Generate Output">
+  <template-output file="{planning_artifacts}/market-research.md">
+    Generate market research report with: executive summary, competitive analysis, customer segments, market sizing (TAM/SAM/SOM), key findings, and strategic recommendations.
+  </template-output>
+</step>
+</workflow>

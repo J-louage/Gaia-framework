@@ -1,0 +1,59 @@
+<workflow name="dev-story">
+<critical>
+  <mandate>Story must be in ready-for-dev status before starting</mandate>
+  <mandate>Follow TDD cycle: red, green, refactor</mandate>
+  <mandate>Write checkpoint after each subtask completes</mandate>
+  <mandate>All tests must pass before marking complete</mandate>
+</critical>
+<step n="1" title="Load Story File">
+  <action>Read story .md file, parse YAML frontmatter</action>
+  <action>Extract: key, status, acceptance criteria, subtasks, dependencies</action>
+</step>
+<step n="2" title="Pre-Start Gate">
+  <action>Verify story status is 'ready-for-dev'</action>
+  <check if="status != ready-for-dev">HALT: Story must be in ready-for-dev status</check>
+</step>
+<step n="3" title="Check for WIP">
+  <action>Look for checkpoint file at _memory/checkpoints/dev-story-{story_key}.yaml</action>
+  <check if="checkpoint_exists">Offer to resume from last checkpoint or start fresh</check>
+</step>
+<step n="4" title="Update Status">
+  <action>Set story status to 'in-progress' in story file frontmatter</action>
+  <action>Update sprint-status.yaml: set story to 'in-progress'</action>
+</step>
+<step n="5" title="Plan Implementation">
+  <action>Break subtasks into implementation plan</action>
+  <action>Declare which files will be created/modified</action>
+  <action>Confirm plan with user</action>
+</step>
+<step n="6" title="Execute TDD Cycle">
+  <action>For each subtask:</action>
+  <action>  a. Write failing test (RED)</action>
+  <action>  b. Implement minimum code to pass (GREEN)</action>
+  <action>  c. Refactor while tests stay green (REFACTOR)</action>
+  <action>  d. Mark subtask complete in story file</action>
+  <action>  e. Write checkpoint</action>
+</step>
+<step n="7" title="Load Skills JIT">
+  <action>Load git-workflow:commits section for commit conventions</action>
+  <action>Apply conventional commit format to all commits</action>
+</step>
+<step n="8" title="Commit Changes">
+  <action>Stage all changes</action>
+  <action>Commit with conventional commit format: type(scope): description</action>
+</step>
+<step n="9" title="Post-Complete Gate">
+  <action>Verify all tests pass</action>
+  <action>Verify all acceptance criteria met</action>
+  <action>Verify all subtasks marked complete</action>
+  <check if="any_test_fails">HALT: All tests must pass before marking complete</check>
+</step>
+<step n="10" title="Update Status">
+  <action>Set story status to 'review' in story file</action>
+  <action>Update sprint-status.yaml: set story to 'review'</action>
+  <action>Append files changed list to story file</action>
+  <template-output file="{implementation_artifacts}/{story_key}.md">
+    Update story file with status change to 'review' and list of files changed.
+  </template-output>
+</step>
+</workflow>

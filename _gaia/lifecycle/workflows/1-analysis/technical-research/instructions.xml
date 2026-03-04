@@ -1,0 +1,30 @@
+<workflow name="technical-research">
+<critical>
+  <mandate>Check web access availability before research</mandate>
+  <mandate>Provide objective trade-off analysis, not technology advocacy</mandate>
+</critical>
+<step n="1" title="Technology Scoping">
+  <ask>What technologies or tech stack do you want to research?</ask>
+  <ask>What is the use case or problem context?</ask>
+  <ask>Are there constraints (team expertise, budget, timeline)?</ask>
+</step>
+<step n="2" title="Web Access Check">
+  <action>Check if MCP web tools are available</action>
+  <check if="no_web_access">Notify user and proceed with general knowledge only</check>
+</step>
+<step n="3" title="Technology Evaluation">
+  <action>Assess each technology for: maturity, community size, learning curve, licensing</action>
+  <action>Evaluate ecosystem: libraries, tools, IDE support, documentation quality</action>
+  <action>Check production readiness: stability, performance characteristics, scalability</action>
+</step>
+<step n="4" title="Trade-off Analysis">
+  <action>Create pros/cons matrix for each technology option</action>
+  <action>Compare alternatives across key dimensions</action>
+  <action>Provide recommendation with clear rationale</action>
+</step>
+<step n="5" title="Generate Output">
+  <template-output file="{planning_artifacts}/technical-research.md">
+    Generate technical research report with: technology overview, evaluation matrix, trade-off analysis, recommendation, and migration/adoption considerations.
+  </template-output>
+</step>
+</workflow>

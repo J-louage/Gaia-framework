@@ -1,0 +1,41 @@
+<workflow name="create-epics-stories">
+<critical>
+  <mandate>Architecture must exist before creating epics</mandate>
+  <mandate>Every story must have depends_on and blocks declarations</mandate>
+  <mandate>Stories must be ordered by dependency topology + business priority</mandate>
+</critical>
+<step n="1" title="Load PRD and Architecture">
+  <action>Read {planning_artifacts}/prd.md — extract functional requirements</action>
+  <action>Read {planning_artifacts}/architecture.md — extract technical components</action>
+</step>
+<step n="2" title="Define Epics">
+  <action>Group related features into logical epics</action>
+  <action>Each epic: name, description, goal, success criteria</action>
+</step>
+<step n="3" title="Break Into Stories">
+  <action>For each epic, create user stories</action>
+  <action>Each story needs: title, description, acceptance criteria, size estimate (S/M/L/XL)</action>
+  <action>Use format: "As a [user], I want to [action] so that [benefit]"</action>
+</step>
+<step n="4" title="Declare Dependencies">
+  <action>For each story, declare depends_on: [story-ids] and blocks: [story-ids]</action>
+  <action>Ensure no circular dependencies</action>
+</step>
+<step n="5" title="Priority Ordering">
+  <action>Sort stories by: dependency topology first, then business priority</action>
+  <action>Assign priority: P0 (must-have), P1 (should-have), P2 (nice-to-have)</action>
+</step>
+<step n="6" title="Generate Output">
+  <template-output file="{planning_artifacts}/epics-and-stories.md">
+    Generate epics and stories document. Each story formatted as:
+    ### Story {epic-N}-{story-N}: {Title}
+    - Epic: {epic name}
+    - Priority: {P0/P1/P2}
+    - Size: {S/M/L/XL}
+    - Depends on: [{story-ids}]
+    - Blocks: [{story-ids}]
+    - Acceptance Criteria:
+      - AC1: {criteria}
+  </template-output>
+</step>
+</workflow>

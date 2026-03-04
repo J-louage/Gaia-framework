@@ -1,0 +1,22 @@
+<workflow name="sprint-status">
+<critical>
+  <mandate>Highlight blocked stories prominently with reason</mandate>
+</critical>
+<step n="1" title="Load Sprint Status">
+  <action>Read {implementation_artifacts}/sprint-status.yaml</action>
+  <action>Parse all story statuses</action>
+</step>
+<step n="2" title="Display Status">
+  <action>Show stories grouped by status in a table</action>
+  <action>Highlight blocked stories with blocking reason</action>
+  <action>Show progress: done/total, percentage complete</action>
+</step>
+<step n="3" title="Surface Risks">
+  <action>Identify at-risk stories: blocked, dependencies not met</action>
+  <action>Flag stories that may miss sprint deadline</action>
+  <action>Suggest mitigation actions</action>
+  <template-output file="{implementation_artifacts}/sprint-status.yaml">
+    Update sprint status with current story states, progress metrics, and risk flags.
+  </template-output>
+</step>
+</workflow>

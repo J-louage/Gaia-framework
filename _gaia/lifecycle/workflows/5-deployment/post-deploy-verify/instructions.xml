@@ -1,0 +1,33 @@
+<workflow name="post-deploy-verify">
+<critical>
+  <mandate>Health checks must pass before declaring deployment successful</mandate>
+  <mandate>Metrics must be within SLO bounds</mandate>
+  <mandate>Trigger rollback if any critical check fails</mandate>
+</critical>
+<step n="1" title="Health Checks">
+  <action>Verify application health endpoints respond correctly</action>
+  <action>Confirm service connectivity: databases, caches, queues, external APIs</action>
+  <action>Check all containers/instances are running and healthy</action>
+</step>
+<step n="2" title="Smoke Tests">
+  <action>Execute critical path validation: login, core feature, key user journeys</action>
+  <action>Verify API endpoints return expected responses</action>
+  <action>Check static assets and CDN serving correctly</action>
+</step>
+<step n="3" title="Metric Validation">
+  <action>Check error rate is within SLO bounds</action>
+  <action>Verify latency (P50, P95, P99) within acceptable range</action>
+  <action>Confirm throughput matches expected levels</action>
+  <action>Monitor resource utilization: CPU, memory, disk</action>
+</step>
+<step n="4" title="Canary Analysis">
+  <action>If canary deployment: compare canary vs baseline metrics</action>
+  <action>Evaluate statistical significance of metric differences</action>
+  <action>Recommend: proceed, hold, or rollback</action>
+</step>
+<step n="5" title="Generate Report">
+  <template-output file="{implementation_artifacts}/post-deploy-{date}.md">
+    Generate post-deployment report with: health check results, smoke test results, metric comparison, canary analysis (if applicable), overall deployment status.
+  </template-output>
+</step>
+</workflow>

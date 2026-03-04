@@ -1,0 +1,11 @@
+# Performance Testing Checklist
+- [ ] Response time targets defined (P50, P95, P99)
+- [ ] Throughput targets defined (RPS)
+- [ ] Error rate thresholds established
+- [ ] Load test scenarios designed (gradual, spike, soak)
+- [ ] Virtual user profiles reflect real traffic patterns
+- [ ] Core Web Vitals targets set (LCP, INP, CLS)
+- [ ] Bundle size budgets defined per route
+- [ ] Backend profiling covers queries, memory, connections, CPU
+- [ ] CI performance gates configured
+- [ ] Performance regression alerts in place

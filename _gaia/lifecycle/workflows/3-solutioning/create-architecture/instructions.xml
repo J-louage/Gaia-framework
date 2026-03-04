@@ -1,0 +1,47 @@
+<workflow name="create-architecture">
+<critical>
+  <mandate>Record every significant decision as an ADR in architect-sidecar</mandate>
+  <mandate>PRD must exist before starting architecture</mandate>
+  <mandate>Every technical decision must connect to business value</mandate>
+</critical>
+<step n="1" title="Load Upstream Artifacts">
+  <action>Read {planning_artifacts}/prd.md — extract requirements</action>
+  <action>Read {planning_artifacts}/ux-design.md if available — extract UI requirements</action>
+</step>
+<step n="2" title="Technology Selection">
+  <action>Select tech stack with rationale for each choice</action>
+  <action>Consider: team expertise, scalability needs, ecosystem maturity</action>
+  <action>Record decision as ADR in _memory/architect-sidecar/architecture-decisions.md</action>
+</step>
+<step n="3" title="System Architecture">
+  <action>Define component diagram and service boundaries</action>
+  <action>Describe communication patterns between components</action>
+  <action>Record architectural style decision as ADR</action>
+</step>
+<step n="4" title="Data Architecture">
+  <action>Design database schema and data model</action>
+  <action>Define data flow between components</action>
+  <action>Specify data storage, caching, and replication strategies</action>
+</step>
+<step n="5" title="API Design">
+  <action>Define API endpoint overview</action>
+  <action>Specify authentication and authorization strategy</action>
+  <action>Document API versioning approach</action>
+</step>
+<step n="6" title="Infrastructure">
+  <action>Define deployment topology and environments (dev, staging, prod)</action>
+  <action>Specify hosting, containerization, and orchestration choices</action>
+  <action>Define monitoring and logging strategy</action>
+</step>
+<step n="7" title="Architecture Decision Records">
+  <action>Review all decisions made in steps 2-6</action>
+  <action>Ensure each significant decision is recorded as ADR</action>
+  <action>ADR format: title, date, status, context, decision, consequences</action>
+  <action>Append all ADRs to _memory/architect-sidecar/architecture-decisions.md</action>
+</step>
+<step n="8" title="Generate Output">
+  <template-output file="{planning_artifacts}/architecture.md">
+    Generate architecture document with: technology stack, system architecture, data architecture, API design, infrastructure plan, and ADR references.
+  </template-output>
+</step>
+</workflow>

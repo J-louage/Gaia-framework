@@ -1,0 +1,31 @@
+<protocol name="preflight-check">
+<objective>Validate all workflow variables and paths before execution begins</objective>
+
+<flow>
+  <step n="1">Collect all variables from the resolved workflow config</step>
+  <step n="2">Check each variable has a non-empty value.
+    Variables that should be resolved by now:
+    - {project-root} — must point to actual filesystem path
+    - {installed_path} — must point to workflow directory
+    - {date} — must be current date
+    - Any {config_source}:field references — must be resolved from module config
+  </step>
+  <step n="3">Check all file paths exist on disk:
+    - instructions file (required)
+    - validation/checklist file (if declared)
+    - template file (if declared)
+    - config_source file (if using runtime resolution)
+  </step>
+  <step n="4">Check all required input files exist:
+    - For each entry in input_file_patterns where required=true
+    - Resolve any template variables in the path
+    - Verify the file or glob pattern matches at least one file
+  </step>
+  <step n="5">If any check fails:
+    - Collect ALL failures (do not stop at first)
+    - Report each failure with: variable name or file path, expected value, actual value
+    - HALT execution — do not proceed to step processing
+  </step>
+  <step n="6">If all checks pass: return success and proceed to instruction loading</step>
+</flow>
+</protocol>

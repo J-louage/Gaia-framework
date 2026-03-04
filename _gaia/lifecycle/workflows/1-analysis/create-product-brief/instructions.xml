@@ -1,0 +1,39 @@
+<workflow name="create-product-brief">
+<critical>
+  <mandate>Invoke discover-inputs protocol to load upstream artifacts</mandate>
+  <mandate>All sections must be collaboratively developed with the user</mandate>
+</critical>
+<step n="1" title="Discover Inputs">
+  <action>Invoke discover-inputs protocol</action>
+  <action>Load brainstorm output if available</action>
+  <action>Load market research if available</action>
+  <action>Load creative outputs if available</action>
+  <action>Summarize what upstream context was found</action>
+</step>
+<step n="2" title="Vision Statement">
+  <action>Collaboratively craft vision statement with user</action>
+  <action>Incorporate insights from prior analysis if available</action>
+  <ask>What is the core vision for this product?</ask>
+</step>
+<step n="3" title="Target Users">
+  <action>Define user personas based on research</action>
+  <action>For each persona: name, role, goals, pain points, context</action>
+</step>
+<step n="4" title="Problem Statement">
+  <action>Articulate the core problem being solved</action>
+  <action>Ground in user research and market findings</action>
+</step>
+<step n="5" title="Proposed Solution">
+  <action>Define high-level solution approach</action>
+  <action>Key features and differentiators</action>
+</step>
+<step n="6" title="Success Metrics">
+  <action>Define measurable KPIs and success criteria</action>
+  <action>Include both quantitative and qualitative metrics</action>
+</step>
+<step n="7" title="Generate Output">
+  <template-output file="{planning_artifacts}/product-brief.md">
+    Generate product brief with: vision, target users/personas, problem statement, proposed solution, key features, success metrics, and next steps.
+  </template-output>
+</step>
+</workflow>

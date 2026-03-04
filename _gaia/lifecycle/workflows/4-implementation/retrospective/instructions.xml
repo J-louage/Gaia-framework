@@ -1,0 +1,26 @@
+<workflow name="retrospective">
+<critical>
+  <mandate>Focus on actionable improvements, not blame</mandate>
+</critical>
+<step n="1" title="Load Sprint Data">
+  <action>Read sprint-status.yaml for completed sprint</action>
+  <action>Calculate: stories completed, blocked, velocity</action>
+</step>
+<step n="2" title="What Went Well">
+  <ask>What went well this sprint?</ask>
+  <action>Document positive outcomes and practices to keep</action>
+</step>
+<step n="3" title="What Could Improve">
+  <ask>What could improve?</ask>
+  <action>Document challenges and pain points</action>
+</step>
+<step n="4" title="Action Items">
+  <action>Define concrete improvements for next sprint</action>
+  <action>Assign ownership for each action item</action>
+</step>
+<step n="5" title="Generate Output">
+  <template-output file="{implementation_artifacts}/retro-{sprint_id}.md">
+    Generate retrospective report with: sprint metrics, what went well, improvements, action items.
+  </template-output>
+</step>
+</workflow>

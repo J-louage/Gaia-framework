@@ -1,0 +1,40 @@
+<workflow name="performance-review">
+<critical>
+  <mandate>Always measure before recommending optimizations</mandate>
+  <mandate>Report in percentiles (P50, P95, P99), not averages</mandate>
+  <mandate>Compare against baseline — never optimize blind</mandate>
+</critical>
+<step n="1" title="Scope">
+  <action>Define what to measure: specific endpoints, user flows, or full system</action>
+  <action>Identify performance-critical paths from user perspective</action>
+  <action>Determine frontend vs backend vs both scope</action>
+</step>
+<step n="2" title="Baseline Capture">
+  <action>Document current performance metrics or establish baseline plan</action>
+  <action>Identify existing SLOs and performance budgets</action>
+  <action>Capture Core Web Vitals if frontend is in scope: LCP, FID, CLS</action>
+</step>
+<step n="3" title="Load Test Design">
+  <action>Define test scenarios matching real user behavior</action>
+  <action>Design traffic patterns: steady state, ramp-up, spike, soak</action>
+  <action>Specify concurrent user targets and ramp-up strategy</action>
+  <action>Recommend tooling: k6, Locust, Artillery, or alternatives</action>
+</step>
+<step n="4" title="Bottleneck Identification">
+  <action>Analyze for N+1 queries and inefficient database access</action>
+  <action>Check for blocking operations and synchronous bottlenecks</action>
+  <action>Identify memory leaks, large payloads, unoptimized loops</action>
+  <action>Review caching strategy: what's cached, what should be</action>
+  <action>Check frontend: bundle size, render blocking, image optimization</action>
+</step>
+<step n="5" title="Optimization Recommendations">
+  <action>Provide specific, prioritized improvements with estimated impact</action>
+  <action>Categorize: quick wins, medium effort, architectural changes</action>
+  <action>Include implementation guidance for each recommendation</action>
+</step>
+<step n="6" title="Generate Report">
+  <template-output file="{test_artifacts}/performance-review-{date}.md">
+    Generate performance review with: scope, baseline metrics, load test design, bottleneck analysis, prioritized recommendations with estimated impact.
+  </template-output>
+</step>
+</workflow>

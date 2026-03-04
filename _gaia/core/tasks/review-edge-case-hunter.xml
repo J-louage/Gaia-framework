@@ -1,0 +1,54 @@
+<task id="review-edge-case-hunter" name="Edge Case Hunter">
+<objective>Walk every branching path and boundary condition to find unhandled edge cases</objective>
+
+<critical>
+  <mandate>Method-driven, not attitude-driven — orthogonal to adversarial review</mandate>
+  <mandate>Exhaustively trace every decision point and boundary</mandate>
+  <mandate>Report ONLY unhandled cases — skip cases that are already covered</mandate>
+  <mandate>Include concrete examples for each edge case found</mandate>
+</critical>
+
+<flow>
+  <step n="1" title="Load Target">
+    <action>Ask user for the document/code/design to analyze</action>
+    <action>Read the entire target</action>
+    <action>Identify the type: requirements, code, API spec, user flow, etc.</action>
+  </step>
+
+  <step n="2" title="Map Decision Points">
+    <action>Identify every branching path:
+      - If/else conditions and their inverses
+      - Switch/case branches and missing default
+      - Input validation boundaries (min, max, zero, negative, null, empty)
+      - State transitions and invalid state combinations
+      - Concurrent access scenarios
+      - Error handling paths and cascading failures
+      - Timeout and retry boundaries
+      - Data type boundaries (overflow, underflow, precision)
+    </action>
+  </step>
+
+  <step n="3" title="Trace Boundaries">
+    <action>For each boundary found:
+      - Test the exact boundary value
+      - Test one above and one below
+      - Test with null/empty/missing input
+      - Test with maximum possible input
+      - Test with special characters or malformed data
+    </action>
+  </step>
+
+  <step n="4" title="Generate Report">
+    <action>Produce edge case findings with:
+      - Summary: N edge cases found, M are critical
+      - Findings table: location, boundary type, unhandled case, concrete example, severity
+      - Each finding includes a specific scenario that would trigger the edge case
+    </action>
+  </step>
+</flow>
+
+<output>
+  <format>Markdown edge case report with concrete test scenarios</format>
+  <location>Displayed to user (not saved unless requested)</location>
+</output>
+</task>

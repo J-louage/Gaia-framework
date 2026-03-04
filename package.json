@@ -1,0 +1,29 @@
+{
+  "name": "gaia-framework",
+  "version": "1.0.0",
+  "description": "GAIA — Generative Agile Intelligence Architecture installer",
+  "bin": {
+    "gaia-framework": "./bin/gaia-framework.js"
+  },
+  "keywords": [
+    "gaia",
+    "ai",
+    "framework",
+    "claude",
+    "agent",
+    "workflow",
+    "installer"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/J-louage/Gaia-framework.git"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "bin/",
+    "gaia-install.sh"
+  ]
+}

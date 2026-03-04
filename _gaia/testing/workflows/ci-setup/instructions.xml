@@ -1,0 +1,21 @@
+<workflow name="ci-setup">
+<critical>
+  <mandate>Quality gates must be enforced, not advisory</mandate>
+</critical>
+<step n="1" title="Detect CI Platform">
+  <action>Identify: GitHub Actions, GitLab CI, Jenkins, or other</action>
+</step>
+<step n="2" title="Define Pipeline">
+  <action>Build > lint > test > coverage > deploy gates</action>
+</step>
+<step n="3" title="Quality Gates">
+  <action>Define pass/fail thresholds: coverage %, test pass rate</action>
+</step>
+<step n="4" title="Generate Pipeline Config">
+  <action>Generate CI config file (.github/workflows/ci.yml or equivalent)</action>
+</step>
+<step n="5" title="Generate Output">
+  <action>Generate CI pipeline configuration document with quality gates</action>
+  <template-output file="{test_artifacts}/ci-setup.md" />
+</step>
+</workflow>

@@ -1,0 +1,49 @@
+<workflow name="implementation-readiness">
+<critical>
+  <mandate>Output must include machine-readable PASS/FAIL gate report</mandate>
+  <mandate>Check ALL artifacts — do not stop at first failure</mandate>
+</critical>
+<step n="1" title="Load All Artifacts">
+  <action>Load PRD, UX Design, Architecture, Epics/Stories</action>
+  <action>Note any missing artifacts immediately</action>
+</step>
+<step n="2" title="Completeness Check">
+  <action>Verify each document exists and has all required sections</action>
+  <action>PRD: overview, personas, requirements, NFRs, journeys, data, integrations, constraints, criteria</action>
+  <action>Architecture: stack, system design, data, API, infrastructure</action>
+  <action>Epics: at least 1 epic with stories, all stories have AC</action>
+</step>
+<step n="3" title="Consistency Check">
+  <action>Verify stories trace to PRD requirements</action>
+  <action>Verify architecture covers all functional areas</action>
+  <action>Check for terminology consistency across documents</action>
+</step>
+<step n="4" title="TEA Readiness">
+  <action>Is test strategy implied or defined?</action>
+  <action>Are acceptance criteria testable and automatable?</action>
+  <action>Are NFR targets quantified for performance testing?</action>
+</step>
+<step n="5" title="Security Readiness">
+  <action>Are security requirements documented in PRD?</action>
+  <action>Is authentication/authorization defined in architecture?</action>
+  <action>Are data privacy requirements addressed?</action>
+</step>
+<step n="6" title="Generate Gate Report">
+  <template-output file="{planning_artifacts}/readiness-report.md">
+    Generate readiness report with YAML frontmatter:
+    ---
+    status: PASS or FAIL
+    gate_results:
+      prd_complete: true/false
+      ux_complete: true/false
+      architecture_complete: true/false
+      stories_complete: true/false
+      tea_ready: true/false
+      security_documented: true/false
+    blocking_issues:
+      - "issue description"
+    ---
+    Then detailed findings for each gate.
+  </template-output>
+</step>
+</workflow>

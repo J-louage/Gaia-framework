@@ -1,0 +1,52 @@
+<workflow name="security-threat-model">
+<critical>
+  <mandate>Architecture doc must exist before starting threat modeling</mandate>
+  <mandate>Use STRIDE methodology for threat identification</mandate>
+  <mandate>Use DREAD scoring for risk prioritization</mandate>
+  <mandate>Record all threat model decisions in security-sidecar</mandate>
+</critical>
+<step n="1" title="Load Architecture">
+  <action>Read {planning_artifacts}/architecture.md</action>
+  <action>Extract system components, data flows, and trust boundaries</action>
+  <action>Identify external interfaces, APIs, and user-facing endpoints</action>
+</step>
+<step n="2" title="Identify Assets">
+  <action>Catalog valuable data and systems: user credentials, PII, financial data, API keys</action>
+  <action>Classify sensitivity: critical, high, medium, low</action>
+  <action>Map asset locations across system components</action>
+</step>
+<step n="3" title="STRIDE Analysis">
+  <action>For each component and data flow, evaluate all six STRIDE categories:</action>
+  <action>Spoofing — Can identities be faked?</action>
+  <action>Tampering — Can data be modified in transit or storage?</action>
+  <action>Repudiation — Can actions be denied without trace?</action>
+  <action>Information Disclosure — Can data leak to unauthorized parties?</action>
+  <action>Denial of Service — Can availability be disrupted?</action>
+  <action>Elevation of Privilege — Can users gain unauthorized access?</action>
+</step>
+<step n="4" title="DREAD Scoring">
+  <action>For each identified threat, rate 1-10 on each DREAD dimension:</action>
+  <action>Damage potential — How severe is the impact?</action>
+  <action>Reproducibility — How easy to reproduce?</action>
+  <action>Exploitability — How much skill/effort to exploit?</action>
+  <action>Affected users — What percentage of users impacted?</action>
+  <action>Discoverability — How easy to find the vulnerability?</action>
+  <action>Calculate average DREAD score and assign risk level: Critical (8-10), High (6-8), Medium (4-6), Low (1-4)</action>
+</step>
+<step n="5" title="Mitigation Strategies">
+  <action>For each high and critical risk threat, propose specific mitigations</action>
+  <action>Map mitigations to implementation: code changes, configuration, infrastructure</action>
+  <action>Prioritize mitigations by risk reduction vs implementation effort</action>
+</step>
+<step n="6" title="Security Requirements">
+  <action>Extract security requirements from threat analysis</action>
+  <action>Format as SR-1, SR-2, etc. with clear acceptance criteria</action>
+  <action>Map requirements to architecture components they protect</action>
+</step>
+<step n="7" title="Generate Output">
+  <action>Record key decisions in _memory/security-sidecar/threat-model-decisions.md</action>
+  <template-output file="{planning_artifacts}/threat-model.md">
+    Generate threat model with: assets table, STRIDE analysis per component, DREAD scores, risk levels, mitigation strategies, and security requirements list.
+  </template-output>
+</step>
+</workflow>

@@ -1,0 +1,33 @@
+<workflow name="release-plan">
+<critical>
+  <mandate>Every release must have a defined deployment strategy</mandate>
+  <mandate>Staged rollout percentages must be explicit</mandate>
+  <mandate>Communication plan must be included</mandate>
+</critical>
+<step n="1" title="Release Scope">
+  <action>Define what's included: stories, features, bug fixes, breaking changes</action>
+  <action>Assign version number following semantic versioning</action>
+  <action>Identify release dependencies and ordering constraints</action>
+</step>
+<step n="2" title="Deployment Strategy">
+  <action>Select strategy: blue-green, canary, rolling, or big-bang</action>
+  <action>Justify strategy choice based on risk profile and infrastructure</action>
+  <action>Define success criteria for each deployment phase</action>
+</step>
+<step n="3" title="Staged Rollout">
+  <action>Define percentage targets: 1% → 10% → 50% → 100%</action>
+  <action>Set observation windows between stages</action>
+  <action>Define metrics to monitor at each stage</action>
+  <action>Specify abort criteria for each stage</action>
+</step>
+<step n="4" title="Communication Plan">
+  <action>Define stakeholder notification timeline</action>
+  <action>Prepare changelog and release notes</action>
+  <action>Plan user-facing communications if applicable</action>
+</step>
+<step n="5" title="Generate Output">
+  <template-output file="{implementation_artifacts}/release-plan-{version}.md">
+    Generate release plan with: scope, deployment strategy, staged rollout schedule, communication plan, and success criteria.
+  </template-output>
+</step>
+</workflow>

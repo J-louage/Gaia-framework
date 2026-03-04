@@ -1,0 +1,43 @@
+<workflow name="sprint-planning">
+<critical>
+  <mandate>Use sprint state machine: backlog, ready-for-dev, in-progress, blocked, review, done</mandate>
+  <mandate>Support multi-sprint via sprint_id tracking</mandate>
+</critical>
+<step n="1" title="Load Epics and Stories">
+  <action>Read {planning_artifacts}/epics-and-stories.md</action>
+  <action>Parse all stories with their priorities, sizes, dependencies</action>
+</step>
+<step n="2" title="Sprint Scoping">
+  <ask>Sprint duration (1 week / 2 weeks / custom)?</ask>
+  <ask>Team velocity estimate (story points)?</ask>
+  <ask>Sprint number (for multi-sprint tracking)?</ask>
+</step>
+<step n="3" title="Story Selection">
+  <action>Select stories for this sprint based on priority and dependencies</action>
+  <action>Ensure total size fits within velocity estimate</action>
+  <action>Respect dependency ordering — blocked stories cannot be selected without their blockers</action>
+</step>
+<step n="4" title="Sprint Plan Generation">
+  <action>Create sprint plan with story assignments and execution order</action>
+  <action>Order by dependency resolution + priority</action>
+</step>
+<step n="5" title="Status Initialization">
+  <action>Set all selected stories to 'backlog' status</action>
+  <action>Generate sprint-status.yaml with format:
+    sprint_id: "sprint-{N}"
+    started: "{date}"
+    stories:
+      - key: "{story-key}"
+        status: "backlog"
+        assignee: null
+        blocked_by: null
+        updated: "{date}"
+  </action>
+</step>
+<step n="6" title="Generate Output">
+  <template-output file="{implementation_artifacts}/sprint-{sprint_id}-plan.md">
+    Generate sprint plan document with: sprint goals, selected stories (ordered), velocity target, risk assessment.
+  </template-output>
+  <action>Write sprint-status.yaml to {implementation_artifacts}/sprint-status.yaml</action>
+</step>
+</workflow>
