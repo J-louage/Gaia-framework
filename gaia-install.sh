@@ -6,7 +6,7 @@ set -euo pipefail
 # Installs, updates, validates, and reports on GAIA installations.
 # ─────────────────────────────────────────────────────────────────────────────
 
-readonly VERSION="1.1.10"
+readonly VERSION="1.1.11"
 readonly GITHUB_REPO="https://github.com/J-louage/Gaia-framework.git"
 readonly MANIFEST_REL="_gaia/_config/manifest.yaml"
 
@@ -44,7 +44,7 @@ OPT_VERBOSE=false
 cleanup() {
   if [[ -n "$TEMP_CLONE_DIR" && -d "$TEMP_CLONE_DIR" ]]; then
     rm -rf "$TEMP_CLONE_DIR"
-    [[ "$OPT_VERBOSE" == true ]] && detail "Cleaned up temp dir: $TEMP_CLONE_DIR"
+    [[ "$OPT_VERBOSE" == true ]] && detail "Cleaned up temp dir: $TEMP_CLONE_DIR" || true
   fi
 }
 trap cleanup EXIT
@@ -110,7 +110,7 @@ copy_if_missing() {
   fi
   mkdir -p "$(dirname "$dst")"
   cp "$src" "$dst"
-  [[ "$OPT_VERBOSE" == true ]] && detail "Copied: $dst"
+  [[ "$OPT_VERBOSE" == true ]] && detail "Copied: $dst" || true
 }
 
 copy_with_backup() {
@@ -122,12 +122,12 @@ copy_with_backup() {
     fi
     mkdir -p "$(dirname "$dst")"
     cp "$src" "$dst"
-    [[ "$OPT_VERBOSE" == true ]] && detail "Copied (new): $dst"
+    [[ "$OPT_VERBOSE" == true ]] && detail "Copied (new): $dst" || true
     return 0
   fi
   # Compare files — skip if identical
   if cmp -s "$src" "$dst"; then
-    [[ "$OPT_VERBOSE" == true ]] && detail "Unchanged: $dst"
+    [[ "$OPT_VERBOSE" == true ]] && detail "Unchanged: $dst" || true
     return 0
   fi
   if [[ "$OPT_DRY_RUN" == true ]]; then
@@ -140,7 +140,7 @@ copy_with_backup() {
   mkdir -p "$(dirname "$backup_path")"
   cp "$dst" "$backup_path"
   cp "$src" "$dst"
-  [[ "$OPT_VERBOSE" == true ]] && detail "Updated (backed up): $dst"
+  [[ "$OPT_VERBOSE" == true ]] && detail "Updated (backed up): $dst" || true
 }
 
 append_if_missing() {
