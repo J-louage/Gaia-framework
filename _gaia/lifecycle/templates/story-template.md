@@ -1,6 +1,6 @@
 ---
 template: 'story'
-version: 1.0.0
+version: 1.1.0
 used_by: ['create-story']
 ---
 
@@ -35,6 +35,40 @@ As a {role}, I want to {action}, so that {benefit}.
 |----------|-------|----------|
 | {happy path} | {input} | {output} |
 | {edge case} | {input} | {output} |
+
+## Tasks / Subtasks
+
+- [ ] Task 1 (AC: #)
+  - [ ] Subtask 1.1
+- [ ] Task 2 (AC: #)
+  - [ ] Subtask 2.1
+
+## Dev Notes
+
+- Relevant architecture patterns and constraints
+- Source tree components to touch
+- Testing standards summary
+
+### Project Structure Notes
+
+- Alignment with unified project structure (paths, modules, naming)
+- Detected conflicts or variances (with rationale)
+
+### References
+
+- Cite all technical details with source paths and sections, e.g. [Source: docs/<file>.md#Section]
+
+## Dev Agent Record
+
+### Agent Model Used
+
+{agent_model_name_version}
+
+### Debug Log References
+
+### Completion Notes List
+
+### File List
 
 ## Estimate
 
