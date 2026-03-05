@@ -22,9 +22,9 @@
   <action>Verify all declared dependencies exist and are resolvable</action>
 </step>
 <step n="6" title="Generate Validation Report">
-  <action>Append validation result (PASS/FAIL with findings) to story file</action>
+  <action>Append validation result at the END of the story file, after a horizontal rule (---) separator</action>
   <template-output file="{implementation_artifacts}/{story_key}-{story_title_slug}.md">
-    Append validation results (PASS/FAIL with detailed findings per section) to the story file.
+    Append a section titled "## Validation Report" at the very end of the story file, preceded by a --- separator. Include: date, overall PASS/FAIL verdict, and per-section findings (PASS or FAIL with specific issue description). This report will be read by /gaia-fix-story to resolve issues.
   </template-output>
 </step>
 </workflow>

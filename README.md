@@ -1,6 +1,6 @@
 # GAIA — Generative Agile Intelligence Architecture
 
-AI agent framework for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) that orchestrates software product development through 25 specialized agents, 57 workflows, and 8 shared skills — from initial research all the way to deployment.
+AI agent framework for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) that orchestrates software product development through 25 specialized agents, 58 workflows, and 8 shared skills — from initial research all the way to deployment.
 
 GAIA gives you a team of AI agents with distinct personas, structured workflows that follow a proven product lifecycle, built-in quality gates, checkpoint/resume for long-running sessions, and persistent agent memory across conversations.
 
@@ -49,7 +49,7 @@ The script resolves sources in this order: `--source` flag, `$GAIA_SOURCE` env v
 4. Creates `.resolved/` directories for pre-built configs
 5. Prompts for project name and user name, writes them to `global.yaml`
 6. Copies `CLAUDE.md` to your project root (the framework instruction file)
-7. Installs 100 slash commands to `.claude/commands/`
+7. Installs 101 slash commands to `.claude/commands/`
 8. Appends GAIA entries to `.gitignore`
 
 ### Updating an existing installation
@@ -140,7 +140,7 @@ _gaia/
 │   └── workflows/        # Brainstorming, party mode, advanced elicitation
 ├── lifecycle/            # Product lifecycle (5 phases)
 │   ├── agents/           # 11 lifecycle agents
-│   ├── workflows/        # 35 workflows across 5 phases + anytime + quick-flow
+│   ├── workflows/        # 36 workflows across 5 phases + anytime + quick-flow
 │   ├── templates/        # 16 document templates (PRD, architecture, API docs, brownfield, etc.)
 │   └── teams/            # Pre-built team compositions
 ├── dev/                  # Developer tooling
@@ -273,6 +273,7 @@ Workflows are structured multi-step processes. Each has a `workflow.yaml` config
 | `/gaia-epic-status` | Epic Status | Nate | `docs/implementation-artifacts/` |
 | `/gaia-create-story` | Create Story | Derek | `docs/implementation-artifacts/` |
 | `/gaia-validate-story` | Validate Story | Derek | `docs/implementation-artifacts/` |
+| `/gaia-fix-story` | Fix Story | Nate | `docs/implementation-artifacts/` |
 | `/gaia-dev-story` | Dev Story | Stack dev | `docs/implementation-artifacts/` |
 | `/gaia-code-review` | Code Review | Stack dev | `docs/implementation-artifacts/` |
 | `/gaia-qa-tests` | QA Generate Tests | Vera | `docs/implementation-artifacts/` |
@@ -555,7 +556,7 @@ The single source of truth for project settings at `_gaia/_config/global.yaml`:
 
 ```yaml
 framework_name: "GAIA"
-framework_version: "1.1.13"
+framework_version: "1.1.14"
 
 user_name: "your-name"
 project_name: "your-project"
@@ -606,6 +607,9 @@ A full product lifecycle from idea to deployment:
 /gaia-create-epics         → break into epics and stories
 /gaia-readiness-check      → verify everything is ready
 /gaia-sprint-plan          → plan the first sprint
+/gaia-create-story         → create detailed stories
+/gaia-validate-story       → validate story completeness
+/gaia-fix-story            → fix issues from validation
 /gaia-dev-story            → implement stories
 /gaia-code-review          → review the code
 /gaia-qa-tests             → generate tests

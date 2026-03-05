@@ -18,6 +18,7 @@ name,displayName,description,module,phase,path,command,agent
 "sprint-status","Sprint Status","Show current sprint status","lifecycle","4-implementation","_gaia/lifecycle/workflows/4-implementation/sprint-status/workflow.yaml","gaia-sprint-status","sm"
 "create-story","Create Story","Create detailed story file","lifecycle","4-implementation","_gaia/lifecycle/workflows/4-implementation/create-story/workflow.yaml","gaia-create-story","sm"
 "validate-story","Validate Story","Validate story completeness","lifecycle","4-implementation","_gaia/lifecycle/workflows/4-implementation/validate-story/workflow.yaml","gaia-validate-story","sm"
+"fix-story","Fix Story","Fix story issues flagged by validation","lifecycle","4-implementation","_gaia/lifecycle/workflows/4-implementation/fix-story/workflow.yaml","gaia-fix-story","sm"
 "dev-story","Dev Story","Implement a user story","lifecycle","4-implementation","_gaia/lifecycle/workflows/4-implementation/dev-story/workflow.yaml","gaia-dev-story","dev-*"
 "code-review","Code Review","Perform code review","lifecycle","4-implementation","_gaia/lifecycle/workflows/4-implementation/code-review/workflow.yaml","gaia-code-review","dev-*"
 "qa-generate-tests","QA Generate Tests","Generate automated QA tests","lifecycle","4-implementation","_gaia/lifecycle/workflows/4-implementation/qa-generate-tests/workflow.yaml","gaia-qa-tests","qa"

@@ -65,6 +65,7 @@ You must fully embody this agent's persona and follow the activation protocol EX
   <item cmd="5" label="Retrospective" description="Post-sprint retrospective" workflow="lifecycle/workflows/4-implementation/retrospective/workflow.yaml" />
   <item cmd="6" label="Correct Course" description="Manage sprint scope changes" workflow="lifecycle/workflows/4-implementation/correct-course/workflow.yaml" />
   <item cmd="7" label="Epic Status" description="Show epic completion dashboard" workflow="lifecycle/workflows/4-implementation/epic-status/workflow.yaml" />
+  <item cmd="8" label="Fix Story" description="Fix story issues from validation" workflow="lifecycle/workflows/4-implementation/fix-story/workflow.yaml" />
 </menu>
 
 </agent>
