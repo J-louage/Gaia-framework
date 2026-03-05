@@ -22,14 +22,15 @@ execution modes (normal/yolo), checkpoints, and quality gates.
   <rule n="4">RESOLVE all {project-root}, {installed_path}, {date} variables</rule>
   <rule n="5">ASK user for any remaining unknown variables</rule>
   <rule n="6">RUN preflight-check protocol to validate all variables before proceeding</rule>
-  <rule n="7">LOAD the instructions file specified by 'instructions' key</rule>
-  <rule n="8">READ the ENTIRE instructions file — never use offset/limit</rule>
-  <rule n="9">CHECK quality_gates.pre_start — HALT if any gate fails</rule>
-  <rule n="10">PROCESS each step in the instructions file in strict numerical order</rule>
-  <rule n="11">After each step: WRITE checkpoint to _memory/checkpoints/</rule>
-  <rule n="12">At template-output: SAVE to file, then prompt user (unless YOLO mode)</rule>
-  <rule n="13">CHECK quality_gates.post_complete — HALT if any gate fails</rule>
-  <rule n="14">On completion: archive checkpoint to completed/</rule>
+  <rule n="7">If workflow.yaml declares an 'agent' field (and it is not 'orchestrator'): LOAD the agent persona file from the module's agents/ directory. Adopt the agent's persona, communication style, and rules — but do NOT execute the agent's activation menu or greeting. The engine remains in control of step execution.</rule>
+  <rule n="8">LOAD the instructions file specified by 'instructions' key</rule>
+  <rule n="9">READ the ENTIRE instructions file — never use offset/limit</rule>
+  <rule n="10">CHECK quality_gates.pre_start — HALT if any gate fails</rule>
+  <rule n="11">PROCESS each step in the instructions file in strict numerical order</rule>
+  <rule n="12">After each step: WRITE checkpoint to _memory/checkpoints/</rule>
+  <rule n="13">At template-output: SAVE to file, then prompt user (unless YOLO mode)</rule>
+  <rule n="14">CHECK quality_gates.post_complete — HALT if any gate fails</rule>
+  <rule n="15">On completion: archive checkpoint to completed/</rule>
 </WORKFLOW-RULES>
 
 <flow>
@@ -53,13 +54,23 @@ execution modes (normal/yolo), checkpoints, and quality gates.
     <action if="any gate fails">HALT with clear error message — do NOT proceed</action>
   </step>
 
-  <step n="3" title="Load Instructions">
+  <step n="3" title="Load Agent Persona">
+    <action>Check if workflow.yaml contains an 'agent' field</action>
+    <action if="agent is 'orchestrator' or field is missing">Skip persona loading — execute as the generic workflow engine</action>
+    <action if="agent field exists and is not 'orchestrator'">Resolve the agent file path: {project-root}/_gaia/{module}/agents/{agent}.md</action>
+    <action if="agent is 'dev-*' (wildcard)">Ask user which stack developer to use (typescript, angular, flutter, java, python, mobile), then resolve to {project-root}/_gaia/dev/agents/{stack}-dev.md</action>
+    <action if="agent file resolved">Read the agent persona file — adopt its persona, name, communication style, rules, and domain knowledge for the duration of this workflow</action>
+    <action if="agent file resolved">Do NOT execute the agent's activation protocol, greeting, or menu — the workflow engine controls step execution</action>
+    <action if="agent file resolved">Do NOT load the agent's memory sidecar — the workflow engine manages its own checkpoints</action>
+  </step>
+
+  <step n="4" title="Load Instructions">
     <action>Read the FULL instructions file (xml or md)</action>
     <action>Count total steps in the instructions</action>
     <action>Write initial checkpoint: workflow started, step 0 of N</action>
   </step>
 
-  <step n="4" title="Process Instructions">
+  <step n="5" title="Process Instructions">
     <action>Execute each step in strict numerical order</action>
     <action>For each step: read any required skills/knowledge JIT</action>
     <action>For each step: drop prior step's skills/knowledge from context</action>
@@ -71,7 +82,7 @@ execution modes (normal/yolo), checkpoints, and quality gates.
     <action>After each step completes: write checkpoint with step number, key variables, output paths</action>
   </step>
 
-  <step n="5" title="Completion">
+  <step n="6" title="Completion">
     <action>Check quality_gates.post_complete conditions if declared</action>
     <action if="any gate fails">HALT — report which gate failed and why</action>
     <action>Load validation/checklist file if declared</action>
