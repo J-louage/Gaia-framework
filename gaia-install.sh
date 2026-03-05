@@ -6,7 +6,7 @@ set -euo pipefail
 # Installs, updates, validates, and reports on GAIA installations.
 # ─────────────────────────────────────────────────────────────────────────────
 
-readonly VERSION="1.1.6"
+readonly VERSION="1.1.7"
 readonly GITHUB_REPO="https://github.com/J-louage/Gaia-framework.git"
 readonly MANIFEST_REL="_gaia/_config/manifest.yaml"
 
@@ -439,7 +439,7 @@ cmd_update() {
         local rel="${file#$src_path/}"
         copy_with_backup "$file" "$dst_path/$rel" "$backup_dir"
         updated=$((updated + 1))
-      done < <(find "$src_path" -type f -print0)
+      done < <(find "$src_path" -type f -print0) || true
     fi
   done
 
