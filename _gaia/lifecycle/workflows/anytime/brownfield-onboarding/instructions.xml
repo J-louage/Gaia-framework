@@ -86,12 +86,26 @@
   <action>Test coverage: identify framework, count tests, check coverage %, find untested areas, assess test quality</action>
   <action>CI/CD: document build pipeline, deploy strategy, environment management, infrastructure as code</action>
   <action>Create NFR Baseline Summary Table with: category | current baseline | recommended target | gap severity</action>
-  <template-output file="{planning_artifacts}/nfr-assessment.md">
-    Generate NFR assessment following the nfr-assessment-template. Include code quality baselines, security posture, performance baselines, accessibility status, test coverage baselines, CI/CD assessment, and the NFR baseline summary table with measured values (not placeholders).
+  <template-output file="{test_artifacts}/nfr-assessment.md">
+    Generate NFR assessment following the nfr-assessment-template. Output to {test_artifacts}/nfr-assessment.md — this is the canonical location. Include code quality baselines, security posture, performance baselines, accessibility status, test coverage baselines, CI/CD assessment, and the NFR baseline summary table with measured values (not placeholders).
   </template-output>
 </step>
 
-<step n="7" title="Create PRD for Gaps">
+<step n="7" title="Performance Test Plan">
+  <action>REQUIRED for brownfield — create performance test plan</action>
+  <action>Load testing/knowledge/performance/k6-patterns.md for load testing patterns</action>
+  <action>Load testing/knowledge/performance/lighthouse-ci.md if {has_frontend} is true</action>
+  <action>Define performance budgets: P50/P95/P99 latency targets based on nfr-assessment.md baselines</action>
+  <action>Design load test scenarios: gradual load, spike test, soak test</action>
+  <action>If {has_frontend}: define Core Web Vitals targets (LCP under 2.5s, INP under 200ms, CLS under 0.1)</action>
+  <action>Identify backend profiling targets: slow queries, N+1 problems, connection pool sizing</action>
+  <action>Define CI performance gates with pass/fail thresholds</action>
+  <template-output file="{test_artifacts}/performance-test-plan-{date}.md">
+    Generate performance test plan. Include: performance budgets derived from nfr-assessment.md baselines, load test scenarios (gradual, spike, soak), frontend performance targets (if has_frontend), backend profiling targets, and CI performance gate definitions.
+  </template-output>
+</step>
+
+<step n="8" title="Create PRD for Gaps">
   <action>Read the PRD template from {installed_path}/../../templates/prd-template.md</action>
   <action>Read upstream artifacts to inform gap analysis:</action>
   <action>— nfr-assessment.md → NFR section gets real "Current Baseline" and "Target" columns</action>
@@ -104,13 +118,13 @@
   <action>Goals = gap closure goals only. Non-Goals = existing features that will NOT be re-implemented</action>
   <action>User Stories = stories for gap features only, not existing functionality</action>
   <action>Functional Requirements = gap requirements organized by priority</action>
-  <action>Non-Functional Requirements = NFR gaps with current baseline and target from nfr-assessment.md</action>
+  <action>Non-Functional Requirements = NFR gaps with current baseline and target from {test_artifacts}/nfr-assessment.md</action>
   <template-output file="{planning_artifacts}/prd.md">
-    Generate a PRD following the standard template structure. Add "Mode: Brownfield — gaps only" to the header. All sections must follow the template format but contain only gap-focused content. NFR section must include "Current Baseline" and "Target" columns with real values from nfr-assessment.md. Include a Priority Matrix section mapping each gap to priority/effort/impact.
+    Generate a PRD following the standard template structure. Add "Mode: Brownfield — gaps only" to the header. All sections must follow the template format but contain only gap-focused content. NFR section must include "Current Baseline" and "Target" columns with real values from {test_artifacts}/nfr-assessment.md. Include a Priority Matrix section mapping each gap to priority/effort/impact.
   </template-output>
 </step>
 
-<step n="8" title="Map Architecture with Diagrams">
+<step n="9" title="Map Architecture with Diagrams">
   <action>Read the brownfield architecture template from {installed_path}/../../templates/brownfield-architecture-template.md</action>
   <action>Document as-is architecture with Mermaid diagrams:</action>
   <action>— System context diagram (C4 Level 1) using Mermaid C4 syntax</action>
@@ -127,15 +141,15 @@
   </template-output>
 </step>
 
-<step n="9" title="Create Epics/Stories &amp; Onboard Developer">
+<step n="10" title="Create Epics/Stories &amp; Onboard Developer">
   <action>Invoke create-epics-stories for gap features only — do NOT create stories for existing implemented features</action>
-  <action>Stories must trace to PRD requirements from step 7</action>
+  <action>Stories must trace to PRD requirements from step 8</action>
   <template-output file="{planning_artifacts}/epics-and-stories.md">
     Generate epics and stories for gap features only. Every story must have acceptance criteria. Stories must trace to PRD requirement IDs.
   </template-output>
   <action>Read the brownfield onboarding template from {installed_path}/../../templates/brownfield-onboarding-template.md</action>
-  <action>Generate onboarding doc as a knowledge base index linking to ALL artifacts generated in steps 1-8</action>
-  <action>Include: quick-start guide, project overview, architecture overview, API reference, UX patterns (if frontend), event architecture (if events), dependencies, NFR baselines, gap analysis, stories, conventions, key files</action>
+  <action>Generate onboarding doc as a knowledge base index linking to ALL artifacts generated in steps 1-9</action>
+  <action>Include: quick-start guide, project overview, architecture overview, API reference, UX patterns (if frontend), event architecture (if events), dependencies, NFR baselines (at {test_artifacts}/nfr-assessment.md), performance test plan (at {test_artifacts}/performance-test-plan-{date}.md), gap analysis, stories, conventions, key files</action>
   <action>Skip sections for optional artifacts that were not generated (no API docs if no APIs, etc.)</action>
   <action>Include a "Reading Order for New Developers" section at the end</action>
   <template-output file="{planning_artifacts}/brownfield-onboarding.md">

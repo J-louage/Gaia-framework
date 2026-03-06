@@ -13,12 +13,17 @@ validation-target: 'Readiness gate report'
 ## TEA Readiness
 - [ ] Acceptance criteria are testable
 - [ ] NFR targets quantified
+## Test Infrastructure
+- [ ] test-plan.md exists at {test_artifacts}/test-plan.md
+- [ ] traceability-matrix.md covers all PRD requirements
+- [ ] ci-setup.md has enforced quality gates (not advisory-only)
+- [ ] Gate report includes test_plan_exists, traceability_complete, ci_gates_enforced
 ## Security
 - [ ] Security requirements documented
 - [ ] Auth strategy defined
 ## Brownfield Completeness (if brownfield-onboarding.md exists)
 - [ ] dependency-map.md exists with Mermaid dependency graph
-- [ ] nfr-assessment.md exists with real baseline values
+- [ ] nfr-assessment.md exists at {test_artifacts}/nfr-assessment.md with real baseline values
 - [ ] api-documentation.md exists with OpenAPI spec (if APIs detected)
 - [ ] event-catalog.md exists with event tables (if events detected)
 - [ ] ux-design.md exists with accessibility assessment (if frontend detected)

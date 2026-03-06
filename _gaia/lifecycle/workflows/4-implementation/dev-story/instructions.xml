@@ -12,6 +12,11 @@
 <step n="2" title="Pre-Start Gate">
   <action>Verify story status is 'ready-for-dev'</action>
   <check if="status != ready-for-dev">HALT: Story must be in ready-for-dev status</check>
+  <action>Read story frontmatter: extract risk_level field (default: low if absent)</action>
+  <check if="risk_level == high">
+    Verify {test_artifacts}/atdd-{story_key}.md exists.
+    If file does not exist: HALT — This story is marked high-risk. Run /gaia-atdd for story {story_key} before implementation. ATDD acceptance tests must be written (red phase) before implementation begins.
+  </check>
 </step>
 <step n="3" title="Check for WIP">
   <action>Look for checkpoint file at _memory/checkpoints/dev-story-{story_key}.yaml</action>

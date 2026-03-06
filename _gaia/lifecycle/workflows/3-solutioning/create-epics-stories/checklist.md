@@ -4,6 +4,7 @@ validation-target: 'Epics and stories document'
 required-inputs:
   - '{planning_artifacts}/prd.md'
   - '{planning_artifacts}/architecture.md'
+  - '{test_artifacts}/test-plan.md'
 ---
 ## Epics
 - [ ] Epics group related features logically
@@ -16,6 +17,10 @@ required-inputs:
 - [ ] depends_on declared for each story
 - [ ] blocks declared for each story
 - [ ] No circular dependencies
+## Test Integration
+- [ ] test-plan.md read and risk levels extracted
+- [ ] Each story has risk_level field (high/medium/low)
+- [ ] High-risk stories include ATDD reminder in Dev Notes
 ## Priority
 - [ ] Stories ordered by dependency + priority
 - [ ] Priority labels assigned (P0/P1/P2)

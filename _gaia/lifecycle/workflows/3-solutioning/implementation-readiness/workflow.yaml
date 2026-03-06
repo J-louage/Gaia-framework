@@ -20,6 +20,18 @@ input_file_patterns:
   epics:
     whole: "{planning_artifacts}/epics-and-stories.md"
     load_strategy: "FULL_LOAD"
+  traceability:
+    whole: "{test_artifacts}/traceability-matrix.md"
+    load_strategy: "FULL_LOAD"
+  ci_setup:
+    whole: "{test_artifacts}/ci-setup.md"
+    load_strategy: "FULL_LOAD"
+quality_gates:
+  pre_start:
+    - check: "traceability_exists"
+      on_fail: "HALT: Run /gaia-trace first — traceability matrix required before readiness check."
+    - check: "ci_setup_exists"
+      on_fail: "HALT: Run /gaia-ci-setup first — CI pipeline config required before readiness check."
 on_error:
   missing_file: "ask_user"
   unresolved_variable: "halt"

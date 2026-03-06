@@ -14,10 +14,15 @@ input_file_patterns:
   architecture:
     whole: "{planning_artifacts}/architecture.md"
     load_strategy: "FULL_LOAD"
+  test_plan:
+    whole: "{test_artifacts}/test-plan.md"
+    load_strategy: "FULL_LOAD"
 quality_gates:
   pre_start:
     - check: "architecture_exists"
       on_fail: "HALT: Run create-architecture first"
+    - check: "test_plan_exists"
+      on_fail: "HALT: Test plan not found. Run /gaia-test-design first — test risk levels inform story sizing and ATDD decisions."
 on_error:
   missing_file: "ask_user"
   unresolved_variable: "halt"

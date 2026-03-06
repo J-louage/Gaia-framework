@@ -7,6 +7,9 @@
 <step n="1" title="Load Deployment Context">
   <action>Read {planning_artifacts}/architecture.md — understand system components</action>
   <action>Read {planning_artifacts}/infrastructure-design.md if available</action>
+  <action>Read {test_artifacts}/traceability-matrix.md — verify requirement coverage</action>
+  <action>Read {test_artifacts}/ci-setup.md — verify CI quality gates</action>
+  <action>Read {planning_artifacts}/readiness-report.md — verify PASS status</action>
   <action>Identify release scope: what stories, features, fixes are included</action>
 </step>
 <step n="2" title="Pre-Deployment Checks">
@@ -27,9 +30,15 @@
   <action>Define rollback trigger criteria</action>
 </step>
 <step n="5" title="Approval Gates">
-  <action>QA sign-off: all tests passing, no critical bugs open</action>
-  <action>Security sign-off: security review complete, no critical findings</action>
-  <action>Stakeholder approval: release scope confirmed</action>
+  <action>Verify readiness-report.md status is PASS — if not PASS, HALT deployment</action>
+  <action>Verify traceability-matrix.md coverage is complete — flag gaps as blocking</action>
+  <action>Verify ci-setup.md quality gates are enforced (not advisory-only)</action>
+  <ask>QA sign-off: confirm all acceptance tests pass and no critical bugs are open. Enter CONFIRMED or provide blocking issue.</ask>
+  <check if="qa_signoff != CONFIRMED">HALT: QA sign-off is required before deployment.</check>
+  <ask>Security sign-off: confirm security review is complete with no critical findings. Enter CONFIRMED or provide blocking findings.</ask>
+  <check if="security_signoff != CONFIRMED">HALT: Security sign-off is required before deployment.</check>
+  <ask>Stakeholder approval: confirm release scope is approved. Enter CONFIRMED.</ask>
+  <check if="stakeholder_approval != CONFIRMED">HALT: Stakeholder approval required before deployment.</check>
 </step>
 <step n="6" title="Generate Checklist">
   <template-output file="{implementation_artifacts}/deployment-checklist-{date}.md">

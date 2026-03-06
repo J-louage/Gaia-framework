@@ -10,6 +10,11 @@ validation-target: 'Sprint plan and status files'
 - [ ] Stories selected within velocity
 - [ ] Dependencies respected
 - [ ] Priority ordering applied
+## Testing Readiness
+- [ ] test-plan.md checked (warn if missing)
+- [ ] High-risk stories identified from risk_level field
+- [ ] ATDD file status noted for each high-risk story
+- [ ] Sprint plan includes Testing Readiness section
 ## Status
 - [ ] sprint-status.yaml generated
 - [ ] All stories set to 'backlog'

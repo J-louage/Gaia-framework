@@ -18,6 +18,9 @@ quality_gates:
   pre_start:
     - check: "prd_exists"
       on_fail: "HALT: Run create-prd first"
+  post_complete:
+    - check: "test_plan_recommended"
+      on_fail: "RECOMMEND: Architecture complete. Run /gaia-test-design next to create the test plan before creating epics."
 on_error:
   missing_file: "ask_user"
   unresolved_variable: "halt"

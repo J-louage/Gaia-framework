@@ -34,13 +34,21 @@ validation-target: 'Brownfield onboarding output'
 - [ ] Key library dependencies documented with CVE risk
 - [ ] Mermaid dependency graph included
 - [ ] Risks and recommendations identified
-## NFR Assessment
+## NFR Assessment (via /gaia-nfr — REQUIRED)
 - [ ] Code quality baselines measured
 - [ ] Security posture assessed
 - [ ] Performance baselines documented
 - [ ] Test coverage baselines measured
 - [ ] CI/CD assessment completed
 - [ ] NFR baseline summary table has real values (not placeholders)
+- [ ] Output at {test_artifacts}/nfr-assessment.md (canonical location)
+## Performance Test Plan (REQUIRED)
+- [ ] Performance budgets defined (P50/P95/P99)
+- [ ] Load test scenarios designed (gradual, spike, soak)
+- [ ] Frontend performance targets set if applicable (LCP, INP, CLS)
+- [ ] Backend profiling targets identified
+- [ ] CI performance gates configured with pass/fail thresholds
+- [ ] Output at {test_artifacts}/performance-test-plan-{date}.md
 ## Gap Analysis
 - [ ] PRD created with gap-focused content only
 - [ ] NFR section includes current baseline and target from nfr-assessment.md
@@ -66,7 +74,8 @@ validation-target: 'Brownfield onboarding output'
 - [ ] UX design exists at {planning_artifacts}/ux-design.md (if has_frontend)
 - [ ] Event catalog exists at {planning_artifacts}/event-catalog.md (if has_events)
 - [ ] Dependency map exists at {planning_artifacts}/dependency-map.md
-- [ ] NFR assessment exists at {planning_artifacts}/nfr-assessment.md
+- [ ] NFR assessment exists at {test_artifacts}/nfr-assessment.md
+- [ ] Performance test plan exists at {test_artifacts}/performance-test-plan-*.md
 - [ ] PRD exists at {planning_artifacts}/prd.md
 - [ ] Architecture exists at {planning_artifacts}/architecture.md
 - [ ] Epics and stories exist at {planning_artifacts}/epics-and-stories.md
