@@ -18,5 +18,12 @@ required-inputs:
 - [ ] Each finding has severity level
 - [ ] Each finding has remediation suggestion
 - [ ] Overall risk assessment provided
+## Verdict
+- [ ] PASSED or FAILED verdict clearly stated in report
+## Review Gate
+- [ ] Review Gate table updated in story file
+- [ ] If PASSED: Security Review row shows PASSED with report link
+- [ ] If FAILED: Security Review row shows FAILED, story status set to in-progress
+- [ ] Review gate check protocol invoked
 ## Output Verification
 - [ ] Report generated with findings table

@@ -37,6 +37,15 @@ abstract: true
 - If code review returns REQUEST_CHANGES: load review findings, address each
 - After addressing: re-run tests, update story, submit for re-review
 
+## QA Test Follow-up
+- If QA tests return FAILED: load QA test report, identify failing tests
+- Fix failing tests or underlying code causing failures
+- After addressing: re-run tests, update story, re-submit for review
+
+## Security Review Follow-up
+- If security review returns FAILED: load security findings, address each critical/high finding
+- After addressing: re-run relevant security checks, update story, re-submit for review
+
 ## Definition of Done Execution
 - After all subtasks complete, evaluate each DoD item in story file
 - Mark each as checked or document why it can't be checked
@@ -81,6 +90,8 @@ abstract: true
   <r>NEVER modify files outside the story's declared scope without documenting</r>
   <r>ALWAYS verify definition of done before marking review</r>
   <r>ALWAYS use conventional commit format</r>
+  <r>ALWAYS address QA test failures before re-submitting for review</r>
+  <r>ALWAYS address security findings (critical/high) before re-submitting for review</r>
 </rules>
 
 <quality-gates>

@@ -7,6 +7,10 @@ config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/4-implementation/security-review"
 instructions: "{installed_path}/instructions.xml"
 validation: "{installed_path}/checklist.md"
+quality_gates:
+  pre_start:
+    - check: "story_status == 'review'"
+      on_fail: "HALT: Story must be in review status before security review"
 input_file_patterns:
   story:
     whole: "{implementation_artifacts}/{{story_key}}.md"
@@ -20,3 +24,4 @@ on_error:
 
 output:
   primary: "{implementation_artifacts}/{story_key}-security-review.md"
+  secondary: "{implementation_artifacts}/{story_key}.md"

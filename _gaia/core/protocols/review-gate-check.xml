@@ -1,0 +1,25 @@
+<protocol name="review-gate-check">
+<description>
+  Shared protocol invoked by each review workflow after updating its Review Gate row.
+  Checks if ALL reviews have passed and transitions story to done if so.
+</description>
+<step n="1" title="Read Review Gate">
+  <action>Read the story file's Review Gate table</action>
+  <action>Parse each row: Review name, Status (PENDING | PASSED | FAILED), Report link</action>
+  <action>If Review Gate section is missing: HALT with message "Review Gate section not found — did dev-story transition to review properly?"</action>
+</step>
+<step n="2" title="Evaluate Gate">
+  <action>Count: total rows, PASSED rows, FAILED rows, PENDING rows</action>
+  <action>If any row is FAILED: log "Review gate not passed — {failed_reviews} failed. Developer must fix and re-submit for review." No status change.</action>
+  <action>If any row is PENDING: log "Review gate incomplete — waiting on: {pending_reviews}." No status change.</action>
+  <action>If ALL rows are PASSED: transition story to done.</action>
+</step>
+<step n="3" title="Transition to Done" condition="all_rows == PASSED">
+  <action>Set story status to 'done' in story file frontmatter</action>
+  <action>Update {implementation_artifacts}/sprint-status.yaml: set story status to 'done'</action>
+  <action>Log: "Review gate PASSED — all reviews complete. Story is done."</action>
+  <template-output file="{implementation_artifacts}/sprint-status.yaml">
+    Update sprint-status.yaml with story status set to done.
+  </template-output>
+</step>
+</protocol>

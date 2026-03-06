@@ -3,15 +3,15 @@
 
 modules:
   - name: core
-    version: "1.0.1"
+    version: "1.0.2"
     path: "_gaia/core"
     type: built-in
   - name: lifecycle
-    version: "1.1.12"
+    version: "1.1.13"
     path: "_gaia/lifecycle"
     type: built-in
   - name: dev
-    version: "1.0.0"
+    version: "1.0.1"
     path: "_gaia/dev"
     type: built-in
   - name: creative

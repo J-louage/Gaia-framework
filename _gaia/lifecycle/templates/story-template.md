@@ -71,6 +71,16 @@ As a {role}, I want to {action}, so that {benefit}.
 
 ### File List
 
+## Review Gate
+
+| Review | Status | Report |
+|--------|--------|--------|
+| Code Review | PENDING | — |
+| QA Tests | PENDING | — |
+| Security Review | PENDING | — |
+
+> Story moves to `done` only when ALL reviews show PASSED.
+
 ## Estimate
 
 - **Points:** {story points}
