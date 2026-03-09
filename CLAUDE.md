@@ -1,4 +1,4 @@
-# GAIA Framework v1.20.0
+# GAIA Framework v1.21.0
 
 This project uses the **GAIA** (Generative Agile Intelligence Architecture) framework — an AI agent framework for Claude Code that orchestrates software product development through 25 specialized agents, 62 workflows, and 8 shared skills.
 
@@ -121,6 +121,8 @@ backlog → validating → ready-for-dev → in-progress → blocked → review 
 - `/gaia-test-automate` — PASSED or FAILED
 - `/gaia-test-review` — PASSED or FAILED
 - `/gaia-review-perf` — PASSED or FAILED
+
+Run `/gaia-run-all-reviews` to execute all six reviews sequentially via subagents — one command instead of six.
 
 If any review fails, the story returns to `in-progress`. The Review Gate table in the story file tracks progress.
 
