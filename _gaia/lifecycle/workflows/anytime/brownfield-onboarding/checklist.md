@@ -63,13 +63,9 @@ validation-target: 'Brownfield onboarding output'
 - [ ] Target architecture for gaps documented
 - [ ] As-is vs target delta table included
 - [ ] Cross-references to api-documentation.md, event-catalog.md, dependency-map.md
-## Epics/Stories & Onboarding
-- [ ] Stories created only for gaps
-- [ ] Stories trace to PRD requirement IDs
-- [ ] All stories have acceptance criteria
-- [ ] Developer knowledge base generated as index linking all artifacts
-- [ ] Quick-start guide included
-- [ ] Reading order for new developers included
+## Phase 3 Handoff
+- [ ] Architecture created via subagent
+- [ ] User informed of remaining Phase 3 sequence: /gaia-test-design → /gaia-create-epics → /gaia-readiness-check
 ## Output Verification
 - [ ] Project documentation exists at {planning_artifacts}/project-documentation.md
 - [ ] API documentation exists at {planning_artifacts}/api-documentation.md (if has_apis)
@@ -80,5 +76,4 @@ validation-target: 'Brownfield onboarding output'
 - [ ] Performance test plan exists at {test_artifacts}/performance-test-plan-*.md
 - [ ] PRD exists at {planning_artifacts}/prd.md
 - [ ] Architecture exists at {planning_artifacts}/architecture.md
-- [ ] Epics and stories exist at {planning_artifacts}/epics-and-stories.md
-- [ ] Onboarding document exists at {planning_artifacts}/brownfield-onboarding.md
+- [ ] Next step: /gaia-test-design → /gaia-create-epics → /gaia-readiness-check

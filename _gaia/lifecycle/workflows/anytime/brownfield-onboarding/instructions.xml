@@ -139,12 +139,12 @@
   </template-output>
 </step>
 
-<step n="10" title="Architecture, Stories &amp; Onboarding">
-  <action>Architecture and stories are created using the Phase 3 workflows which auto-detect brownfield mode from the PRD "Mode: Brownfield" header set in step 8.</action>
+<step n="10" title="Architecture">
+  <action>Architecture is created using the Phase 3 workflow which auto-detects brownfield mode from the PRD "Mode: Brownfield" header set in step 8.</action>
   <action>Spawn a subagent using the Agent tool: "Load {project-root}/_gaia/core/engine/workflow.xml, then process {project-root}/_gaia/lifecycle/workflows/3-solutioning/create-architecture/workflow.yaml as workflow-config. Run in YOLO mode. Follow the workflow engine instructions EXACTLY." When subagent returns: verify {planning_artifacts}/architecture.md exists.</action>
-  <action>Spawn a subagent using the Agent tool: "Load {project-root}/_gaia/core/engine/workflow.xml, then process {project-root}/_gaia/lifecycle/workflows/3-solutioning/create-epics-stories/workflow.yaml as workflow-config. Run in YOLO mode. Follow the workflow engine instructions EXACTLY." When subagent returns: verify {planning_artifacts}/epics-and-stories.md and {planning_artifacts}/brownfield-onboarding.md exist.</action>
+  <action>Epics and stories require a test plan first. The remaining Phase 3 sequence (/gaia-test-design → /gaia-create-epics → /gaia-readiness-check) must be run after this workflow completes.</action>
 </step>
-<next-step command="/gaia-readiness-check">
-  Run /gaia-readiness-check in the Claude Code terminal to validate implementation readiness before starting development.
+<next-step command="/gaia-test-design">
+  Run Phase 3 sequence: /gaia-test-design → /gaia-create-epics → /gaia-readiness-check. Start with /gaia-test-design to create the test plan required by create-epics.
 </next-step>
 </workflow>
