@@ -33,6 +33,11 @@ validation-target: 'Readiness gate report'
 ## Security
 - [ ] Security requirements documented
 - [ ] Auth strategy defined
+## Operational Readiness
+- [ ] Rollback procedure documented and feasible
+- [ ] Observability stack defined (logging, metrics, alerting)
+- [ ] Release strategy defined and infrastructure supports it
+- [ ] Gate report includes rollback_feasible, observability_ready, release_strategy_defined
 ## Brownfield Completeness (if brownfield-onboarding.md exists)
 - [ ] dependency-map.md exists with Mermaid dependency graph
 - [ ] nfr-assessment.md exists at {test_artifacts}/nfr-assessment.md with real baseline values

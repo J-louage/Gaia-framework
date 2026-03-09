@@ -3,6 +3,7 @@
   <mandate>Product brief must exist before starting</mandate>
   <mandate>Requirements must be discoverable, not guessed</mandate>
   <mandate>Each requirement must have testable acceptance criteria</mandate>
+  <mandate>Every requirement must have a unique ID: FR-### (functional), NFR-### (non-functional)</mandate>
 </critical>
 <step n="1" title="Load Product Brief">
   <action>Read {planning_artifacts}/product-brief.md</action>
@@ -17,10 +18,12 @@
 <step n="3" title="Functional Requirements">
   <action>List features organized by priority: Must-Have, Should-Have, Nice-to-Have</action>
   <action>Each feature needs: description, user story format, acceptance criteria</action>
+  <action>Assign unique IDs: FR-001, FR-002, ... — IDs are sequential and never reused</action>
 </step>
 <step n="4" title="Non-Functional Requirements">
   <action>Define: performance targets, security requirements, accessibility standards</action>
   <action>Define: scalability needs, reliability targets, compliance requirements</action>
+  <action>Assign unique IDs: NFR-001, NFR-002, ... — IDs are sequential and never reused</action>
 </step>
 <step n="5" title="User Journeys">
   <action>Map key user flows with happy path and error paths</action>
@@ -34,24 +37,28 @@
   <action>List external systems, APIs, and third-party services</action>
   <action>Define integration patterns and data exchange formats</action>
 </step>
-<step n="8" title="Constraints and Assumptions">
+<step n="8" title="Out of Scope">
+  <action>List features, integrations, and use cases explicitly excluded from this release</action>
+  <action>For each exclusion: state what is excluded and why (deferred, not needed, separate product)</action>
+</step>
+<step n="9" title="Constraints and Assumptions">
   <action>Document technical, budget, timeline, and team constraints</action>
   <action>List all assumptions that requirements depend on</action>
 </step>
-<step n="9" title="Success Criteria">
+<step n="10" title="Success Criteria">
   <action>Define measurable acceptance criteria for each feature</action>
   <action>Define overall product success metrics</action>
 </step>
-<step n="10" title="Generate Output">
+<step n="11" title="Generate Output">
   <template-output file="{planning_artifacts}/prd.md">
-    Generate PRD with all sections: overview, user personas, functional requirements (prioritized), non-functional requirements, user journeys, data requirements, integrations, constraints, assumptions, success criteria.
+    Generate PRD with all sections: overview, user personas, functional requirements (prioritized with FR-### IDs), non-functional requirements (with NFR-### IDs), user journeys, data requirements, integrations, out of scope, constraints, assumptions, success criteria. Include a Requirements Summary Table listing all FR and NFR IDs with their description, priority, and status.
   </template-output>
 </step>
-<step n="11" title="Adversarial Review">
+<step n="12" title="Adversarial Review">
   <ask>Open a new Claude Code terminal and run /gaia-adversarial targeting {planning_artifacts}/prd.md. This is required — findings will be incorporated back into the PRD. Confirm here once it completes. (ok)</ask>
   <action>Wait for user to confirm adversarial-review-{date}.md exists in {planning_artifacts}/</action>
 </step>
-<step n="12" title="Incorporate Adversarial Findings">
+<step n="13" title="Incorporate Adversarial Findings">
   <action>Read {planning_artifacts}/adversarial-review-{date}.md — extract critical and high severity findings</action>
   <action>For each critical/high finding: add as a new requirement or refine an existing requirement in the PRD</action>
   <action>Add a "## Review Findings Incorporated" section to the PRD listing each finding, its severity, and how it was addressed (new requirement added / existing requirement refined / acknowledged as risk)</action>

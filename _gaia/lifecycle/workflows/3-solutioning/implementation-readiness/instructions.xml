@@ -69,7 +69,12 @@
   <action>Is authentication/authorization defined in architecture?</action>
   <action>Are data privacy requirements addressed?</action>
 </step>
-<step n="8" title="Brownfield Completeness Check" optional="true" condition="brownfield-onboarding.md exists in {planning_artifacts}">
+<step n="8" title="Operational Readiness">
+  <action>Rollback: Is a rollback procedure documented in architecture or release plan? Can the deployment be reversed without data loss?</action>
+  <action>Observability: Are logging, metrics, and alerting requirements defined? Are health-check endpoints specified?</action>
+  <action>Release strategy: Is the deployment approach defined (blue-green, canary, rolling)? Does the infrastructure design support it?</action>
+</step>
+<step n="9" title="Brownfield Completeness Check" optional="true" condition="brownfield-onboarding.md exists in {planning_artifacts}">
   <action>Skip this step if {planning_artifacts}/brownfield-onboarding.md does not exist. This step only applies to brownfield projects.</action>
   <action>Verify dependency-map.md exists and has: external services, infrastructure, library dependencies, Mermaid graph</action>
   <action>Verify nfr-assessment.md exists at {test_artifacts}/nfr-assessment.md and has: baseline summary table with real values (not placeholders)</action>
@@ -81,7 +86,7 @@
   <action>Verify brownfield-onboarding.md links to all generated artifacts</action>
   <action>Verify {planning_artifacts}/dependency-audit-*.md exists — required dependency audit was completed</action>
 </step>
-<step n="9" title="Generate Gate Report">
+<step n="10" title="Generate Gate Report">
   <template-output file="{planning_artifacts}/readiness-report.md">
     Generate readiness report with YAML frontmatter:
     ---
@@ -97,6 +102,9 @@
       traceability_complete: true/false
       ci_gates_enforced: true/false
       security_documented: true/false
+      rollback_feasible: true/false
+      observability_ready: true/false
+      release_strategy_defined: true/false
       brownfield_complete: true/false/skipped
     contradictions_found: {count}
     contradictions_blocking: {blocking_count}
@@ -110,7 +118,7 @@
     If checks were skipped (missing optional artifacts), list them as INFO notes.
   </template-output>
 </step>
-<step n="10" title="Optional: Adversarial Review">
+<step n="11" title="Optional: Adversarial Review">
   <ask>Would you like to run an adversarial review on the readiness report and all planning artifacts? Open a new Claude Code terminal and run /gaia-adversarial — it runs in a separate context to preserve this session's budget. This is the last opportunity to catch flaws before implementation begins. Strongly recommended before committing to build. (yes, I'll open a new terminal / skip)</ask>
   <action>If yes: the user opens a new terminal and runs /gaia-adversarial targeting {planning_artifacts}/readiness-report.md (reviewer will pull in referenced artifacts). Wait for confirmation before proceeding.</action>
   <action>If skip: adversarial review can be run anytime later with /gaia-adversarial in a separate terminal</action>

@@ -39,30 +39,43 @@ used_by: ['create-prd']
 
 ## 5. Non-Functional Requirements
 
-| Category | Requirement | Target |
-|----------|------------|--------|
-| Performance | {requirement} | {target} |
-| Security | {requirement} | {target} |
-| Accessibility | {requirement} | {target} |
+| ID | Category | Requirement | Target |
+|----|----------|------------|--------|
+| NFR-001 | Performance | {requirement} | {target} |
+| NFR-002 | Security | {requirement} | {target} |
+| NFR-003 | Accessibility | {requirement} | {target} |
 
-## 6. UX Requirements
+## 6. Out of Scope
+
+| Exclusion | Reason |
+|-----------|--------|
+| {feature or integration} | {deferred / not needed / separate product} |
+
+## 7. UX Requirements
 
 {Key interaction patterns, wireframe references, accessibility needs.}
 
-## 7. Technical Constraints
+## 8. Technical Constraints
 
 - {Platform, language, or integration constraint}
 
-## 8. Dependencies
+## 9. Dependencies
 
 - {External system or team dependency}
 
-## 9. Milestones
+## 10. Milestones
 
 | Milestone | Target Date | Deliverables |
 |-----------|------------|-------------|
 | {milestone} | {date} | {deliverables} |
 
-## 10. Open Questions
+## 11. Requirements Summary
+
+| ID | Description | Priority | Status |
+|----|------------|----------|--------|
+| FR-001 | {description} | {Must-Have/Should-Have/Nice-to-Have} | {Draft/Approved} |
+| NFR-001 | {description} | {Must-Have/Should-Have/Nice-to-Have} | {Draft/Approved} |
+
+## 12. Open Questions
 
 - [ ] {Unresolved question}

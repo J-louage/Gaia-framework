@@ -10,13 +10,15 @@ validation-rules:
 ## Completeness
 - [ ] Overview section present
 - [ ] User personas defined
-- [ ] Functional requirements listed
-- [ ] Non-functional requirements defined
+- [ ] Functional requirements listed with FR-### IDs
+- [ ] Non-functional requirements defined with NFR-### IDs
 - [ ] User journeys mapped
 - [ ] Data requirements specified
 - [ ] Integration requirements listed
+- [ ] Out of scope section present
 - [ ] Constraints documented
 - [ ] Success criteria defined
+- [ ] Requirements Summary Table present with all FR and NFR IDs
 ## User Focus
 - [ ] Requirements trace to user needs
 - [ ] User stories in standard format
