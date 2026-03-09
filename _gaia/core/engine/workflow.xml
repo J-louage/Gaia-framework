@@ -122,6 +122,7 @@ execution modes (normal/yolo), checkpoints, and quality gates.
   <protocol name="discover-inputs" file="protocols/discover-inputs.xml" />
   <protocol name="preflight-check" file="protocols/preflight-check.xml" />
   <protocol name="handoff" file="protocols/handoff.xml" />
+  <protocol name="review-gate-check" file="protocols/review-gate-check.xml" />
 </protocols>
 
 <llm final="true">
