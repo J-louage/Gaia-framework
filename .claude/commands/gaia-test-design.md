@@ -1,6 +1,7 @@
 ---
 name: 'test-design'
 description: 'Create risk-based test plans. Use when "design test plan".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

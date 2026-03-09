@@ -1,6 +1,7 @@
 ---
 name: 'code-review'
 description: 'Perform code review. Use when "run code review".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

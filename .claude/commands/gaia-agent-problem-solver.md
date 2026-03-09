@@ -1,6 +1,7 @@
 ---
 name: 'agent-problem-solver'
 description: 'Nova — Problem Solver. Use for systematic problem-solving, root cause analysis.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

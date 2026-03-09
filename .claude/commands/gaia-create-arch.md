@@ -1,6 +1,7 @@
 ---
 name: 'create-arch'
 description: 'Design system architecture. Use when "create architecture".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

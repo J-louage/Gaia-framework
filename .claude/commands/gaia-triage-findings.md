@@ -1,6 +1,7 @@
 ---
 name: 'triage-findings'
 description: 'Triage development findings into backlog stories. Use when "triage findings".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

@@ -1,6 +1,7 @@
 ---
 name: 'nfr'
 description: 'Assess non-functional requirements. Use when "assess NFRs".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

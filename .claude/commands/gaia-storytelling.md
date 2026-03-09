@@ -1,6 +1,7 @@
 ---
 name: 'storytelling'
 description: 'Craft compelling narratives using story frameworks. Use when "craft a story".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

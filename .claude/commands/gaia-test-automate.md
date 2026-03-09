@@ -1,6 +1,7 @@
 ---
 name: 'test-automate'
 description: 'Expand automated test coverage. Use when "automate tests".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

@@ -1,6 +1,7 @@
 ---
 name: 'brainstorm'
 description: 'Brainstorm a new project idea. Use when "brainstorm a project".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

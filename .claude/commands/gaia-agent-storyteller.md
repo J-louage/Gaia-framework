@@ -1,6 +1,7 @@
 ---
 name: 'agent-storyteller'
 description: 'Elara — Storyteller. Use for narrative crafting, storytelling frameworks.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

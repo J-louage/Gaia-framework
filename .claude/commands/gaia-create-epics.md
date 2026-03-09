@@ -1,6 +1,7 @@
 ---
 name: 'create-epics'
 description: 'Break requirements into epics and stories. Use when "create epics and stories".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

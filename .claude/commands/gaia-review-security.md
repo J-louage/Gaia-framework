@@ -1,6 +1,7 @@
 ---
 name: 'review-security'
 description: 'OWASP-focused security review on code or documents. Use when "review security".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

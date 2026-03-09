@@ -1,6 +1,7 @@
 ---
 name: 'fix-story'
 description: 'Fix story issues flagged by validation. Use when "fix story".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

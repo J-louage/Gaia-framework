@@ -1,6 +1,7 @@
 ---
 name: 'agent-architect'
 description: 'Theo — System Architect. Use for architecture design, technical decisions, readiness checks.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

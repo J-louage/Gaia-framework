@@ -1,6 +1,7 @@
 ---
 name: 'review-perf'
 description: 'Review code for performance issues. Use when "review performance".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

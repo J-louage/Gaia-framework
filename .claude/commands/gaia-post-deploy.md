@@ -1,6 +1,7 @@
 ---
 name: 'post-deploy'
 description: 'Post-deployment health and metric validation. Use when "post-deploy verify".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

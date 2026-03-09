@@ -1,6 +1,7 @@
 ---
 name: 'agent-sm'
 description: 'Nate — Scrum Master. Use for sprint planning, story prep, agile ceremonies.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

@@ -1,6 +1,7 @@
 ---
 name: 'atdd'
 description: 'Generate failing acceptance tests using TDD. Use when "write acceptance tests".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

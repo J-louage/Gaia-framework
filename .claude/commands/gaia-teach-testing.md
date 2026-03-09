@@ -1,6 +1,7 @@
 ---
 name: 'teach-testing'
 description: 'Teach testing progressively through structured sessions. Use when "teach me testing".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

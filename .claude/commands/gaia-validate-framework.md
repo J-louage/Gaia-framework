@@ -1,6 +1,7 @@
 ---
 name: 'validate-framework'
 description: 'Run GAIA framework self-validation. Use when "validate framework".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

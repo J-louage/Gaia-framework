@@ -1,6 +1,7 @@
 ---
 name: 'changelog'
 description: 'Generate changelog from git history and sprint files. Use when "generate changelog".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

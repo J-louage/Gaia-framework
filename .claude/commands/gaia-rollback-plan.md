@@ -1,6 +1,7 @@
 ---
 name: 'rollback-plan'
 description: 'Create rollback trigger criteria and procedures. Use when "create rollback plan".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

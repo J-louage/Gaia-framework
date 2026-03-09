@@ -1,6 +1,7 @@
 ---
 name: 'threat-model'
 description: 'Create security threat model using STRIDE/DREAD. Use when "create threat model".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

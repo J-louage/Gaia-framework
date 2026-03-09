@@ -1,6 +1,7 @@
 ---
 name: 'agent-devops'
 description: 'Soren — DevOps/SRE Engineer. Use for infrastructure design, deployment, rollback planning.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

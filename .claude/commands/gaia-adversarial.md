@@ -1,6 +1,7 @@
 ---
 name: 'adversarial'
 description: 'Cynical adversarial review. Use when "adversarial review".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

@@ -1,6 +1,7 @@
 ---
 name: 'innovation'
 description: 'Identify disruption opportunities and innovate business models. Use when "run innovation strategy".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

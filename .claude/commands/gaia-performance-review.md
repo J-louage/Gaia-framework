@@ -1,6 +1,7 @@
 ---
 name: 'performance-review'
 description: 'Analyze performance bottlenecks and recommend optimizations. Use when "performance review".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

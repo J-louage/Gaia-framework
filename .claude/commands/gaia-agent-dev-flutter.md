@@ -1,6 +1,7 @@
 ---
 name: 'agent-dev-flutter'
 description: 'Freya — Flutter Developer. Use for Flutter, Dart cross-platform development.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

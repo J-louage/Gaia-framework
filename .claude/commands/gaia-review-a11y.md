@@ -1,6 +1,7 @@
 ---
 name: 'review-a11y'
 description: 'Review code for WCAG 2.1 accessibility compliance. Use when "review accessibility".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

@@ -1,6 +1,7 @@
 ---
 name: 'agent-brainstorming'
 description: 'Rex — Brainstorming Coach. Use for brainstorming facilitation, creative techniques.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

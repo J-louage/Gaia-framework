@@ -1,6 +1,7 @@
 ---
 name: 'build-configs'
 description: 'Regenerate pre-resolved config files. Run after changing global.yaml or any module config.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

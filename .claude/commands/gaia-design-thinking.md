@@ -1,6 +1,7 @@
 ---
 name: 'design-thinking'
 description: 'Guide human-centered design process. Use when "run design thinking".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

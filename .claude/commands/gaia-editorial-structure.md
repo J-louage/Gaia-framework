@@ -1,6 +1,7 @@
 ---
 name: 'editorial-structure'
 description: 'Structural editing review. Use when "review structure".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

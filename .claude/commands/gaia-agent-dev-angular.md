@@ -1,6 +1,7 @@
 ---
 name: 'agent-dev-angular'
 description: 'Lena — Angular Developer. Use for Angular, RxJS, NgRx development.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

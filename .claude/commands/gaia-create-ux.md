@@ -1,6 +1,7 @@
 ---
 name: 'create-ux'
 description: 'Create UX design specifications. Use when "create UX design".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

@@ -1,6 +1,7 @@
 ---
 name: 'product-brief'
 description: 'Create a product brief. Use when "create a product brief".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

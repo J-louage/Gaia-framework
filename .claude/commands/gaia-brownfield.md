@@ -1,6 +1,7 @@
 ---
 name: 'brownfield'
 description: 'Onboard existing project to GAIA. Use when "onboard existing project".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

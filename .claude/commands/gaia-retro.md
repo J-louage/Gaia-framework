@@ -1,6 +1,7 @@
 ---
 name: 'retro'
 description: 'Post-sprint retrospective. Use when "run retrospective".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

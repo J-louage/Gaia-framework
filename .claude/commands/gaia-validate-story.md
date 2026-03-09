@@ -1,6 +1,7 @@
 ---
 name: 'validate-story'
 description: 'Validate story completeness. Use when "validate story".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

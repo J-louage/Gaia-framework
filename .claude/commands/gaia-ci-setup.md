@@ -1,6 +1,7 @@
 ---
 name: 'ci-setup'
 description: 'Scaffold CI/CD quality pipeline. Use when "setup CI pipeline".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

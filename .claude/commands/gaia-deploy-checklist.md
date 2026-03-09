@@ -1,6 +1,7 @@
 ---
 name: 'deploy-checklist'
 description: 'Pre-deployment verification checklist. Use when "deployment checklist".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

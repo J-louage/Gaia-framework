@@ -1,6 +1,7 @@
 ---
 name: 'agent-ux-designer'
 description: 'Christy — UX Designer. Use for user research, interaction design, UI patterns.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

@@ -1,6 +1,7 @@
 ---
 name: 'sprint-plan'
 description: 'Plan sprint from epics and stories. Use when "run sprint planning".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

@@ -1,6 +1,7 @@
 ---
 name: 'agent-dev-python'
 description: 'Ravi — Python Developer. Use for Django, FastAPI, data pipeline development.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

@@ -1,6 +1,7 @@
 ---
 name: 'correct-course'
 description: 'Manage sprint scope changes. Use when "correct course".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

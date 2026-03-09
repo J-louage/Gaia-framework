@@ -1,6 +1,7 @@
 ---
 name: 'gaia'
 description: 'Start GAIA orchestrator. The primary entry point for all GAIA operations.'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

@@ -1,6 +1,7 @@
 ---
 name: 'party'
 description: 'Multi-agent group discussion. Use when "party mode".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

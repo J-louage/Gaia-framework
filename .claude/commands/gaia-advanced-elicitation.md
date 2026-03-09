@@ -1,6 +1,7 @@
 ---
 name: 'advanced-elicitation'
 description: 'Deep requirements elicitation. Use when "run advanced elicitation".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

@@ -1,6 +1,7 @@
 ---
 name: 'agent-dev-mobile'
 description: 'Talia — Mobile Developer. Use for React Native, Swift, Kotlin development.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

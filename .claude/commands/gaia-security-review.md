@@ -1,6 +1,7 @@
 ---
 name: 'security-review'
 description: 'Pre-merge OWASP-focused security review. Use when "security review".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

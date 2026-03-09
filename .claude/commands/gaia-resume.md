@@ -1,6 +1,7 @@
 ---
 name: 'resume'
 description: 'Resume from last checkpoint after context loss or session break.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

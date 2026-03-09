@@ -1,6 +1,7 @@
 ---
 name: 'infra-design'
 description: 'Design infrastructure topology and IaC structure. Use when "design infrastructure".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

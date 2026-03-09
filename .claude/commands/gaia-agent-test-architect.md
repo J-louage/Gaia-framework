@@ -1,6 +1,7 @@
 ---
 name: 'agent-test-architect'
 description: 'Sable — Test Architect. Use for test architecture, risk-based testing, quality gates.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

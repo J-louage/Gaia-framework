@@ -1,6 +1,7 @@
 ---
 name: 'agent-analyst'
 description: 'Elena — Strategic Business Analyst. Use for market research, domain research, product briefs.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

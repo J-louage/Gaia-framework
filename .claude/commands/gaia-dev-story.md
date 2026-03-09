@@ -1,6 +1,7 @@
 ---
 name: 'dev-story'
 description: 'Implement a user story. Use when "dev this story".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

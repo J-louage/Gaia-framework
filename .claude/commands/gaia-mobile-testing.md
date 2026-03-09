@@ -1,6 +1,7 @@
 ---
 name: 'mobile-testing'
 description: 'Create mobile test plan covering devices, Appium, and responsive testing. Use when "mobile testing".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

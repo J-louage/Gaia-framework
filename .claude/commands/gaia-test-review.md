@@ -1,6 +1,7 @@
 ---
 name: 'test-review'
 description: 'Review test quality and identify flakiness. Use when "review tests".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

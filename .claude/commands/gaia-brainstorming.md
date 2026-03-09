@@ -1,6 +1,7 @@
 ---
 name: 'brainstorming'
 description: 'Facilitated brainstorming session. Use when "brainstorming session".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

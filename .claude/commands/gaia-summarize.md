@@ -1,6 +1,7 @@
 ---
 name: 'summarize'
 description: 'Generate executive summary of a document. Use when "summarize document".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

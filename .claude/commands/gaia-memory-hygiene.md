@@ -1,6 +1,7 @@
 ---
 name: 'memory-hygiene'
 description: 'Detect stale or contradicted decisions in agent memory sidecars. Use when "memory hygiene" or "clean sidecars".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

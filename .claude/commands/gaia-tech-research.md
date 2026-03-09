@@ -1,6 +1,7 @@
 ---
 name: 'tech-research'
 description: 'Research a technology. Use when "research a technology".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

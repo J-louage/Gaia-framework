@@ -1,6 +1,7 @@
 ---
 name: 'problem-solving'
 description: 'Apply systematic problem-solving methodologies. Use when "solve a problem".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

@@ -1,6 +1,7 @@
 ---
 name: 'qa-tests'
 description: 'Generate automated QA tests. Use when "generate QA tests".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

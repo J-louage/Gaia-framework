@@ -1,6 +1,7 @@
 ---
 name: 'agent-design-thinking'
 description: 'Lyra — Design Thinking Coach. Use for human-centered design, empathy mapping.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

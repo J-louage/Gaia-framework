@@ -1,6 +1,7 @@
 ---
 name: 'creative-sprint'
 description: 'Run multi-agent creative pipeline: empathize → solve → innovate. Use when "creative sprint".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

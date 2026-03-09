@@ -1,6 +1,7 @@
 ---
 name: 'slide-deck'
 description: 'Create a presentation slide deck with narrative arc. Use when "create slide deck".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

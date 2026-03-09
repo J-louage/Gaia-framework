@@ -1,3 +1,9 @@
+---
+name: 'change-request'
+description: 'Document and analyze a change request with impact analysis, approval gate, and cascade artifact updates.'
+model: opus
+---
+
 Document and analyze a change request with impact analysis, approval gate, and cascade artifact updates.
 
 Load $ARGUMENTS as additional context.

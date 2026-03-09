@@ -1,6 +1,7 @@
 ---
 name: 'review-api'
 description: 'Review REST API design against standards. Use when "review API design".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

@@ -1,6 +1,7 @@
 ---
 name: 'readiness-check'
 description: 'Validate implementation readiness. Use when "check readiness".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

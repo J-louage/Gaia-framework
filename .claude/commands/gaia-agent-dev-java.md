@@ -1,6 +1,7 @@
 ---
 name: 'agent-dev-java'
 description: 'Hugo — Java Developer. Use for Spring Boot, JPA, microservices development.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

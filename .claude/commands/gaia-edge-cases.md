@@ -1,6 +1,7 @@
 ---
 name: 'edge-cases'
 description: 'Edge case analysis. Use when "find edge cases".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

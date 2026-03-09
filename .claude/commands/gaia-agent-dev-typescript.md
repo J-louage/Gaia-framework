@@ -1,6 +1,7 @@
 ---
 name: 'agent-dev-typescript'
 description: 'Cleo — TypeScript Developer. Use for React, Next.js, Express development.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

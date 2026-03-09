@@ -1,6 +1,7 @@
 ---
 name: 'agent-performance'
 description: 'Juno — Performance Specialist. Use for load testing, profiling, Core Web Vitals.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

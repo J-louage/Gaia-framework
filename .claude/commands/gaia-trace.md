@@ -1,6 +1,7 @@
 ---
 name: 'trace'
 description: 'Generate requirements-to-tests traceability matrix. Use when "create traceability matrix".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

@@ -1,6 +1,7 @@
 ---
 name: 'market-research'
 description: 'Conduct market research. Use when "create market research".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

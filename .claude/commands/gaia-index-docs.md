@@ -1,6 +1,7 @@
 ---
 name: 'index-docs'
 description: 'Generate doc index for folder. Use when "index these docs".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

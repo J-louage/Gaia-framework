@@ -1,6 +1,7 @@
 ---
 name: 'merge-docs'
 description: 'Merge multiple markdown files into one document. Use when "merge documents".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

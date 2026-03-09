@@ -237,85 +237,89 @@ All developer agents extend a shared base with common dev patterns. Each adds st
 
 Workflows are structured multi-step processes. Each has a `workflow.yaml` config, `instructions.xml` with step-by-step guidance, and a `checklist.md` for quality gates.
 
+### Model Assignment
+
+Each command specifies which Claude model to use. **Opus** is assigned to workflows requiring deep reasoning, multi-step synthesis, or complex analysis. **Sonnet** is assigned to structured generation, template-following, and status reporting tasks.
+
 ### Phase 1: Analysis
 
-| Command | Workflow | Agent | Output |
-|---------|----------|-------|--------|
-| `/gaia-brainstorm` | Brainstorm Project | Elena | `docs/planning-artifacts/` |
-| `/gaia-market-research` | Market Research | Elena | `docs/planning-artifacts/` |
-| `/gaia-domain-research` | Domain Research | Elena | `docs/planning-artifacts/` |
-| `/gaia-tech-research` | Technical Research | Elena | `docs/planning-artifacts/` |
-| `/gaia-product-brief` | Create Product Brief | Elena | `docs/planning-artifacts/` |
+| Command | Workflow | Agent | Model | Output |
+|---------|----------|-------|-------|--------|
+| `/gaia-brainstorm` | Brainstorm Project | Elena | Sonnet | `docs/planning-artifacts/` |
+| `/gaia-market-research` | Market Research | Elena | Sonnet | `docs/planning-artifacts/` |
+| `/gaia-domain-research` | Domain Research | Elena | Sonnet | `docs/planning-artifacts/` |
+| `/gaia-tech-research` | Technical Research | Elena | Sonnet | `docs/planning-artifacts/` |
+| `/gaia-product-brief` | Create Product Brief | Elena | Sonnet | `docs/planning-artifacts/` |
 
 ### Phase 2: Planning
 
-| Command | Workflow | Agent | Output |
-|---------|----------|-------|--------|
-| `/gaia-create-prd` | Create PRD | Derek | `docs/planning-artifacts/` |
-| `/gaia-validate-prd` | Validate PRD | Derek | `docs/planning-artifacts/` |
-| `/gaia-edit-prd` | Edit PRD | Derek | `docs/planning-artifacts/` |
-| `/gaia-create-ux` | Create UX Design | Christy | `docs/planning-artifacts/` |
+| Command | Workflow | Agent | Model | Output |
+|---------|----------|-------|-------|--------|
+| `/gaia-create-prd` | Create PRD | Derek | Opus | `docs/planning-artifacts/` |
+| `/gaia-validate-prd` | Validate PRD | Derek | Sonnet | `docs/planning-artifacts/` |
+| `/gaia-edit-prd` | Edit PRD | Derek | Opus | `docs/planning-artifacts/` |
+| `/gaia-create-ux` | Create UX Design | Christy | Opus | `docs/planning-artifacts/` |
 
 ### Phase 3: Solutioning
 
-| Command | Workflow | Agent | Output |
-|---------|----------|-------|--------|
-| `/gaia-create-arch` | Create Architecture | Theo | `docs/planning-artifacts/` |
-| `/gaia-create-epics` | Create Epics & Stories | Derek | `docs/planning-artifacts/` |
-| `/gaia-readiness-check` | Implementation Readiness | Theo | `docs/planning-artifacts/` |
-| `/gaia-threat-model` | Security Threat Model | Zara | `docs/planning-artifacts/` |
-| `/gaia-infra-design` | Infrastructure Design | Soren | `docs/planning-artifacts/` |
+| Command | Workflow | Agent | Model | Output |
+|---------|----------|-------|-------|--------|
+| `/gaia-create-arch` | Create Architecture | Theo | Opus | `docs/planning-artifacts/` |
+| `/gaia-create-epics` | Create Epics & Stories | Derek | Opus | `docs/planning-artifacts/` |
+| `/gaia-readiness-check` | Implementation Readiness | Theo | Opus | `docs/planning-artifacts/` |
+| `/gaia-threat-model` | Security Threat Model | Zara | Opus | `docs/planning-artifacts/` |
+| `/gaia-infra-design` | Infrastructure Design | Soren | Opus | `docs/planning-artifacts/` |
 
 ### Phase 4: Implementation
 
-| Command | Workflow | Agent | Output |
-|---------|----------|-------|--------|
-| `/gaia-sprint-plan` | Sprint Planning | Nate | `docs/implementation-artifacts/` |
-| `/gaia-sprint-status` | Sprint Status | Nate | `docs/implementation-artifacts/` |
-| `/gaia-epic-status` | Epic Status | Nate | `docs/implementation-artifacts/` |
-| `/gaia-create-story` | Create Story | Derek | `docs/implementation-artifacts/` |
-| `/gaia-validate-story` | Validate Story | Derek | `docs/implementation-artifacts/` |
-| `/gaia-fix-story` | Fix Story | Nate | `docs/implementation-artifacts/` |
-| `/gaia-dev-story` | Dev Story | Stack dev | `docs/implementation-artifacts/` |
-| `/gaia-code-review` | Code Review | Stack dev | `docs/implementation-artifacts/` |
-| `/gaia-qa-tests` | QA Generate Tests | Vera | `docs/implementation-artifacts/` |
-| `/gaia-security-review` | Security Review | Zara | `docs/implementation-artifacts/` |
-| `/gaia-triage-findings` | Triage Findings | Nate | `docs/implementation-artifacts/` |
-| `/gaia-tech-debt-review` | Tech Debt Review | Nate | `docs/implementation-artifacts/` |
-| `/gaia-change-request` | Change Request | Derek | `docs/planning-artifacts/` |
-| `/gaia-add-stories` | Add Stories | Derek | `docs/planning-artifacts/` |
-| `/gaia-correct-course` | Correct Course | Nate | `docs/implementation-artifacts/` |
-| `/gaia-retro` | Retrospective | Nate | `docs/implementation-artifacts/` |
+| Command | Workflow | Agent | Model | Output |
+|---------|----------|-------|-------|--------|
+| `/gaia-sprint-plan` | Sprint Planning | Nate | Sonnet | `docs/implementation-artifacts/` |
+| `/gaia-sprint-status` | Sprint Status | Nate | Sonnet | `docs/implementation-artifacts/` |
+| `/gaia-epic-status` | Epic Status | Nate | Sonnet | `docs/implementation-artifacts/` |
+| `/gaia-create-story` | Create Story | Derek | Sonnet | `docs/implementation-artifacts/` |
+| `/gaia-validate-story` | Validate Story | Derek | Sonnet | `docs/implementation-artifacts/` |
+| `/gaia-fix-story` | Fix Story | Nate | Sonnet | `docs/implementation-artifacts/` |
+| `/gaia-dev-story` | Dev Story | Stack dev | Opus | `docs/implementation-artifacts/` |
+| `/gaia-code-review` | Code Review | Stack dev | Opus | `docs/implementation-artifacts/` |
+| `/gaia-qa-tests` | QA Generate Tests | Vera | Opus | `docs/implementation-artifacts/` |
+| `/gaia-security-review` | Security Review | Zara | Opus | `docs/implementation-artifacts/` |
+| `/gaia-triage-findings` | Triage Findings | Nate | Sonnet | `docs/implementation-artifacts/` |
+| `/gaia-tech-debt-review` | Tech Debt Review | Nate | Sonnet | `docs/implementation-artifacts/` |
+| `/gaia-change-request` | Change Request | Derek | Opus | `docs/planning-artifacts/` |
+| `/gaia-add-stories` | Add Stories | Derek | Sonnet | `docs/planning-artifacts/` |
+| `/gaia-correct-course` | Correct Course | Nate | Sonnet | `docs/implementation-artifacts/` |
+| `/gaia-retro` | Retrospective | Nate | Sonnet | `docs/implementation-artifacts/` |
 
 ### Phase 5: Deployment
 
-| Command | Workflow | Agent | Output |
-|---------|----------|-------|--------|
-| `/gaia-release-plan` | Release Plan | Soren | `docs/implementation-artifacts/` |
-| `/gaia-deploy-checklist` | Deployment Checklist | Soren | `docs/implementation-artifacts/` |
-| `/gaia-post-deploy` | Post-Deploy Verify | Soren | `docs/implementation-artifacts/` |
-| `/gaia-rollback-plan` | Rollback Plan | Soren | `docs/implementation-artifacts/` |
+| Command | Workflow | Agent | Model | Output |
+|---------|----------|-------|-------|--------|
+| `/gaia-release-plan` | Release Plan | Soren | Sonnet | `docs/implementation-artifacts/` |
+| `/gaia-deploy-checklist` | Deployment Checklist | Soren | Sonnet | `docs/implementation-artifacts/` |
+| `/gaia-post-deploy` | Post-Deploy Verify | Soren | Sonnet | `docs/implementation-artifacts/` |
+| `/gaia-rollback-plan` | Rollback Plan | Soren | Sonnet | `docs/implementation-artifacts/` |
 
 ### Quick Flow
 
 Fast-track workflows for small changes that skip the full lifecycle ceremony.
 
-| Command | Workflow | Description |
-|---------|----------|-------------|
-| `/gaia-quick-spec` | Quick Spec | Rapid tech spec — skip full PRD |
-| `/gaia-quick-dev` | Quick Dev | Implement a quick spec immediately |
+| Command | Workflow | Model | Description |
+|---------|----------|-------|-------------|
+| `/gaia-quick-spec` | Quick Spec | Sonnet | Rapid tech spec — skip full PRD |
+| `/gaia-quick-dev` | Quick Dev | Sonnet | Implement a quick spec immediately |
 
 ### Creative Workflows
 
-| Command | Workflow | Agent | Output |
-|---------|----------|-------|--------|
-| `/gaia-creative-sprint` | Creative Sprint | Multi-agent | `docs/creative-artifacts/` |
-| `/gaia-design-thinking` | Design Thinking | Lyra | `docs/creative-artifacts/` |
-| `/gaia-innovation` | Innovation Strategy | Orion | `docs/creative-artifacts/` |
-| `/gaia-problem-solving` | Problem Solving | Nova | `docs/creative-artifacts/` |
-| `/gaia-storytelling` | Storytelling | Elara | `docs/creative-artifacts/` |
-| `/gaia-slide-deck` | Slide Deck | Vermeer | `docs/creative-artifacts/` |
-| `/gaia-pitch-deck` | Pitch Deck | Vermeer | `docs/creative-artifacts/` |
+| Command | Workflow | Agent | Model | Output |
+|---------|----------|-------|-------|--------|
+| `/gaia-creative-sprint` | Creative Sprint | Multi-agent | Opus | `docs/creative-artifacts/` |
+| `/gaia-design-thinking` | Design Thinking | Lyra | Opus | `docs/creative-artifacts/` |
+| `/gaia-innovation` | Innovation Strategy | Orion | Opus | `docs/creative-artifacts/` |
+| `/gaia-problem-solving` | Problem Solving | Nova | Opus | `docs/creative-artifacts/` |
+| `/gaia-storytelling` | Storytelling | Elara | Sonnet | `docs/creative-artifacts/` |
+| `/gaia-slide-deck` | Slide Deck | Vermeer | Sonnet | `docs/creative-artifacts/` |
+| `/gaia-pitch-deck` | Pitch Deck | Vermeer | Sonnet | `docs/creative-artifacts/` |
 
 ### Testing Workflows
 
@@ -330,35 +334,35 @@ Testing workflows are **integrated into the main lifecycle** — they are not op
 | During `/gaia-brownfield` | `/gaia-nfr` + `/gaia-perf-testing` | REQUIRED steps |
 | Before `/gaia-deploy-checklist` | traceability + CI + readiness PASS | HALT |
 
-| Command | Workflow | Agent | Output |
-|---------|----------|-------|--------|
-| `/gaia-test-design` | Test Design | Sable | `docs/test-artifacts/` |
-| `/gaia-test-framework` | Test Framework | Sable | `docs/test-artifacts/` |
-| `/gaia-atdd` | ATDD | Sable | `docs/test-artifacts/` |
-| `/gaia-test-automate` | Test Automation | Sable | `docs/test-artifacts/` |
-| `/gaia-test-review` | Test Review | Sable | `docs/test-artifacts/` |
-| `/gaia-ci-setup` | CI Setup | Sable | `docs/test-artifacts/` |
-| `/gaia-nfr` | NFR Assessment | Sable | `docs/test-artifacts/` |
-| `/gaia-trace` | Traceability Matrix | Sable | `docs/test-artifacts/` |
-| `/gaia-a11y-testing` | Accessibility Testing | Sable | `docs/test-artifacts/` |
-| `/gaia-perf-testing` | Performance Testing | Sable | `docs/test-artifacts/` |
-| `/gaia-mobile-testing` | Mobile Testing | Sable | `docs/test-artifacts/` |
-| `/gaia-teach-testing` | Teach Me Testing | Sable | `docs/test-artifacts/` |
+| Command | Workflow | Agent | Model | Output |
+|---------|----------|-------|-------|--------|
+| `/gaia-test-design` | Test Design | Sable | Opus | `docs/test-artifacts/` |
+| `/gaia-test-framework` | Test Framework | Sable | Sonnet | `docs/test-artifacts/` |
+| `/gaia-atdd` | ATDD | Sable | Sonnet | `docs/test-artifacts/` |
+| `/gaia-test-automate` | Test Automation | Sable | Sonnet | `docs/test-artifacts/` |
+| `/gaia-test-review` | Test Review | Sable | Sonnet | `docs/test-artifacts/` |
+| `/gaia-ci-setup` | CI Setup | Sable | Sonnet | `docs/test-artifacts/` |
+| `/gaia-nfr` | NFR Assessment | Sable | Opus | `docs/test-artifacts/` |
+| `/gaia-trace` | Traceability Matrix | Sable | Sonnet | `docs/test-artifacts/` |
+| `/gaia-a11y-testing` | Accessibility Testing | Sable | Sonnet | `docs/test-artifacts/` |
+| `/gaia-perf-testing` | Performance Testing | Sable | Sonnet | `docs/test-artifacts/` |
+| `/gaia-mobile-testing` | Mobile Testing | Sable | Sonnet | `docs/test-artifacts/` |
+| `/gaia-teach-testing` | Teach Me Testing | Sable | Sonnet | `docs/test-artifacts/` |
 
 ### Anytime Workflows
 
 Available at any point in the lifecycle.
 
-| Command | Workflow | Description |
-|---------|----------|-------------|
-| `/gaia-brownfield` | Brownfield Onboarding | 9-step knowledge base for existing projects — APIs, UX, events, dependencies, NFRs, architecture, stories |
-| `/gaia-document-project` | Document Project | Document a project for AI context |
-| `/gaia-project-context` | Generate Project Context | Generate context for AI consumption |
-| `/gaia-performance-review` | Performance Review | Analyze performance bottlenecks |
-| `/gaia-brainstorming` | Brainstorming | Facilitated brainstorming session |
-| `/gaia-party` | Party Mode | Multi-agent group discussion |
-| `/gaia-advanced-elicitation` | Advanced Elicitation | Deep requirements elicitation |
-| `/gaia-memory-hygiene` | Memory Hygiene | Detect stale or contradicted decisions in agent memory sidecars |
+| Command | Workflow | Model | Description |
+|---------|----------|-------|-------------|
+| `/gaia-brownfield` | Brownfield Onboarding | Opus | 6-step orchestration with subagents for existing projects |
+| `/gaia-document-project` | Document Project | Sonnet | Document a project for AI context |
+| `/gaia-project-context` | Generate Project Context | Sonnet | Generate context for AI consumption |
+| `/gaia-performance-review` | Performance Review | Opus | Analyze performance bottlenecks |
+| `/gaia-brainstorming` | Brainstorming | Sonnet | Facilitated brainstorming session |
+| `/gaia-party` | Party Mode | Sonnet | Multi-agent group discussion |
+| `/gaia-advanced-elicitation` | Advanced Elicitation | Opus | Deep requirements elicitation |
+| `/gaia-memory-hygiene` | Memory Hygiene | Sonnet | Detect stale or contradicted decisions in agent memory sidecars |
 
 ### Brownfield Onboarding (Deep Dive)
 
@@ -422,15 +426,15 @@ Standalone tasks that can be run anytime without a full workflow. These are sing
 
 ### Code & Security Reviews
 
-| Command | Task | Description |
-|---------|------|-------------|
-| `/gaia-adversarial` | Adversarial Review | Cynical critical review — finds weaknesses |
-| `/gaia-edge-cases` | Edge Case Hunter | Identify edge cases and boundary conditions |
-| `/gaia-review-security` | Security Review | OWASP-focused security review |
-| `/gaia-review-api` | API Design Review | Review REST API against standards |
-| `/gaia-review-deps` | Dependency Audit | Scan dependencies for vulnerabilities |
-| `/gaia-review-a11y` | Accessibility Review | WCAG 2.1 compliance review |
-| `/gaia-review-perf` | Performance Review | Code-level performance review |
+| Command | Task | Model | Description |
+|---------|------|-------|-------------|
+| `/gaia-adversarial` | Adversarial Review | Opus | Cynical critical review — finds weaknesses |
+| `/gaia-edge-cases` | Edge Case Hunter | Opus | Identify edge cases and boundary conditions |
+| `/gaia-review-security` | Security Review | Opus | OWASP-focused security review |
+| `/gaia-review-api` | API Design Review | Opus | Review REST API against standards |
+| `/gaia-review-deps` | Dependency Audit | Sonnet | Scan dependencies for vulnerabilities |
+| `/gaia-review-a11y` | Accessibility Review | Sonnet | WCAG 2.1 compliance review |
+| `/gaia-review-perf` | Performance Review | Opus | Code-level performance review |
 
 ### Adversarial Review (`/gaia-adversarial`)
 
@@ -635,7 +639,7 @@ The single source of truth for project settings at `_gaia/_config/global.yaml`:
 
 ```yaml
 framework_name: "GAIA"
-framework_version: "1.26.0"
+framework_version: "1.27.0"
 
 user_name: "your-name"
 project_name: "your-project"

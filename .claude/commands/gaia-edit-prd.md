@@ -1,6 +1,7 @@
 ---
 name: 'edit-prd'
 description: 'Edit an existing PRD. Use when "edit the PRD".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

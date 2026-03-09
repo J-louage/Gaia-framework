@@ -1,6 +1,7 @@
 ---
 name: 'agent-qa'
 description: 'Vera — QA Engineer. Use for test automation, API testing, E2E testing.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

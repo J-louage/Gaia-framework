@@ -1,6 +1,7 @@
 ---
 name: 'quick-dev'
 description: 'Implement a quick spec (use with any dev agent)'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

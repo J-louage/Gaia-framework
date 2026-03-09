@@ -1,6 +1,7 @@
 ---
 name: 'agent-presentation'
 description: 'Vermeer — Presentation Designer. Use for presentation design, visual communication.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

@@ -1,6 +1,7 @@
 ---
 name: 'release-plan'
 description: 'Create staged rollout and release strategy. Use when "create release plan".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

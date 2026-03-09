@@ -1,6 +1,7 @@
 ---
 name: 'document-project'
 description: 'Document a project for AI context. Use when "document this project".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

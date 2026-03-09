@@ -1,6 +1,7 @@
 ---
 name: 'help'
 description: 'Context-sensitive help. Use when you need guidance on what to do next.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

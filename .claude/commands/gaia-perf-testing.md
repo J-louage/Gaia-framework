@@ -1,6 +1,7 @@
 ---
 name: 'perf-testing'
 description: 'Create performance test plan with load testing and CI gates. Use when "performance testing".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

@@ -1,6 +1,7 @@
 ---
 name: 'domain-research'
 description: 'Research a domain or industry. Use when "research a domain".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

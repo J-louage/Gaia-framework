@@ -1,6 +1,7 @@
 ---
 name: 'agent-pm'
 description: 'Derek — Product Manager. Use for PRDs, requirements, stakeholder alignment.'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

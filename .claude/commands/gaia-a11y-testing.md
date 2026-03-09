@@ -1,6 +1,7 @@
 ---
 name: 'a11y-testing'
 description: 'Create accessibility test plan with WCAG compliance checks. Use when "accessibility testing".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

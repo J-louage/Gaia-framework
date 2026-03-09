@@ -1,6 +1,7 @@
 ---
 name: 'pitch-deck'
 description: 'Create an investor/partner pitch deck. Use when "create pitch deck".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

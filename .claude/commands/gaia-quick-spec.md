@@ -1,6 +1,7 @@
 ---
 name: 'quick-spec'
 description: 'Create a quick tech spec. Use when "create a quick spec".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

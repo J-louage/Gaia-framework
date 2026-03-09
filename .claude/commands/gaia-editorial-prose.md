@@ -1,6 +1,7 @@
 ---
 name: 'editorial-prose'
 description: 'Clinical copy-editing review. Use when "review prose".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

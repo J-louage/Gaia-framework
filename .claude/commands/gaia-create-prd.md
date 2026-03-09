@@ -1,6 +1,7 @@
 ---
 name: 'create-prd'
 description: 'Create a Product Requirements Document. Use when "create a PRD".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

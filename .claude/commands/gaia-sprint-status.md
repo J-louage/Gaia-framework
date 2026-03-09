@@ -1,6 +1,7 @@
 ---
 name: 'sprint-status'
 description: 'Show current sprint status. Use when "show sprint status".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

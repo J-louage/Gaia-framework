@@ -1,6 +1,7 @@
 ---
 name: 'create-story'
 description: 'Create a detailed story file. Use when "create a story".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

@@ -1,6 +1,7 @@
 ---
 name: 'shard-doc'
 description: 'Split large doc into sections. Use when "shard this document".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

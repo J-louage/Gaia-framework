@@ -1,6 +1,7 @@
 ---
 name: 'validate-prd'
 description: 'Validate a PRD against standards. Use when "validate the PRD".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

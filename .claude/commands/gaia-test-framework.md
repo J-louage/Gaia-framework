@@ -1,6 +1,7 @@
 ---
 name: 'test-framework'
 description: 'Initialize test framework with appropriate tooling. Use when "setup test framework".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

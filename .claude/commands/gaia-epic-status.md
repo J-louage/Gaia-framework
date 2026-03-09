@@ -1,6 +1,7 @@
 ---
 name: 'epic-status'
 description: 'Show epic completion dashboard. Use when "show epic status".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

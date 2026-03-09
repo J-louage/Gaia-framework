@@ -1,6 +1,7 @@
 ---
 name: 'project-context'
 description: 'Generate project context for AI. Use when "generate project context".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

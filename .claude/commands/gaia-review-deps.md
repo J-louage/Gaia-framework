@@ -1,6 +1,7 @@
 ---
 name: 'review-deps'
 description: 'Audit project dependencies for vulnerabilities and issues. Use when "audit dependencies".'
+model: sonnet
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:
