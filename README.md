@@ -1,6 +1,6 @@
 # GAIA — Generative Agile Intelligence Architecture
 
-[![Framework](https://img.shields.io/badge/framework-v1.27.2-blue)]()
+[![Framework](https://img.shields.io/badge/framework-v1.27.3-blue)]()
 [![License](https://img.shields.io/badge/license-AGPL--3.0-green)]()
 [![Agents](https://img.shields.io/badge/agents-25-purple)]()
 [![Workflows](https://img.shields.io/badge/workflows-64-orange)]()
@@ -90,7 +90,7 @@ npx gaia-framework init --yes ~/my-project
 ### Using the shell script
 
 ```bash
-git clone https://github.com/J-louage/Gaia-framework.git
+git clone https://github.com/jlouage/Gaia-framework.git
 bash Gaia-framework/gaia-install.sh init ~/my-project
 ```
 
@@ -429,7 +429,7 @@ The single source of truth is `_gaia/_config/global.yaml`:
 
 ```yaml
 framework_name: "GAIA"
-framework_version: "1.27.2"
+framework_version: "1.27.3"
 user_name: "your-name"
 project_name: "your-project"
 ```

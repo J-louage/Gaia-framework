@@ -10,7 +10,7 @@ const { mkdtempSync, rmSync, existsSync } = require("fs");
 const { join } = require("path");
 const { tmpdir } = require("os");
 
-const REPO_URL = "https://github.com/J-louage/Gaia-framework.git";
+const REPO_URL = "https://github.com/jlouage/Gaia-framework.git";
 const SCRIPT_NAME = "gaia-install.sh";
 
 let tempDir = null;
