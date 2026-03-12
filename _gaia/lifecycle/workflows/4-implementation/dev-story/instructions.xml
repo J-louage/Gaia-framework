@@ -4,6 +4,7 @@
   <mandate>Follow TDD cycle: red, green, refactor</mandate>
   <mandate>TDD phases MUST be executed as separate, sequential steps — NEVER combine them. Do NOT write implementation code during the Red phase. Do NOT skip the Refactor phase. Each phase must produce its own checkpoint and wait for user confirmation before the next phase begins.</mandate>
   <mandate>Write an intermediate checkpoint to _gaia/_memory/checkpoints/dev-story-{story_key}.yaml after EACH TDD phase completes (Steps 6, 7, 8). Each checkpoint must include: workflow name, current step number, phase status (red_complete/green_complete/refactor_complete), key variables (story_key, epic_key, risk_level), output file path, and files_touched with sha256 checksums (shasum -a 256) for every file created or modified in that phase.</mandate>
+  <mandate>Definition of Done checklist MUST be written to the story file and every item verified before marking complete. The DoD gate (Step 10) is enforced — workflow HALTS if any item fails.</mandate>
   <mandate>All tests must pass before marking complete</mandate>
 </critical>
 <step n="1" title="Load Story File">
@@ -89,23 +90,36 @@
   <action>For each finding: add a row to the Findings table in the story file with type, severity, finding description, and suggested action</action>
   <action>If no findings were discovered, leave the Findings table empty</action>
 </step>
-<step n="10" title="Load Skills JIT">
+<step n="10" title="Definition of Done Verification">
+  <action>Write or update the "Definition of Done" section in the story file with the following checklist items. For each item, run the verification described and mark it [x] if it passes or [ ] if it fails:</action>
+  <action>- [ ] **Code compiles** — run the project build command (e.g., npm run build, mvn compile, flutter build). Mark [x] if exit code 0, [ ] if errors.</action>
+  <action>- [ ] **All tests pass** — run the full test suite. Mark [x] if all tests pass, [ ] if any fail.</action>
+  <action>- [ ] **All acceptance criteria met** — compare each AC from the story against the implementation. Mark [x] only if every AC is demonstrably satisfied.</action>
+  <action>- [ ] **No linting/formatting errors** — run the project linter (e.g., eslint, pylint, dart analyze). Mark [x] if no errors, [ ] if errors found.</action>
+  <action>- [ ] **Code follows project conventions** — verify naming, file structure, and patterns match existing codebase. Mark [x] if consistent.</action>
+  <action>- [ ] **No hardcoded secrets or credentials** — scan new/modified files for API keys, passwords, tokens, connection strings. Mark [x] if clean.</action>
+  <action>- [ ] **All subtasks marked complete** — verify every subtask in the story file is checked off. Mark [x] if all done.</action>
+  <action>- [ ] **Documentation updated** — if the change affects APIs, configs, or user-facing behavior, verify that relevant docs are updated. Mark [x] if not applicable or if docs are updated.</action>
+  <check if="any_dod_item_fails">HALT: Definition of Done has unchecked items. List each failing item with the reason. Fix the issues before proceeding.</check>
+  <ask>Definition of Done checklist complete. Review the results above. All items must pass to proceed. [proceed / fix issues]</ask>
+</step>
+<step n="11" title="Load Skills JIT">
   <action>Load git-workflow:commits section for commit conventions</action>
   <action>Apply conventional commit format to all commits</action>
 </step>
-<step n="11" title="Commit Changes">
+<step n="12" title="Commit Changes">
   <action>Stage all changes</action>
   <action>Commit with conventional commit format: type(scope): description</action>
 </step>
-<step n="12" title="Post-Complete Gate">
-  <action>Verify all tests pass</action>
+<step n="13" title="Post-Complete Gate">
+  <action>Verify all tests pass (final confirmation)</action>
   <action>Verify all acceptance criteria met</action>
   <action>Verify all subtasks marked complete</action>
-  <action>Read the "Definition of Done" section — verify every item is checked (- [x]). If any item is unchecked (- [ ]): list the unchecked items and HALT.</action>
+  <action>Re-read the "Definition of Done" section from the story file — verify every item is checked (- [x]). Required items: code compiles, all tests pass, acceptance criteria met, no lint errors, project conventions followed, no hardcoded secrets, all subtasks complete, documentation updated.</action>
   <check if="any_test_fails">HALT: All tests must pass before marking complete</check>
-  <check if="any_dod_unchecked">HALT: All Definition of Done items must be checked before moving to review. Unchecked items: {list}</check>
+  <check if="any_dod_unchecked">HALT: All Definition of Done items must be checked before moving to review. Unchecked items: {list}. Return to Step 10 to resolve.</check>
 </step>
-<step n="13" title="Update Status">
+<step n="14" title="Update Status">
   <action>Set story status to 'review' in story file</action>
   <action>Update sprint-status.yaml: set story to 'review'</action>
   <action>Append files changed list to story file</action>

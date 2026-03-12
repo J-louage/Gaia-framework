@@ -25,14 +25,14 @@
 | C. Systemic: Unregistered Commands | 4 | 4 | 0 |
 | D. Systemic: Wrong Output Directory | 6 | 0 | 6 |
 | E. Systemic: Story Naming Convention | 3 | 3 | 0 |
-| F. Dev-Story Cluster | 6 | 3 | 3 |
+| F. Dev-Story Cluster | 6 | 4 | 2 |
 | G. Brownfield Cluster | 8 | 0 | 8 |
 | H. Run-All-Reviews Cluster | 5 | 0 | 5 |
 | I. Artifact Wiring Gaps (Issue Report) | 18 | 0 | 18 |
 | J. Individual High-Severity Bugs | 8 | 0 | 8 |
 | K. Individual Medium-Severity Bugs | 28 | 0 | 28 |
 | L. Individual Low-Severity Bugs | 18 | 0 | 18 |
-| **TOTAL** | **122** | **28** | **94** |
+| **TOTAL** | **122** | **29** | **93** |
 
 > BUG-073 is already closed — not counted above.
 
@@ -222,9 +222,9 @@
 
 - [ ] **BUG-053** (Medium) — Covered in Group E (naming convention)
 
-- [ ] **BUG-054** (High) — `/gaia-dev-story` Definition of Done checklist incomplete or not enforced
+- [x] **BUG-054** (High) — `/gaia-dev-story` Definition of Done checklist incomplete or not enforced
   - File: `dev-story/instructions.xml` final step
-  - Fix: Add explicit DoD checklist: code compiles, tests pass, no linting errors, code review standards met, documentation updated
+  - Fix: Added new Step 10 "Definition of Done Verification" with 8 enforced checklist items. Post-Complete Gate (Step 13) re-validates DoD. Added critical mandate for DoD enforcement.
 
 ---
 
