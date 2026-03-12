@@ -30,9 +30,9 @@
 | H. Run-All-Reviews Cluster | 5 | 5 | 0 |
 | I. Artifact Wiring Gaps (Issue Report) | 18 | 18 | 0 |
 | J. Individual High-Severity Bugs | 8 | 6 | 2 |
-| K. Individual Medium-Severity Bugs | 28 | 2 | 26 |
+| K. Individual Medium-Severity Bugs | 28 | 3 | 25 |
 | L. Individual Low-Severity Bugs | 18 | 0 | 18 |
-| **TOTAL** | **122** | **74** | **48** |
+| **TOTAL** | **122** | **75** | **47** |
 
 > BUG-073 is already closed — not counted above.
 
@@ -386,8 +386,8 @@ Bugs not already covered in systemic groups.
 
 ### Phase 2 — Planning
 
-- [ ] **BUG-012** (Medium) — `/gaia-create-prd` doesn't cross-reference product brief
-  - Fix: Load `product-brief.md` and verify PRD scope aligns with brief scope
+- [x] **BUG-012** (Medium) — `/gaia-create-prd` doesn't cross-reference product brief
+  - Fix: Added cross-reference actions in Steps 1, 3, 8, 9, 10. Step 1 extracts all brief sections. Step 3 verifies FRs trace to brief's solution/features. Step 8 checks brief's scope boundaries. Step 9 carries forward brief's risks/assumptions. Step 10 aligns with brief's success metrics.
 
 - [ ] **BUG-013** (Medium) — `/gaia-create-prd` NFR section generated without measurable targets
   - Fix: Each NFR must have a measurable target (e.g., "response time < 200ms" not "fast response")

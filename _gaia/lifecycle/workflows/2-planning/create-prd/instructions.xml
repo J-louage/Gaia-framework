@@ -8,6 +8,7 @@
 <step n="1" title="Load Product Brief">
   <action>Read {planning_artifacts}/product-brief.md</action>
   <action>Extract vision, target users, problem statement, proposed solution</action>
+  <action>Extract scope and boundaries, risks and assumptions, competitive landscape, success metrics</action>
   <check if="{planning_artifacts}/prd.md exists and contains 'Mode: Brownfield'">WARN: A brownfield PRD exists at {planning_artifacts}/prd.md. Continuing will overwrite it. Confirm with user before proceeding.</check>
 </step>
 <step n="2" title="User Interviews">
@@ -20,6 +21,7 @@
   <action>List features organized by priority: Must-Have, Should-Have, Nice-to-Have</action>
   <action>Each feature needs: description, user story format, acceptance criteria</action>
   <action>Assign unique IDs: FR-001, FR-002, ... — IDs are sequential and never reused</action>
+  <action>Cross-reference with product brief: verify each FR is traceable to the brief's proposed solution or key features. Flag any FR that introduces scope not present in the brief — confirm with user before including.</action>
 </step>
 <step n="4" title="Non-Functional Requirements">
   <action>Define: performance targets, security requirements, accessibility standards</action>
@@ -42,14 +44,17 @@
 <step n="8" title="Out of Scope">
   <action>List features, integrations, and use cases explicitly excluded from this release</action>
   <action>For each exclusion: state what is excluded and why (deferred, not needed, separate product)</action>
+  <action>Cross-reference with product brief: items listed as out-of-scope in the brief's "Scope and Boundaries" section must appear here. Flag any brief out-of-scope item missing from this list.</action>
 </step>
 <step n="9" title="Constraints and Assumptions">
   <action>Document technical, budget, timeline, and team constraints</action>
   <action>List all assumptions that requirements depend on</action>
+  <action>Cross-reference with product brief: carry forward every risk and assumption from the brief's "Risks and Assumptions" section. Each must appear in this section or be explicitly noted as resolved with justification.</action>
 </step>
 <step n="10" title="Success Criteria">
   <action>Define measurable acceptance criteria for each feature</action>
   <action>Define overall product success metrics</action>
+  <action>Cross-reference with product brief: every metric from the brief's "Success Metrics" section must have a corresponding measurable criterion in the PRD. Flag any brief metric not covered.</action>
 </step>
 <step n="11" title="Generate Output">
   <template-output file="{planning_artifacts}/prd.md">
