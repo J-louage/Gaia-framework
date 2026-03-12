@@ -29,10 +29,10 @@
 | G. Brownfield Cluster | 8 | 0 | 8 |
 | H. Run-All-Reviews Cluster | 5 | 0 | 5 |
 | I. Artifact Wiring Gaps (Issue Report) | 18 | 0 | 18 |
-| J. Individual High-Severity Bugs | 8 | 1 | 7 |
+| J. Individual High-Severity Bugs | 8 | 2 | 6 |
 | K. Individual Medium-Severity Bugs | 28 | 0 | 28 |
 | L. Individual Low-Severity Bugs | 18 | 0 | 18 |
-| **TOTAL** | **122** | **36** | **86** |
+| **TOTAL** | **122** | **37** | **85** |
 
 > BUG-073 is already closed — not counted above.
 
@@ -337,10 +337,8 @@ These are not part of a systemic cluster but are individually high-impact.
 - [x] **BUG-004** (High) — `/gaia-product-brief` doesn't load all Phase 1 research outputs
   - Fix: Added domain_research and technical_research to workflow.yaml input_file_patterns (FULL_LOAD). Updated instructions.xml to load both in Step 1, reference domain landscape in Step 4, and technical research in Step 5.
 
-- [ ] **BUG-007** (High) — `/gaia-product-brief` missing quality gate for brainstorm existence
-  - File: `create-product-brief/workflow.yaml`
-  - Fix: Add `pre_start` gate: check `{planning_artifacts}/project-brainstorm.md` exists
-  - **Comment:** Without this gate, the workflow silently proceeds without brainstorm context, producing a weaker brief.
+- [x] **BUG-007** (High) — `/gaia-product-brief` missing quality gate for brainstorm existence
+  - Fix: Added pre_start quality gate to workflow.yaml checking project-brainstorm.md exists. HALTs with directive to run /gaia-brainstorm first.
 
 - [ ] **BUG-014** (High) — `/gaia-validate-prd` validation too superficial — misses structural issues
   - File: `validate-prd/instructions.xml`

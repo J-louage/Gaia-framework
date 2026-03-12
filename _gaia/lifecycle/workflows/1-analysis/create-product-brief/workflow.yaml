@@ -24,6 +24,9 @@ input_file_patterns:
     whole: "{creative_artifacts}/*.md"
     load_strategy: "INDEX_GUIDED"
 quality_gates:
+  pre_start:
+    - check: "brainstorm_exists({planning_artifacts}/project-brainstorm.md)"
+      on_fail: "HALT: Brainstorm artifact not found at {planning_artifacts}/project-brainstorm.md. Run /gaia-brainstorm first."
   post_complete:
     - check: "product_brief_has_all_sections"
       on_fail: "HALT: Product brief must include: vision, target users, problem statement, proposed solution, success metrics"
