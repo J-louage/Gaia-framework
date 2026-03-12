@@ -3,9 +3,11 @@
   <mandate>Use sprint state machine: backlog, validating, ready-for-dev, in-progress, blocked, review, done</mandate>
   <mandate>Support multi-sprint via sprint_id tracking</mandate>
 </critical>
-<step n="1" title="Load Epics and Stories">
+<step n="1" title="Load Epics, Stories, and Previous Retro">
   <action>Read {planning_artifacts}/epics-and-stories.md</action>
   <action>Parse all stories with their priorities, sizes, dependencies</action>
+  <action>Load most recent retro-{sprint_id}.md from {implementation_artifacts}/ if available</action>
+  <action>If retro found: extract open action items — carry forward as sprint constraints or tasks. Present to user: "Previous retro action items to carry forward:" with status of each.</action>
 </step>
 <step n="2" title="Optional: Memory Hygiene Check" optional="true">
   <action>Check if any sidecar directories under _gaia/_memory/*-sidecar/ contain content beyond their template header</action>

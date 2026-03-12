@@ -28,11 +28,11 @@
 | F. Dev-Story Cluster | 6 | 4 | 2 |
 | G. Brownfield Cluster | 8 | 8 | 0 |
 | H. Run-All-Reviews Cluster | 5 | 5 | 0 |
-| I. Artifact Wiring Gaps (Issue Report) | 18 | 14 | 4 |
+| I. Artifact Wiring Gaps (Issue Report) | 18 | 18 | 0 |
 | J. Individual High-Severity Bugs | 8 | 6 | 2 |
 | K. Individual Medium-Severity Bugs | 28 | 0 | 28 |
 | L. Individual Low-Severity Bugs | 18 | 0 | 18 |
-| **TOTAL** | **122** | **68** | **54** |
+| **TOTAL** | **122** | **72** | **50** |
 
 > BUG-073 is already closed — not counted above.
 
@@ -329,12 +329,18 @@
 
 ### Issue 7: Redesign `/gaia-retro` as learning loop
 
-- [ ] **7a** — `retrospective/workflow.yaml`: add `previous_retros`, `tech_debt` inputs; declare `sidecar_updates` and `skill_updates` outputs
-- [ ] **7b** — `retrospective/instructions.xml`: add 3 new steps (Agent Memory Updates, Skill Improvement Proposals, Cross-Retro Pattern Detection)
-- [ ] **7c** — `sprint-planning/workflow.yaml`: add `previous_retro` to `input_file_patterns`
-- [ ] **7d** — `sprint-planning/instructions.xml`: load latest retro, carry forward action items
-- [ ] **7e** — `correct-course/workflow.yaml`: add `retro` to `input_file_patterns`
-- [ ] **7f** — `correct-course/instructions.xml`: check if current issue matches known retro pattern
+- [x] **7a** — `retrospective/workflow.yaml`: add `previous_retros`, `tech_debt` inputs; declare `sidecar_updates` and `skill_updates` outputs
+  - Fix: Added previous_retros (INDEX_GUIDED) and tech_debt (FULL_LOAD) inputs. Added sidecar_updates and skill_updates output declarations. Updated description to mention learning loop.
+- [x] **7b** — `retrospective/instructions.xml`: add 3 new steps (Agent Memory Updates, Skill Improvement Proposals, Cross-Retro Pattern Detection)
+  - Fix: Added Step 5 (Agent Memory Updates — writes lessons to relevant sidecars + velocity data), Step 6 (Skill Improvement Proposals — maps findings to shared skills), Step 7 (Cross-Retro Pattern Detection — detects recurring issues across sprints). Renumbered existing Steps 5→8 and 6→9.
+- [x] **7c** — `sprint-planning/workflow.yaml`: add `previous_retro` to `input_file_patterns`
+  - Fix: Added previous_retro (INDEX_GUIDED, retro-*.md) to input_file_patterns.
+- [x] **7d** — `sprint-planning/instructions.xml`: load latest retro, carry forward action items
+  - Fix: Step 1 now loads most recent retro, extracts open action items, and presents them as sprint constraints.
+- [x] **7e** — `correct-course/workflow.yaml`: add `retro` to `input_file_patterns`
+  - Fix: Added retro (INDEX_GUIDED, retro-*.md) to input_file_patterns.
+- [x] **7f** — `correct-course/instructions.xml`: check if current issue matches known retro pattern
+  - Fix: Step 1 now loads retro files and checks if the current issue matches a known pattern from past retrospectives.
 
 ---
 

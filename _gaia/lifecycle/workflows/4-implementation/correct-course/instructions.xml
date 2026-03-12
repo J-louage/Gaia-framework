@@ -7,6 +7,7 @@
 <step n="1" title="Load Sprint Context">
   <action>Read current sprint plan and sprint-status.yaml</action>
   <action>Read {planning_artifacts}/epics-and-stories.md — identify stories NOT yet in any sprint</action>
+  <action>Load retro files from {implementation_artifacts}/retro-*.md if available — check if the current issue matches a known pattern from past retrospectives. If a match is found, note it: "This issue was flagged in retro-{sprint_id}: {finding}. Previous recommendation: {recommendation}."</action>
 </step>
 <step n="2" title="Identify Change">
   <ask>What needs to change and why?</ask>

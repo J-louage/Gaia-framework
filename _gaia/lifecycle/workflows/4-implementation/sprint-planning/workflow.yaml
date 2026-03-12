@@ -11,6 +11,9 @@ input_file_patterns:
   epics:
     whole: "{planning_artifacts}/epics-and-stories.md"
     load_strategy: "FULL_LOAD"
+  previous_retro:
+    whole: "{implementation_artifacts}/retro-*.md"
+    load_strategy: "INDEX_GUIDED"
 quality_gates:
   pre_start:
     - check: "test_plan_exists"

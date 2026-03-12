@@ -1,6 +1,8 @@
 <workflow name="retrospective">
 <critical>
   <mandate>Focus on actionable improvements, not blame</mandate>
+  <mandate>Always write velocity data to sm-sidecar — this enables sprint-over-sprint tracking</mandate>
+  <mandate>Check for recurring patterns across retros — systemic issues need escalation, not repetition</mandate>
 </critical>
 <step n="1" title="Load Sprint Data">
   <action>Read sprint-status.yaml for completed sprint</action>
@@ -19,15 +21,60 @@
   <action>Present debt trend to user: items added vs resolved this sprint, current debt ratio</action>
   <ask>Did technical debt affect velocity this sprint? If so, how?</ask>
   <ask>Are there debt items the team wants to escalate for next sprint?</ask>
-  <action>Document debt-related observations for action items in next step</action>
+  <action>Document debt-related observations for action items</action>
 </step>
-<step n="5" title="Action Items">
+<step n="5" title="Agent Memory Updates">
+  <action>For each improvement or lesson learned, identify which agent's domain it belongs to:
+    - Architecture/tech stack issues → _gaia/_memory/architect-sidecar/architecture-decisions.md
+    - Testing/quality issues → _gaia/_memory/test-architect-sidecar/test-decisions.md
+    - Security issues → _gaia/_memory/security-sidecar/threat-model-decisions.md
+    - Infrastructure/deployment issues → _gaia/_memory/devops-sidecar/infrastructure-decisions.md
+    - Process/velocity issues → _gaia/_memory/sm-sidecar/velocity-data.md
+    - Requirements/scope issues → _gaia/_memory/pm-sidecar/product-decisions.md</action>
+  <action>For each identified lesson, append to the relevant sidecar file:
+    Format: "- {date} [RETRO-{sprint_id}]: {lesson learned}. Context: {what happened}. Recommendation: {what to do differently}."</action>
+  <action>ALWAYS append sprint velocity data to _gaia/_memory/sm-sidecar/velocity-data.md:
+    ### Sprint {sprint_id}
+    - Planned: {X} points ({N} stories)
+    - Completed: {Y} points ({M} stories)
+    - Velocity: {Y} pts
+    - Blocked days: {Z}
+    - Carryover: {list of incomplete stories}</action>
+</step>
+<step n="6" title="Skill Improvement Proposals">
+  <action>Review the "what could improve" findings. For each finding, check if it relates to a shared skill:
+    - Code quality issues → code-review-standards.md
+    - Testing failures/flakiness → testing-patterns.md
+    - Git/branching problems → git-workflow.md
+    - API design issues → api-design.md
+    - Security gaps → security-basics.md
+    - Database problems → database-design.md
+    - Deployment issues → docker-workflow.md
+    - Documentation gaps → documentation-standards.md</action>
+  <action>For each related skill, propose a concrete addition or modification: what section should change, what content to add, and why (link back to the retro finding)</action>
+  <ask>Here are the proposed skill improvements based on this sprint's findings. Approve, modify, or skip each. [approve all / select / skip]</ask>
+  <action>If approved: append to the relevant skill file with comment: "<!-- Added from retro-{sprint_id}: {reason} -->"</action>
+  <action>If no skill improvements identified, state: "No skill improvements identified this sprint."</action>
+</step>
+<step n="7" title="Cross-Retro Pattern Detection">
+  <action>Scan {implementation_artifacts}/ for all previous retro-*.md files</action>
+  <action>If previous retros exist:
+    - Extract "what could improve" sections from each
+    - Identify recurring themes (same category of problem appearing in 2+ sprints)
+    - For each recurring pattern: flag it as a SYSTEMIC ISSUE with sprint history
+    - Present to user: "The following issues have appeared in multiple sprints:"
+      | Pattern | Sprints Affected | Times Reported | Status |
+    - Ask user: "Would you like to escalate any systemic issues to action items with higher priority?"</action>
+  <action>If this is the first retro: skip pattern detection, note "First retrospective — pattern detection will begin after Sprint 2."</action>
+</step>
+<step n="8" title="Action Items">
   <action>Define concrete improvements for next sprint</action>
+  <action>Include any escalated systemic issues from Step 7</action>
   <action>Assign ownership for each action item</action>
 </step>
-<step n="6" title="Generate Output">
+<step n="9" title="Generate Output">
   <template-output file="{implementation_artifacts}/retro-{sprint_id}.md">
-    Generate retrospective report with: sprint metrics, what went well, improvements, action items.
+    Generate retrospective report with: sprint metrics, what went well, improvements, tech debt reflection, agent memory updates made, skill improvement proposals (approved/skipped), cross-retro patterns detected, and action items with ownership.
   </template-output>
 </step>
 </workflow>

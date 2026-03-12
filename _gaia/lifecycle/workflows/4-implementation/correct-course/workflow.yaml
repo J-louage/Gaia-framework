@@ -14,6 +14,9 @@ input_file_patterns:
   epics:
     whole: "{planning_artifacts}/epics-and-stories.md"
     load_strategy: "SELECTIVE_LOAD"
+  retro:
+    whole: "{implementation_artifacts}/retro-*.md"
+    load_strategy: "INDEX_GUIDED"
 on_error:
   missing_file: "ask_user"
   unresolved_variable: "halt"
