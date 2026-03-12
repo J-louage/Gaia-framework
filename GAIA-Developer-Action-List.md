@@ -27,12 +27,12 @@
 | E. Systemic: Story Naming Convention | 3 | 3 | 0 |
 | F. Dev-Story Cluster | 6 | 4 | 2 |
 | G. Brownfield Cluster | 8 | 0 | 8 |
-| H. Run-All-Reviews Cluster | 5 | 2 | 3 |
+| H. Run-All-Reviews Cluster | 5 | 3 | 2 |
 | I. Artifact Wiring Gaps (Issue Report) | 18 | 0 | 18 |
 | J. Individual High-Severity Bugs | 8 | 6 | 2 |
 | K. Individual Medium-Severity Bugs | 28 | 0 | 28 |
 | L. Individual Low-Severity Bugs | 18 | 0 | 18 |
-| **TOTAL** | **122** | **43** | **79** |
+| **TOTAL** | **122** | **44** | **78** |
 
 > BUG-073 is already closed — not counted above.
 
@@ -269,8 +269,8 @@
 - [x] **BUG-086** (Low) — Execution order differs from documentation
   - Fix: Swapped Steps 3/4 in run-all-reviews/instructions.xml — Security Review now runs before QA Tests per documented order.
 
-- [ ] **BUG-087** (Low) — Individual review results not aggregated in a summary
-  - Fix: After all 6 reviews, produce a composite Review Gate Summary table
+- [x] **BUG-087** (Low) — Sprint status reconciliation doesn't generate a report file (corrected from action list description)
+  - Fix: Added reconciliation report output to sprint-status Step 2 — writes `sprint-reconciliation-{date}.md` when discrepancies found.
 
 - [ ] **BUG-088** (Low) — Review gate table in story file not updated atomically
   - Fix: Update all 6 review columns in one write after all reviews complete
