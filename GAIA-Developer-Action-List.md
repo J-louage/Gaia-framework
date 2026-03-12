@@ -30,9 +30,9 @@
 | H. Run-All-Reviews Cluster | 5 | 5 | 0 |
 | I. Artifact Wiring Gaps (Issue Report) | 18 | 18 | 0 |
 | J. Individual High-Severity Bugs | 8 | 6 | 2 |
-| K. Individual Medium-Severity Bugs | 28 | 14 | 14 |
+| K. Individual Medium-Severity Bugs | 28 | 19 | 9 |
 | L. Individual Low-Severity Bugs | 18 | 0 | 18 |
-| **TOTAL** | **122** | **86** | **36** |
+| **TOTAL** | **122** | **91** | **31** |
 
 > BUG-073 is already closed — not counted above.
 
@@ -424,20 +424,20 @@ Bugs not already covered in systemic groups.
 - [x] **BUG-029** (Medium) — `/gaia-readiness-check` YAML frontmatter uses different schema than expected
   - Fix: Standardized YAML to use date, checks_passed, critical_blockers fields. Renamed sections to standard names (completeness, consistency, contradictions, tea_readiness, test_infrastructure, security_readiness, operational_readiness, brownfield_completeness) with PASS/FAIL values instead of booleans.
 
-- [ ] **BUG-031** (Medium) — `/gaia-create-epics` story estimation inconsistent
-  - Fix: Enforce consistent estimation scale (S/M/L/XL with point equivalents)
+- [x] **BUG-031** (Medium) — `/gaia-sprint-plan` loads stories from epics doc instead of individual story files
+  - Fix: Step 1 now scans for individual story files and cross-references against epics. Only stories with files are selectable. Stories without files are flagged with "/gaia-create-story first".
 
-- [ ] **BUG-032** (Medium) — `/gaia-create-epics` missing dependency graph between stories
-  - Fix: Add dependency field to each story and generate dependency visualization
+- [x] **BUG-032** (Medium) — `/gaia-sprint-plan` skips memory hygiene without asking when sidecar is empty
+  - Fix: Step 2 now always shows `<ask>` prompt to user, even when sidecars are empty. User is informed and given the choice.
 
-- [ ] **BUG-034** (Medium) — `/gaia-threat-model` doesn't reference architecture decisions
-  - Fix: Load `architecture.md` and map threats to architectural components
+- [x] **BUG-034** (Medium) — `/gaia-sprint-plan` combines Step 2 and Step 3 into a single turn, violating step ordering
+  - Fix: Step 2 now always has an `<ask>` that must complete before Step 3 begins, enforcing sequential execution.
 
-- [ ] **BUG-035** (Medium) — `/gaia-threat-model` risk scoring missing
-  - Fix: Add DREAD or STRIDE scoring for each identified threat
+- [x] **BUG-035** (Medium) — `/gaia-sprint-plan` T-shirt-to-points conversion inconsistent across runs
+  - Fix: Added canonical sizing_map to global.yaml (S:2, M:5, L:8, XL:13). Step 4 reads sizing_map from config instead of generating it at runtime.
 
-- [ ] **BUG-036** (Medium) — `/gaia-infra-design` not loading architecture artifact
-  - Fix: Add `architecture.md` to `input_file_patterns`
+- [x] **BUG-036** (Medium) — `/gaia-sprint-plan` doesn't assign sprint_id to story files
+  - Fix: Added new Step 5 "Update Story Files" that writes sprint_id to each selected story file. Status remains backlog — transitions happen in create-story/validate-story.
 
 - [ ] **BUG-037** (Medium) — `/gaia-infra-design` missing cost estimation
   - Fix: Add infrastructure cost estimation section

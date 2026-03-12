@@ -6,6 +6,9 @@
 <step n="1" title="Load Epics, Stories, and Previous Retro">
   <action>Read {planning_artifacts}/epics-and-stories.md</action>
   <action>Parse all stories with their priorities, sizes, dependencies</action>
+  <action>Scan {implementation_artifacts}/ for individual story files matching {story_key}-*.md. Record which stories have files and which do not.</action>
+  <action>Cross-reference: for each story in epics-and-stories.md, check if a corresponding story file exists. Flag stories without files: "Story {key} has no individual file — run /gaia-create-story {key} before selecting for sprint."</action>
+  <action>Only stories WITH individual story files in {implementation_artifacts}/ are selectable for this sprint.</action>
   <action>Load most recent retro-{sprint_id}.md from {implementation_artifacts}/ if available</action>
   <action>If retro found: extract open action items — carry forward as sprint constraints or tasks. Present to user: "Previous retro action items to carry forward:" with status of each.</action>
 </step>
@@ -16,7 +19,11 @@
     <action>If yes: spawn a subagent using the Agent tool: "Load {project-root}/_gaia/core/engine/workflow.xml, then process {project-root}/_gaia/lifecycle/workflows/anytime/memory-hygiene/workflow.yaml as workflow-config. Run in YOLO mode. Follow the workflow engine instructions EXACTLY."</action>
     <action>If skip: memory hygiene can be run anytime with /gaia-memory-hygiene</action>
   </check>
-  <check if="no sidecars have content">Skip — no sidecar data to review.</check>
+  <check if="no sidecars have content">
+    <ask>No agent memory sidecar data found. Would you like to run memory hygiene anyway? This is typically skipped for first sprints. (yes / skip)</ask>
+    <action>If yes: spawn subagent as above</action>
+    <action>If skip: continue to next step</action>
+  </check>
 </step>
 <step n="3" title="Sprint Scoping">
   <ask>Sprint duration (1 week / 2 weeks / custom)?</ask>
@@ -24,22 +31,28 @@
   <ask>Sprint number (for multi-sprint tracking)?</ask>
 </step>
 <step n="4" title="Story Selection">
-  <action>Select stories for this sprint based on priority and dependencies</action>
-  <action>Ensure total size fits within velocity estimate</action>
+  <action>Read sizing_map from {project-root}/_gaia/_config/global.yaml. Use these canonical point values for T-shirt sizes (S/M/L/XL → points). Display the mapping to the user before selection.</action>
+  <action>Select stories for this sprint based on priority and dependencies — only from stories that have individual files (per Step 1)</action>
+  <action>Ensure total size fits within velocity estimate using the sizing_map point values</action>
   <action>Respect dependency ordering — blocked stories cannot be selected without their blockers</action>
   <action>If {test_artifacts}/test-plan.md exists: apply risk levels to story selection — buffer 20% for high-risk stories in velocity estimate</action>
   <action>Flag any high-risk story that does not have a corresponding {test_artifacts}/atdd-{story_key}.md file — add a sprint risk note</action>
 </step>
-<step n="5" title="Optional: Mobile Testing">
+<step n="5" title="Update Story Files">
+  <action>For each selected story that has an individual file in {implementation_artifacts}/: update the sprint_id field to "sprint-{N}"</action>
+  <action>Leave status as 'backlog' — status transitions happen in /gaia-create-story (→ validating) and /gaia-validate-story (→ ready-for-dev)</action>
+  <action>Include all modified story files in the checkpoint files_touched with sha256 checksums</action>
+</step>
+<step n="6" title="Optional: Mobile Testing">
   <ask>Would you like to create a mobile test plan? This spawns a subagent in a separate context. Recommended for mobile or responsive applications. (yes / skip)</ask>
   <action>If yes: spawn a subagent using the Agent tool: "Load {project-root}/_gaia/core/engine/workflow.xml, then process {project-root}/_gaia/testing/workflows/mobile-testing/workflow.yaml as workflow-config. Run in YOLO mode. Follow the workflow engine instructions EXACTLY."</action>
   <action>If skip: mobile testing can be set up anytime later with /gaia-mobile-testing</action>
 </step>
-<step n="6" title="Sprint Plan Generation">
+<step n="7" title="Sprint Plan Generation">
   <action>Create sprint plan with story assignments and execution order</action>
   <action>Order by dependency resolution + priority</action>
 </step>
-<step n="7" title="Status Initialization">
+<step n="8" title="Status Initialization">
   <action>Set all selected stories to 'backlog' status</action>
   <action>Generate sprint-status.yaml with format:
     sprint_id: "sprint-{N}"
@@ -52,7 +65,7 @@
         updated: "{date}"
   </action>
 </step>
-<step n="8" title="Generate Output">
+<step n="9" title="Generate Output">
   <template-output file="{implementation_artifacts}/sprint-{sprint_id}-plan.md">
     Generate sprint plan document with: sprint goals, selected stories (ordered), velocity target, risk assessment, and a Testing Readiness section listing high-risk stories, ATDD file status for each, and any missing test artifacts.
   </template-output>

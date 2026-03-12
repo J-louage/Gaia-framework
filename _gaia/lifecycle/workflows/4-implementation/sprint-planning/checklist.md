@@ -6,10 +6,14 @@ validation-target: 'Sprint plan and status files'
 - [ ] Sprint duration defined
 - [ ] Velocity estimate set
 - [ ] Sprint ID assigned
+- [ ] Memory hygiene prompt shown to user (even when sidecars empty)
 ## Story Selection
+- [ ] Only stories with individual story files are selectable
+- [ ] T-shirt-to-points mapping read from global.yaml sizing_map
 - [ ] Stories selected within velocity
 - [ ] Dependencies respected
 - [ ] Priority ordering applied
+- [ ] Selected story files updated with sprint_id
 ## Testing Readiness
 - [ ] test-plan.md checked (warn if missing)
 - [ ] High-risk stories identified from risk_level field

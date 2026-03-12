@@ -3,7 +3,7 @@
 # After modifying this file, run /gaia-build-configs to regenerate resolved configs.
 
 framework_name: "GAIA"
-framework_version: "1.27.46"
+framework_version: "1.27.47"
 
 # User settings
 user_name: "Jlouage"
@@ -21,6 +21,13 @@ planning_artifacts: "{project-root}/docs/planning-artifacts"
 implementation_artifacts: "{project-root}/docs/implementation-artifacts"
 test_artifacts: "{project-root}/docs/test-artifacts"
 creative_artifacts: "{project-root}/docs/creative-artifacts"
+
+# Story sizing — canonical T-shirt-to-points mapping (Fibonacci scale)
+sizing_map:
+  S: 2
+  M: 5
+  L: 8
+  XL: 13
 
 # Framework paths
 installed_path: "{project-root}/_gaia"

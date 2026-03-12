@@ -14,6 +14,9 @@ input_file_patterns:
   previous_retro:
     whole: "{implementation_artifacts}/retro-*.md"
     load_strategy: "INDEX_GUIDED"
+  story_files:
+    whole: "{implementation_artifacts}/{story_key}-*.md"
+    load_strategy: "INDEX_GUIDED"
 quality_gates:
   pre_start:
     - check: "test_plan_exists"
