@@ -21,7 +21,7 @@
 | Group | Items | Fixed | Remaining |
 |-------|-------|-------|-----------|
 | A. Systemic: Next-Step Suggestions | 14 | 14 | 0 |
-| B. Systemic: Normal Mode Pause | 4 | 0 | 4 |
+| B. Systemic: Normal Mode Pause | 4 | 4 | 0 |
 | C. Systemic: Unregistered Commands | 4 | 2 | 2 |
 | D. Systemic: Wrong Output Directory | 6 | 0 | 6 |
 | E. Systemic: Story Naming Convention | 3 | 0 | 3 |
@@ -32,7 +32,7 @@
 | J. Individual High-Severity Bugs | 8 | 0 | 8 |
 | K. Individual Medium-Severity Bugs | 28 | 0 | 28 |
 | L. Individual Low-Severity Bugs | 18 | 0 | 18 |
-| **TOTAL** | **122** | **16** | **106** |
+| **TOTAL** | **122** | **20** | **102** |
 
 > BUG-073 is already closed — not counted above.
 
@@ -112,21 +112,21 @@
 
 **Review comment:** This undermines the user's ability to review and course-correct. High priority for trust — users need to see and approve outputs before the workflow moves on.
 
-- [ ] **BUG-011** (Medium) — `/gaia-create-prd` skips pause at `<template-output>` in normal mode
+- [x] **BUG-011** (Medium) — `/gaia-create-prd` skips pause at `<template-output>` in normal mode
   - File: Engine + `create-prd/instructions.xml`
-  - Fix: Enforce pause at `<template-output file="{planning_artifacts}/prd.md">`
+  - Fix: Strengthened engine pause enforcement + added `<ask>` at create-architecture Step 3 for tech selection confirmation
 
-- [ ] **BUG-040** (Medium) — `/gaia-create-story` skips user interaction in normal mode
+- [x] **BUG-040** (Medium) — `/gaia-create-story` skips user interaction in normal mode
   - File: `create-story/instructions.xml`
-  - Fix: Must ask 4 elaboration questions even when upstream context is available
+  - Fix: Added 4 mandatory `<ask>` tags at Step 4 for elaboration questions
 
-- [ ] **BUG-051** (High) — `/gaia-dev-story` auto-proceeds past checkpoint in normal mode
+- [x] **BUG-051** (High) — `/gaia-dev-story` auto-proceeds past checkpoint in normal mode
   - File: Engine + `dev-story/instructions.xml`
-  - Fix: Enforce pause at each `<template-output>` checkpoint
+  - Fix: Split TDD Step 6 into 3 steps (Red/Green/Refactor) each with `<template-output>`, added `<ask>` at Step 5
 
-- [ ] **BUG-066** (Medium) — `/gaia-brownfield` skips review at architecture output checkpoint
+- [x] **BUG-066** (Medium) — `/gaia-brownfield` skips review at architecture output checkpoint
   - File: Engine + `brownfield/instructions.xml`
-  - Fix: Pause after architecture artifact generation for user review
+  - Fix: Added subagent isolation mandate + `<template-output>` at end of Step 2
 
 ---
 

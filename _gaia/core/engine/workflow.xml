@@ -11,6 +11,9 @@ execution modes (normal/yolo/planning), checkpoints, and quality gates.
 <mandate>Execute steps in strict numerical order. NEVER skip or reorder.</mandate>
 <mandate>Write checkpoints after each step completes.</mandate>
 <mandate>Enforce quality gates — HALT on failure, do not proceed.</mandate>
+<mandate>In normal mode: NEVER auto-proceed past any interaction point (template-output, ask, or check-with-user). ALWAYS stop and wait for explicit user input.</mandate>
+<mandate>An ask tag is a MANDATORY interaction — ALWAYS present the question and WAIT for user response. NEVER infer, assume, or skip the answer even if context suggests one.</mandate>
+<mandate>Background subagent completions MUST NOT trigger auto-proceed. Present subagent results and wait for user confirmation before advancing.</mandate>
 <mandate>Load skills and knowledge JIT — NEVER pre-load.</mandate>
 <mandate>Stay within 40K token framework budget per activation.</mandate>
 </llm>
@@ -93,9 +96,11 @@ execution modes (normal/yolo/planning), checkpoints, and quality gates.
     <action>For each step: drop prior step's skills/knowledge from context</action>
     <action>Handle supported tags: step, action, ask, check, template-output, goto, invoke-workflow, invoke-task</action>
     <action>At optional steps: ask user to include/skip (auto-skip in YOLO mode)</action>
+    <action>At ask tag: MANDATORY interaction point — present the question exactly as written and WAIT for user response. Do NOT infer the answer from loaded context. Do NOT skip even if upstream artifacts contain the information. In YOLO mode: auto-answer from context if unambiguous, otherwise ask.</action>
     <action>At template-output: save output to declared file path</action>
     <action>At template-output in normal mode: show user the output, offer [c]ontinue [y]olo [e]dit</action>
     <action>At template-output in yolo mode: auto-continue</action>
+    <action>When a subagent returns: present summary of results. In normal mode: wait for user [c]ontinue before proceeding. Subagent completion MUST NOT auto-advance the workflow.</action>
     <action>After each step completes: write checkpoint with step number, key variables, output paths, and files_touched (for each file created/modified during this workflow, run shasum -a 256 {path} and record path, checksum as "sha256:{hex}", last_modified as ISO 8601)</action>
   </step>
 
@@ -120,6 +125,10 @@ execution modes (normal/yolo/planning), checkpoints, and quality gates.
   <mode name="normal">
     Pause at every template-output for user confirmation.
     Prompt: "[c] Continue | [y] Switch to YOLO | [e] Edit output"
+    Pause at every ask tag — present the question and WAIT for user response.
+    NEVER infer or skip an ask, even if the answer appears available from context.
+    Pause when a subagent returns — show results summary and wait for [c]ontinue.
+    DEFAULT: When in doubt about whether to pause, PAUSE.
   </mode>
   <mode name="yolo">
     Auto-proceed past template-outputs without pausing.
@@ -161,6 +170,7 @@ execution modes (normal/yolo/planning), checkpoints, and quality gates.
 <llm final="true">
 <mandate>NEVER skip steps. NEVER reorder steps. NEVER proceed past a failed quality gate.</mandate>
 <mandate>ALWAYS write checkpoints. ALWAYS load skills JIT. ALWAYS stay under 40K tokens.</mandate>
+<mandate>In normal mode: ALWAYS pause at template-output, ask, and subagent-return boundaries. Proceeding without user input in normal mode is a VIOLATION.</mandate>
 </llm>
 
 </task>

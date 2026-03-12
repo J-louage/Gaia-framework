@@ -23,6 +23,7 @@
   <action>Greenfield: select tech stack with rationale for each choice. Consider: team expertise, scalability needs, ecosystem maturity.</action>
   <action>Brownfield: discover existing tech stack from project-documentation.md and code scan. Mark ADR status as "Existing" for discovered decisions.</action>
   <action>Record decision as ADR in _memory/architect-sidecar/architecture-decisions.md</action>
+  <ask>Here is the recommended technology stack with rationale for each choice. Please review — confirm to proceed or request changes before I design the full architecture. [confirm / revise]</ask>
 </step>
 <step n="4" title="System Architecture">
   <action>Greenfield: define component diagram and service boundaries. Describe communication patterns. Record architectural style as ADR.</action>

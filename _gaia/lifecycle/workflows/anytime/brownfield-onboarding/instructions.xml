@@ -5,6 +5,7 @@
   <mandate>All diagrams must use Mermaid syntax — no ASCII art, no text descriptions of diagrams</mandate>
   <mandate>All API documentation must use Swagger/OpenAPI format</mandate>
   <mandate>Limit flow diagrams to 3-5 key flows to avoid output bloat</mandate>
+  <mandate>Subagent completion MUST NOT auto-advance the workflow. After all subagents return, pause for user review before proceeding.</mandate>
 </critical>
 
 <step n="1" title="Deep Project Discovery">
@@ -29,6 +30,9 @@
   <action>If {has_events}: spawn subagent — "Scan the codebase at {project-root} for messaging patterns (Kafka, RabbitMQ, SNS-SQS, Redis pub-sub, NATS). Read {installed_path}/../../templates/event-catalog-template.md for the output format. Document messaging infrastructure, produced/consumed events with schemas, external events, delivery guarantees (retry, DLQ, idempotency). Include Mermaid event flow diagrams for 2-3 key flows. Output to {planning_artifacts}/event-catalog.md"</action>
   <action>Spawn subagent (always) — "Scan the codebase at {project-root} for external dependencies. Read {installed_path}/../../templates/dependency-map-template.md for the output format. Document external service dependencies (APIs consumed, auth, health checks), infrastructure dependencies (databases, caches, queues), key library dependencies (ORM, auth lib — check version currency and CVE risk). Create Mermaid dependency graph. Document contracts, SLAs, and fallback strategies. Identify dependency risks. Output to {planning_artifacts}/dependency-map.md. Then load {project-root}/_gaia/core/tasks/review-dependency-audit.xml, read its entire contents, and follow the flow steps EXACTLY to generate a dependency audit report."</action>
   <action>Wait for all subagents to complete. Verify each expected output file exists: dependency-map.md (always), api-documentation.md (if has_apis), ux-design.md (if has_frontend), event-catalog.md (if has_events), dependency-audit-{date}.md (always).</action>
+  <template-output file="{planning_artifacts}/brownfield-subagent-summary.md">
+    After all subagents complete, summarize: which subagents ran, artifacts produced, file paths, and any errors. This checkpoint ensures user reviews subagent results before NFR assessment.
+  </template-output>
 </step>
 
 <step n="3" title="NFR Assessment &amp; Performance Test Plan">

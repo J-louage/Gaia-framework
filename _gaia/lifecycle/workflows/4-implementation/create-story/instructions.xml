@@ -16,6 +16,12 @@
   <check if="no_web_access">Note limitation in story file</check>
 </step>
 <step n="4" title="Elaborate Story">
+  <action>Present a brief summary of what was loaded from epics and architecture context for this story.</action>
+  <ask>Are there specific edge cases or error scenarios to call out in the acceptance criteria?</ask>
+  <ask>Any implementation preferences or constraints not in the architecture? (libraries, patterns, performance targets)</ask>
+  <ask>Should any acceptance criteria be split out or deprioritized?</ask>
+  <ask>Any additional context, stakeholder notes, or dependencies to include?</ask>
+  <action>Incorporate user responses into the story elaboration</action>
   <action>Expand acceptance criteria in Given/When/Then format: "Given {context}, when {action}, then {expected result}"</action>
   <action>Add technical notes from architecture context</action>
   <action>Define subtasks for implementation</action>

@@ -30,35 +30,51 @@
 <step n="5" title="Plan Implementation">
   <action>Break subtasks into implementation plan</action>
   <action>Declare which files will be created/modified</action>
-  <action>Confirm plan with user</action>
+  <ask>Here is the implementation plan with files to create/modify. Confirm to proceed, or request changes. [confirm / revise]</ask>
 </step>
-<step n="6" title="Execute TDD Cycle">
-  <action>For each subtask:</action>
-  <action>  a. Write failing test (RED)</action>
-  <action>  b. Implement minimum code to pass (GREEN)</action>
-  <action>  c. Refactor while tests stay green (REFACTOR)</action>
-  <action>  d. Mark subtask complete in story file</action>
-  <action>  e. Write checkpoint</action>
-  <action>  f. Update files_touched in checkpoint: for each file created/modified so far, record path, checksum (shasum -a 256), last_modified (ISO 8601)</action>
-  <action>  g. Conditional checks — for each that applies to this story:
+<step n="6" title="TDD Red Phase — Write Failing Tests">
+  <action>For each subtask: write failing test(s) that define expected behavior (RED)</action>
+  <action>Run the test suite — verify all new tests FAIL</action>
+  <action>Update files_touched in checkpoint</action>
+  <template-output file="{implementation_artifacts}/{story_key}-tdd-progress.md">
+    RED phase complete. Summary: test files created, test names, what each validates, confirmation all new tests fail.
+  </template-output>
+</step>
+<step n="7" title="TDD Green Phase — Implement to Pass">
+  <action>For each subtask: implement minimum code to make failing tests pass (GREEN)</action>
+  <action>Run the test suite — verify all tests PASS</action>
+  <action>Mark each completed subtask in story file</action>
+  <action>Update files_touched in checkpoint</action>
+  <action>Conditional checks — for each that applies:
     — If API boundary changes: write or update contract tests (consumer/provider)
     — If database schema changes: create reversible migration script (UP + DOWN)
     — If gradual rollout needed: implement feature flag wrapping new code path</action>
+  <template-output file="{implementation_artifacts}/{story_key}-tdd-progress.md">
+    GREEN phase complete. Summary: files created/modified, all tests passing, any contract tests or migrations created.
+  </template-output>
 </step>
-<step n="7" title="Capture Findings">
+<step n="8" title="TDD Refactor Phase">
+  <action>Refactor implementation while keeping all tests green</action>
+  <action>Run the test suite — verify all tests still PASS after refactoring</action>
+  <action>Update files_touched in checkpoint</action>
+  <template-output file="{implementation_artifacts}/{story_key}-tdd-progress.md">
+    REFACTOR phase complete. Summary: what was refactored, why, confirmation all tests still pass.
+  </template-output>
+</step>
+<step n="9" title="Capture Findings">
   <action>Review any out-of-scope issues discovered during implementation (e.g., missing setup scripts, environment gaps, tech debt, broken tooling)</action>
   <action>For each finding: add a row to the Findings table in the story file with type, severity, finding description, and suggested action</action>
   <action>If no findings were discovered, leave the Findings table empty</action>
 </step>
-<step n="8" title="Load Skills JIT">
+<step n="10" title="Load Skills JIT">
   <action>Load git-workflow:commits section for commit conventions</action>
   <action>Apply conventional commit format to all commits</action>
 </step>
-<step n="9" title="Commit Changes">
+<step n="11" title="Commit Changes">
   <action>Stage all changes</action>
   <action>Commit with conventional commit format: type(scope): description</action>
 </step>
-<step n="10" title="Post-Complete Gate">
+<step n="12" title="Post-Complete Gate">
   <action>Verify all tests pass</action>
   <action>Verify all acceptance criteria met</action>
   <action>Verify all subtasks marked complete</action>
@@ -66,7 +82,7 @@
   <check if="any_test_fails">HALT: All tests must pass before marking complete</check>
   <check if="any_dod_unchecked">HALT: All Definition of Done items must be checked before moving to review. Unchecked items: {list}</check>
 </step>
-<step n="11" title="Update Status">
+<step n="13" title="Update Status">
   <action>Set story status to 'review' in story file</action>
   <action>Update sprint-status.yaml: set story to 'review'</action>
   <action>Append files changed list to story file</action>
