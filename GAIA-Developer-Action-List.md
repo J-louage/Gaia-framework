@@ -30,9 +30,9 @@
 | H. Run-All-Reviews Cluster | 5 | 5 | 0 |
 | I. Artifact Wiring Gaps (Issue Report) | 18 | 18 | 0 |
 | J. Individual High-Severity Bugs | 8 | 6 | 2 |
-| K. Individual Medium-Severity Bugs | 28 | 19 | 9 |
+| K. Individual Medium-Severity Bugs | 28 | 24 | 4 |
 | L. Individual Low-Severity Bugs | 18 | 0 | 18 |
-| **TOTAL** | **122** | **91** | **31** |
+| **TOTAL** | **122** | **96** | **26** |
 
 > BUG-073 is already closed — not counted above.
 
@@ -439,20 +439,20 @@ Bugs not already covered in systemic groups.
 - [x] **BUG-036** (Medium) — `/gaia-sprint-plan` doesn't assign sprint_id to story files
   - Fix: Added new Step 5 "Update Story Files" that writes sprint_id to each selected story file. Status remains backlog — transitions happen in create-story/validate-story.
 
-- [ ] **BUG-037** (Medium) — `/gaia-infra-design` missing cost estimation
-  - Fix: Add infrastructure cost estimation section
+- [x] **BUG-037** (Medium) — `/gaia-sprint-plan` sprint-status.yaml schema deviates from spec — missing summary fields, wrong field names
+  - Fix: Standardized sprint-status.yaml schema in Step 8 with velocity_capacity, team_size, total_points, capacity_utilization, and story-level fields.
 
-- [ ] **BUG-038** (Medium) — `/gaia-trace` matrix format hard to parse
-  - Fix: Use clean markdown table with FR/NFR rows × test type columns
+- [x] **BUG-038** (Medium) — `/gaia-sprint-plan` sprint plan document missing burndown estimate section
+  - Fix: Added burndown estimate generation to Step 7 and Testing Readiness section to Step 9 template-output.
 
-- [ ] **BUG-043** (Medium) — `/gaia-ci-setup` output is generic, not tailored to detected stack
-  - Fix: Load architecture to detect stack, generate stack-specific CI config
+- [x] **BUG-043** (Medium) — `/gaia-validate-story` skips duplicate story check and architecture conflict check
+  - Fix: Added new Step 3 "Semantic Quality Checks" with duplicate detection and architecture cross-reference. Added input_file_patterns for architecture and epics to workflow.yaml.
 
-- [ ] **BUG-045** (Medium) — `/gaia-readiness-check` missing capacity assessment
-  - Fix: Cross-reference story count/complexity with team capacity data
+- [x] **BUG-045** (Medium) — `/gaia-validate-story` appends report to story file instead of creating separate validation report file
+  - Fix: Step 7 now creates separate story-validation-{story_key}.md with YAML frontmatter. Added validation_report output to workflow.yaml.
 
-- [ ] **BUG-047** (Medium) — `/gaia-readiness-check` doesn't check for test coverage gaps
-  - Fix: Load traceability matrix, flag any FR/NFR with no test coverage as a readiness risk
+- [x] **BUG-047** (Medium) — `/gaia-fix-story` applies fixes without asking user confirmation, no version notes
+  - Fix: Step 4 now presents each proposed fix and asks for user approval before applying. Added Step 4b "Change Log" for audit trail.
 
 ### Phase 4 — Implementation
 

@@ -51,15 +51,25 @@
 <step n="7" title="Sprint Plan Generation">
   <action>Create sprint plan with story assignments and execution order</action>
   <action>Order by dependency resolution + priority</action>
+  <action>Generate a Sprint Burndown Estimate table showing projected points remaining per day based on wave/story completion schedule. Format: Day | Points Remaining | Stories Completing. This helps the team track expected progress and identify deviations early.</action>
 </step>
 <step n="8" title="Status Initialization">
   <action>Set all selected stories to 'backlog' status</action>
-  <action>Generate sprint-status.yaml with format:
+  <action>Generate sprint-status.yaml with standardized schema:
     sprint_id: "sprint-{N}"
+    duration: "{1 week / 2 weeks / custom}"
+    velocity_capacity: {velocity estimate from Step 3}
+    team_size: {number of developers}
+    total_points: {sum of all selected story points}
+    capacity_utilization: "{total_points / velocity_capacity * 100}%"
     started: "{date}"
+    end_date: "{date}"
     stories:
       - key: "{story-key}"
+        title: "{story title}"
         status: "backlog"
+        points: {story points from sizing_map}
+        risk_level: "{high/medium/low}"
         assignee: null
         blocked_by: null
         updated: "{date}"
@@ -67,7 +77,7 @@
 </step>
 <step n="9" title="Generate Output">
   <template-output file="{implementation_artifacts}/sprint-{sprint_id}-plan.md">
-    Generate sprint plan document with: sprint goals, selected stories (ordered), velocity target, risk assessment, and a Testing Readiness section listing high-risk stories, ATDD file status for each, and any missing test artifacts.
+    Generate sprint plan document with: sprint goals, selected stories (ordered), velocity target, risk assessment, Sprint Burndown Estimate (points remaining per day), and a Testing Readiness section listing high-risk stories, ATDD file status for each, and any missing test artifacts.
   </template-output>
   <action>Write sprint-status.yaml to {implementation_artifacts}/sprint-status.yaml</action>
 </step>

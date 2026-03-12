@@ -19,16 +19,26 @@
   <action>Use the template as reference for expected structure and format of each section</action>
 </step>
 <step n="4" title="Fix Flagged Issues">
-  <action>For each FAIL finding, fix the corresponding section:
-    - Missing sections: add the section following the template structure
-    - Incomplete metadata: fill in missing header fields (Epic, Sprint, Date, Author, Status, Traces to)
-    - Unclear ACs: rewrite in Given/When/Then format, ensure each is testable
-    - Unlinked subtasks: link each subtask to an AC number
-    - Empty Test Scenarios: populate the test scenarios table
-    - Missing DoD: add specific, measurable Definition of Done items
-    - Other issues: address per the validation finding description
+  <action>For each FAIL finding, prepare the proposed fix:
+    - Missing sections: draft the section following the template structure
+    - Incomplete metadata: draft missing header fields (Epic, Sprint, Date, Author, Status, Traces to)
+    - Unclear ACs: draft rewrite in Given/When/Then format, ensure each is testable
+    - Unlinked subtasks: draft links from each subtask to an AC number
+    - Empty Test Scenarios: draft the test scenarios table
+    - Missing DoD: draft specific, measurable Definition of Done items
+    - Other issues: draft fix per the validation finding description
   </action>
+  <ask>For each proposed fix, present the section name, the issue found, and the proposed new content. Wait for user approval before applying. Example: "Section: Acceptance Criteria — Issue: Not in Given/When/Then format — Proposed fix: [content]. Apply this fix? (yes / no / edit)"</ask>
+  <action>Apply only user-approved fixes. If user chooses "edit", accept their revised content instead.</action>
   <action>Preserve all existing valid content — do NOT rewrite sections that passed validation</action>
+</step>
+<step n="4b" title="Change Log">
+  <action>After all fixes are applied, append a "## Change Log" section at the end of the story file (before any validation report) with:
+    - Date: {current date}
+    - Source: fix-story workflow
+    - Sections modified: list each section that was fixed
+    - Summary: one-line description of changes made
+  </action>
 </step>
 <step n="5" title="Remove Validation Report">
   <action>Remove the --- separator and the entire "## Validation Report" section from the end of the story</action>
