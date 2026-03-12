@@ -58,11 +58,13 @@
   <action>Ensure each significant decision is recorded as ADR</action>
   <action>ADR format: title, date, status, context, decision, consequences</action>
   <action>Brownfield: mark existing decisions as status "Existing", new gap-related decisions as "Proposed"</action>
+  <action>For each ADR: add an "Addresses" field listing the FR/NFR IDs it satisfies (e.g., "Addresses: FR-003, NFR-002")</action>
   <action>Append all ADRs to _memory/architect-sidecar/architecture-decisions.md</action>
+  <action>Generate a "Decision → Requirement Mapping" table mapping each ADR to the FR/NFR IDs it addresses. Flag any FR/NFR from the PRD with no corresponding ADR as a coverage gap.</action>
 </step>
 <step n="9" title="Generate Output">
   <template-output file="{planning_artifacts}/architecture.md">
-    Greenfield: generate architecture document with: technology stack, system architecture, data architecture, API design, infrastructure plan, and ADR references.
+    Greenfield: generate architecture document with: technology stack, system architecture, data architecture, API design, infrastructure plan, ADR references, and Decision → Requirement Mapping table.
     Brownfield: generate architecture document following brownfield-architecture-template. Must include: C4 Level 1 and Level 2 Mermaid diagrams, 3-5 Mermaid sequence diagrams for key flows, Mermaid data flow diagram, as-is/target delta table, migration strategy, and cross-references to api-documentation.md, event-catalog.md, and dependency-map.md.
   </template-output>
 </step>

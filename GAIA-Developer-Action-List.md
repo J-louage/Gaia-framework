@@ -29,10 +29,10 @@
 | G. Brownfield Cluster | 8 | 0 | 8 |
 | H. Run-All-Reviews Cluster | 5 | 0 | 5 |
 | I. Artifact Wiring Gaps (Issue Report) | 18 | 0 | 18 |
-| J. Individual High-Severity Bugs | 8 | 3 | 5 |
+| J. Individual High-Severity Bugs | 8 | 4 | 4 |
 | K. Individual Medium-Severity Bugs | 28 | 0 | 28 |
 | L. Individual Low-Severity Bugs | 18 | 0 | 18 |
-| **TOTAL** | **122** | **38** | **84** |
+| **TOTAL** | **122** | **39** | **83** |
 
 > BUG-073 is already closed — not counted above.
 
@@ -343,9 +343,8 @@ These are not part of a systemic cluster but are individually high-impact.
 - [x] **BUG-014** (High) — `/gaia-validate-prd` validation too superficial — misses structural issues
   - Fix: Added Step 3 "Structural Validation" with 7 checks: FR/NFR numbering, AC existence, measurable NFR targets, priority assignment, persona cross-reference.
 
-- [ ] **BUG-024** (High) — `/gaia-create-arch` architecture decisions not traceable to requirements
-  - File: `create-architecture/instructions.xml`
-  - Fix: Each architecture decision should reference the FR/NFR it addresses. Add a "Decision → Requirement Mapping" section to architecture.md output.
+- [x] **BUG-024** (High) — `/gaia-create-arch` architecture decisions not traceable to requirements
+  - Fix: Added "Addresses" field to each ADR listing FR/NFR IDs. Added "Decision → Requirement Mapping" table generation in Step 8 that flags uncovered requirements as gaps.
 
 - [ ] **BUG-030** (High) — `/gaia-test-design` test plan doesn't cover NFRs
   - File: `test-design/instructions.xml`
