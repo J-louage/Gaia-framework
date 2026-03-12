@@ -30,9 +30,9 @@
 | H. Run-All-Reviews Cluster | 5 | 5 | 0 |
 | I. Artifact Wiring Gaps (Issue Report) | 18 | 18 | 0 |
 | J. Individual High-Severity Bugs | 8 | 6 | 2 |
-| K. Individual Medium-Severity Bugs | 28 | 3 | 25 |
+| K. Individual Medium-Severity Bugs | 28 | 4 | 24 |
 | L. Individual Low-Severity Bugs | 18 | 0 | 18 |
-| **TOTAL** | **122** | **75** | **47** |
+| **TOTAL** | **122** | **76** | **46** |
 
 > BUG-073 is already closed — not counted above.
 
@@ -389,8 +389,8 @@ Bugs not already covered in systemic groups.
 - [x] **BUG-012** (Medium) — `/gaia-create-prd` doesn't cross-reference product brief
   - Fix: Added cross-reference actions in Steps 1, 3, 8, 9, 10. Step 1 extracts all brief sections. Step 3 verifies FRs trace to brief's solution/features. Step 8 checks brief's scope boundaries. Step 9 carries forward brief's risks/assumptions. Step 10 aligns with brief's success metrics.
 
-- [ ] **BUG-013** (Medium) — `/gaia-create-prd` NFR section generated without measurable targets
-  - Fix: Each NFR must have a measurable target (e.g., "response time < 200ms" not "fast response")
+- [x] **BUG-013** (Medium) — `/gaia-create-prd` NFR section generated without measurable targets
+  - Fix: Added enforcement action in Step 4 requiring each NFR to include a measurable target with a specific threshold. Rejects vague qualifiers like "fast", "secure", "scalable" without numeric criteria.
 
 - [ ] **BUG-016** (Medium) — `/gaia-create-ux` doesn't reference PRD requirements
   - Fix: Load `prd.md` and map UI flows to functional requirements
