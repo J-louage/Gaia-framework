@@ -30,9 +30,9 @@
 | H. Run-All-Reviews Cluster | 5 | 5 | 0 |
 | I. Artifact Wiring Gaps (Issue Report) | 18 | 18 | 0 |
 | J. Individual High-Severity Bugs | 8 | 6 | 2 |
-| K. Individual Medium-Severity Bugs | 28 | 4 | 24 |
+| K. Individual Medium-Severity Bugs | 28 | 5 | 23 |
 | L. Individual Low-Severity Bugs | 18 | 0 | 18 |
-| **TOTAL** | **122** | **76** | **46** |
+| **TOTAL** | **122** | **77** | **45** |
 
 > BUG-073 is already closed — not counted above.
 
@@ -392,8 +392,8 @@ Bugs not already covered in systemic groups.
 - [x] **BUG-013** (Medium) — `/gaia-create-prd` NFR section generated without measurable targets
   - Fix: Added enforcement action in Step 4 requiring each NFR to include a measurable target with a specific threshold. Rejects vague qualifiers like "fast", "secure", "scalable" without numeric criteria.
 
-- [ ] **BUG-016** (Medium) — `/gaia-create-ux` doesn't reference PRD requirements
-  - Fix: Load `prd.md` and map UI flows to functional requirements
+- [x] **BUG-016** (Medium) — `/gaia-create-ux` doesn't reference PRD requirements
+  - Fix: Added FR mapping actions in Steps 3 (pages→FR IDs), 4 (wireframes→FR IDs), 5 (interactions→user journeys). Updated template-output to include FR-to-Screen Mapping table.
 
 - [ ] **BUG-018** (Medium) — `/gaia-review-a11y` output format inconsistent
   - Fix: Standardize output to use WCAG 2.1 guideline references for each finding

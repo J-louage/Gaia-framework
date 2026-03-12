@@ -14,15 +14,18 @@
 <step n="3" title="Information Architecture">
   <action>Design sitemap and navigation structure</action>
   <action>Define content hierarchy and page relationships</action>
+  <action>Map each page or section to the FR IDs it serves — every page must trace to at least one FR. Flag any user-facing FR from the PRD that has no corresponding page in the sitemap.</action>
 </step>
 <step n="4" title="Wireframes">
   <action>Create text-based wireframe descriptions for key screens</action>
   <action>Define layout, component placement, interaction patterns</action>
+  <action>Annotate each wireframe with the FR IDs it addresses. Flag any FR with user-facing behavior that has no wireframe representation.</action>
 </step>
 <step n="5" title="Interaction Patterns">
   <action>Define common UI patterns used across the application</action>
   <action>Specify component library or design system choices</action>
   <action>Document form behaviors, validation, error states</action>
+  <action>Map each interaction flow to the corresponding user journey from the PRD. Every PRD user journey must have a defined interaction pattern.</action>
 </step>
 <step n="6" title="Accessibility">
   <action>Define WCAG compliance targets (A, AA, AAA)</action>
@@ -31,7 +34,7 @@
 </step>
 <step n="7" title="Generate Output">
   <template-output file="{planning_artifacts}/ux-design.md">
-    Generate UX design document with: personas, information architecture, wireframe descriptions, interaction patterns, component specifications, and accessibility plan.
+    Generate UX design document with: personas, information architecture, wireframe descriptions, interaction patterns, component specifications, accessibility plan, and FR-to-Screen Mapping table (FR ID | Screen/Page | Wireframe Section).
   </template-output>
 </step>
 <step n="8" title="Optional: Accessibility Review">
