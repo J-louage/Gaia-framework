@@ -38,7 +38,7 @@ validation-target: 'Brownfield onboarding output'
 - [ ] "Review Findings Incorporated" section added to PRD
 ## Step 6: Architecture & Phase 3 Handoff
 - [ ] Architecture subagent completed — {planning_artifacts}/architecture.md exists
-- [ ] User informed of remaining Phase 3 sequence: /gaia-test-design → /gaia-create-epics → /gaia-readiness-check
+- [ ] User informed of remaining Phase 3 sequence: /gaia-review-api (optional) → /gaia-adversarial → /gaia-test-design → /gaia-test-framework (optional) → /gaia-create-epics → /gaia-threat-model → /gaia-infra-design → /gaia-trace → /gaia-ci-setup → /gaia-readiness-check
 ## Output Verification
 - [ ] Project documentation exists at {planning_artifacts}/project-documentation.md
 - [ ] API documentation exists at {planning_artifacts}/api-documentation.md (if has_apis)
@@ -49,4 +49,4 @@ validation-target: 'Brownfield onboarding output'
 - [ ] Performance test plan exists at {test_artifacts}/performance-test-plan-*.md
 - [ ] PRD exists at {planning_artifacts}/prd.md
 - [ ] Architecture exists at {planning_artifacts}/architecture.md
-- [ ] Next step: /gaia-test-design → /gaia-create-epics → /gaia-readiness-check
+- [ ] Next step: /gaia-review-api (optional) → /gaia-adversarial → /gaia-test-design → /gaia-test-framework (optional) → /gaia-create-epics → /gaia-threat-model → /gaia-infra-design → /gaia-trace → /gaia-ci-setup → /gaia-readiness-check

@@ -78,13 +78,21 @@
   <action>If {planning_artifacts}/architecture.md already exists: WARN user — "An architecture document already exists. Continuing will overwrite it with the brownfield version. Choose: (a) overwrite, (b) save as architecture-brownfield.md instead." If user chooses (b), instruct the subagent to output to {planning_artifacts}/architecture-brownfield.md.</action>
   <action>Spawn a subagent using the Agent tool: "Load {project-root}/_gaia/core/engine/workflow.xml, then process {project-root}/_gaia/lifecycle/workflows/3-solutioning/create-architecture/workflow.yaml as workflow-config. Run in YOLO mode. Follow the workflow engine instructions EXACTLY." When subagent returns: verify the architecture file exists at the chosen path.</action>
   <action>After architecture is generated: verify it has YAML frontmatter with mode: brownfield, baseline_version: {version}, and update_scope: [list of components being modified]. If these fields are missing, append them to the YAML frontmatter block.</action>
-  <action>Epics and stories require a test plan first. The remaining Phase 3 sequence (/gaia-test-design → /gaia-create-epics → /gaia-readiness-check) must be run after this workflow completes.</action>
+  <action>The remaining Phase 3 sequence must be run after this workflow completes:
+  /gaia-review-api (optional, if APIs) → /gaia-adversarial → /gaia-test-design → /gaia-test-framework (optional) → /gaia-create-epics → /gaia-threat-model → /gaia-infra-design → /gaia-trace → /gaia-ci-setup → /gaia-readiness-check</action>
 </step>
-<next-step command="/gaia-test-design">
-  Run Phase 3 sequence targeting the brownfield PRD:
-  1. /gaia-test-design — target the brownfield PRD (prd.md or prd-brownfield-gaps.md depending on Step 4 choice)
-  2. /gaia-create-epics — create epics and stories for gap requirements only
-  3. /gaia-readiness-check — validate implementation readiness
+<next-step command="/gaia-review-api">
+  Run the remaining Phase 3 sequence after this workflow:
+  1. /gaia-review-api — review API design against standards (optional, if APIs exist)
+  2. /gaia-adversarial — adversarial review of architecture
+  3. /gaia-test-design — create risk-based test plan (required before epics)
+  4. /gaia-test-framework — setup test framework (optional)
+  5. /gaia-create-epics — create epics and stories for gap requirements
+  6. /gaia-threat-model — security threat model
+  7. /gaia-infra-design — infrastructure design
+  8. /gaia-trace — traceability matrix
+  9. /gaia-ci-setup — CI pipeline setup
+  10. /gaia-readiness-check — implementation readiness validation
 
   WARNING: If Phase 3 artifacts already exist from a prior greenfield setup (test-plan.md, epics-and-stories.md), running these workflows will overwrite them. Consider backing up existing artifacts or using the brownfield PRD path to generate separate brownfield-specific outputs.
 </next-step>

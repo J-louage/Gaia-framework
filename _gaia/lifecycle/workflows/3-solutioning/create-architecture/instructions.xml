@@ -90,7 +90,10 @@
   </template-output>
 </step>
 <next-step source="lifecycle-sequence.yaml">
+  <primary command="/gaia-review-api">Review API design against standards (optional, if APIs exist — otherwise skip to /gaia-adversarial)</primary>
+  <primary command="/gaia-adversarial">Adversarial review of architecture</primary>
   <primary command="/gaia-test-design">Create risk-based test plan (required before creating epics)</primary>
+  <primary command="/gaia-test-framework">Setup test framework (optional)</primary>
   <parallel command="/gaia-threat-model">Create security threat model (can run in parallel)</parallel>
   <parallel command="/gaia-infra-design">Design infrastructure (can run in parallel)</parallel>
 </next-step>

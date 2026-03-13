@@ -104,7 +104,8 @@ sequence:
     phase: 3-solutioning
     command: /gaia-create-arch
     next:
-      primary: /gaia-test-design
+      primary: /gaia-review-api
+      note: "Optional if APIs exist, otherwise skip to /gaia-adversarial"
       parallel:
         - /gaia-threat-model
         - /gaia-infra-design
