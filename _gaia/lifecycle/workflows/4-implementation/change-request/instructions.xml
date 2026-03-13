@@ -85,7 +85,7 @@
 <step n="8" title="Update Architecture" optional="true" condition="technical_impact != NONE AND cr_status == APPROVED">
   <action>Skip if technical_impact = NONE.</action>
   <action>If technical_impact = MINOR: flag for manual architecture review — "Run /gaia-adversarial targeting architecture.md after making manual updates."</action>
-  <action>If technical_impact = SIGNIFICANT or BREAKING: spawn a subagent using the Agent tool: "Load {project-root}/_gaia/core/tasks/review-adversarial.xml. Read its entire contents. Target: {planning_artifacts}/architecture.md. Follow the task instructions EXACTLY." When subagent returns: verify adversarial-review-{date}.md exists.</action>
+  <action>If technical_impact = SIGNIFICANT or BREAKING: spawn a subagent using the Agent tool: "Load {project-root}/_gaia/core/tasks/review-adversarial.xml. Read its entire contents. Target: {planning_artifacts}/architecture.md. Target label: architecture. Follow the task instructions EXACTLY." When subagent returns: verify adversarial-review-architecture-{date}.md exists.</action>
   <action>Record: architecture_reviewed = true, manual_update_needed = {true if SIGNIFICANT/BREAKING}.</action>
   <action>If manual_update_needed: inform user — "Architecture needs manual updates for this change. Run /gaia-create-arch to revise, then re-run adversarial review."</action>
 </step>

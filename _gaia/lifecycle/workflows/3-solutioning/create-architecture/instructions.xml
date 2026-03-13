@@ -78,11 +78,11 @@
   <action>If skip: API review can be run anytime later with /gaia-review-api</action>
 </step>
 <step n="11" title="Adversarial Review">
-  <action>Spawn a subagent using the Agent tool: "Load {project-root}/_gaia/core/tasks/review-adversarial.xml. Read its entire contents. Target: {planning_artifacts}/architecture.md. Follow the task instructions EXACTLY." This is required — findings will be incorporated back into the architecture document.</action>
-  <action>When subagent returns: verify adversarial-review-{date}.md exists in {planning_artifacts}/</action>
+  <action>Spawn a subagent using the Agent tool: "Load {project-root}/_gaia/core/tasks/review-adversarial.xml. Read its entire contents. Target: {planning_artifacts}/architecture.md. Target label: architecture. Follow the task instructions EXACTLY." This is required — findings will be incorporated back into the architecture document.</action>
+  <action>When subagent returns: verify adversarial-review-architecture-{date}.md exists in {planning_artifacts}/</action>
 </step>
 <step n="12" title="Incorporate Adversarial Findings">
-  <action>Read the most recent {planning_artifacts}/adversarial-review-{date}.md — extract critical and high severity findings relevant to architecture</action>
+  <action>Read {planning_artifacts}/adversarial-review-architecture-{date}.md — extract critical and high severity findings relevant to architecture</action>
   <action>For each critical/high finding: update the architecture — add missing components, revise decisions, strengthen security/scalability, update ADRs</action>
   <action>Add a "## Review Findings Incorporated" section to the architecture document listing each finding, its severity, and how it was addressed</action>
   <template-output file="{planning_artifacts}/architecture.md">

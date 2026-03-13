@@ -143,8 +143,8 @@
   </template-output>
 </step>
 <step n="11" title="Adversarial Review">
-  <action>Spawn a subagent using the Agent tool: "Load {project-root}/_gaia/core/tasks/review-adversarial.xml. Read its entire contents. Target: {planning_artifacts}/readiness-report.md. Follow the task instructions EXACTLY."</action>
-  <action>When subagent returns: verify adversarial review report exists at {planning_artifacts}/adversarial-review-*.md. If the subagent failed to write the file, the orchestrator MUST write it.</action>
+  <action>Spawn a subagent using the Agent tool: "Load {project-root}/_gaia/core/tasks/review-adversarial.xml. Read its entire contents. Target: {planning_artifacts}/readiness-report.md. Target label: readiness. Follow the task instructions EXACTLY."</action>
+  <action>When subagent returns: verify adversarial-review-readiness-{date}.md exists at {planning_artifacts}/. If the subagent failed to write the file, the orchestrator MUST write it.</action>
 </step>
 <step n="12" title="Incorporate Adversarial Findings">
   <action>Read the adversarial review report — extract all findings by severity (Critical, High, Medium, Low)</action>

@@ -26,12 +26,12 @@
 </step>
 <step n="5" title="Adversarial Review">
   <ask>The PRD has been updated. Would you like to run an adversarial review? This spawns a subagent in a separate context — recommended for significant changes. (yes / skip for minor edits)</ask>
-  <action>If yes: spawn a subagent using the Agent tool: "Load {project-root}/_gaia/core/tasks/review-adversarial.xml. Read its entire contents. Target: {planning_artifacts}/prd.md. Follow the task instructions EXACTLY."</action>
+  <action>If yes: spawn a subagent using the Agent tool: "Load {project-root}/_gaia/core/tasks/review-adversarial.xml. Read its entire contents. Target: {planning_artifacts}/prd.md. Target label: prd. Follow the task instructions EXACTLY."</action>
   <action>If skip: proceed to step 7 — mark "Review Findings Incorporated" as "Incremental edit — adversarial review skipped (minor change)"</action>
-  <action>If ok: wait for user to confirm adversarial-review-{date}.md exists</action>
+  <action>If ok: wait for user to confirm adversarial-review-prd-{date}.md exists</action>
 </step>
 <step n="6" title="Incorporate Review Findings" optional="true" condition="adversarial_completed">
-  <action>Read {planning_artifacts}/adversarial-review-{date}.md — extract critical and high severity findings</action>
+  <action>Read {planning_artifacts}/adversarial-review-prd-{date}.md — extract critical and high severity findings</action>
   <action>For each critical/high finding: add or refine requirement in the PRD</action>
   <action>Update the "## Review Findings Incorporated" section — append new entries with amendment date</action>
   <template-output file="{planning_artifacts}/prd.md">

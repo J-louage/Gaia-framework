@@ -33,7 +33,7 @@ validation-target: 'Brownfield onboarding output'
 - [ ] Upstream artifacts referenced (api-docs, event-catalog, dependency-map, ux-design)
 - [ ] Priority matrix maps each gap to priority/effort/impact
 ## Step 5: Adversarial Review
-- [ ] Adversarial review subagent completed — {planning_artifacts}/adversarial-review-{date}.md exists
+- [ ] Adversarial review subagent completed — {planning_artifacts}/adversarial-review-prd-{date}.md exists
 - [ ] Critical/high findings incorporated into PRD
 - [ ] "Review Findings Incorporated" section added to PRD
 ## Step 6: Architecture & Phase 3 Handoff

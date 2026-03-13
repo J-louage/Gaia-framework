@@ -13,6 +13,7 @@
     <action>Ask user for the document/design/code to review</action>
     <action>Read the entire target</action>
     <action>Identify what type of artifact it is (PRD, architecture, story, code, etc.)</action>
+    <action>Derive {target} label for the output filename: use the target label provided by the caller (e.g., "prd", "architecture", "epics", "readiness"). If no label was provided, derive from the target filename by stripping the extension (e.g., prd.md → prd, architecture.md → architecture, epics-and-stories.md → epics, readiness-report.md → readiness).</action>
   </step>
 
   <step n="2" title="Adversarial Analysis">
@@ -31,7 +32,7 @@
   </step>
 
   <step n="3" title="Generate Report">
-    <template-output file="{planning_artifacts}/adversarial-review-{date}.md">
+    <template-output file="{planning_artifacts}/adversarial-review-{target}-{date}.md">
       Generate adversarial review report with: threat summary (top 3 most critical issues), full findings table (severity, confidence, category, description), and overall risk assessment for proceeding as-is.
     </template-output>
   </step>
@@ -39,6 +40,6 @@
 
 <output>
   <format>Markdown adversarial review report</format>
-  <location>{planning_artifacts}/adversarial-review-{date}.md</location>
+  <location>{planning_artifacts}/adversarial-review-{target}-{date}.md</location>
 </output>
 </task>
