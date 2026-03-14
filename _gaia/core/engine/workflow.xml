@@ -99,8 +99,22 @@ execution modes (normal/yolo/planning), checkpoints, and quality gates.
     <action>At optional steps: ask user to include/skip (auto-skip in YOLO mode)</action>
     <action>At ask tag: MANDATORY interaction point — present the question exactly as written and WAIT for user response. Do NOT infer the answer from loaded context. Do NOT skip even if upstream artifacts contain the information. In YOLO mode: auto-answer from context if unambiguous, otherwise ask.</action>
     <action>At template-output: save output to declared file path</action>
+    <action>After saving template-output: scan the generated content for open question indicators — unchecked checkboxes ("- [ ]"), section headers ("## Open Questions", "## Unresolved", "## Decisions Needed", "## Contradictions", "## Blocking Issues", "## Required Fixes"), and inline markers ("TBD", "TODO", "(needs decision)"). If any found: count the questions, extract their text, and display a guidance block BEFORE the [c]/[y]/[e] prompt:
+
+  --- Open Questions ({N}) ---
+  This artifact contains {N} open question(s) that need your input:
+  {numbered list of each question}
+
+  Recommended: Press [e] to answer these questions now.
+  Why: {next workflow from lifecycle-sequence.yaml} depends on these decisions.
+       Unanswered questions force downstream agents to make assumptions.
+
+  Skip: Press [c] to continue. Questions remain in the artifact.
+  ---
+
+  If no open question indicators are found, skip this guidance and proceed to the standard prompt.</action>
     <action>At template-output in normal mode: show user the output, offer [c]ontinue [y]olo [e]dit</action>
-    <action>At template-output in yolo mode: auto-continue</action>
+    <action>At template-output in yolo mode: auto-continue UNLESS open question indicators were detected — if detected, pause and display guidance as in normal mode. Open questions require human input and cannot be auto-answered.</action>
     <action>When a subagent returns: present summary of results. In normal mode: wait for user [c]ontinue before proceeding. Subagent completion MUST NOT auto-advance the workflow.</action>
     <action>After each step completes: write checkpoint with step number, key variables, output paths, and files_touched (for each file created/modified during this workflow, run shasum -a 256 {path} and record path, checksum as "sha256:{hex}", last_modified as ISO 8601)</action>
   </step>
