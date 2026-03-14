@@ -135,39 +135,47 @@ sequence:
     phase: 3-solutioning
     command: /gaia-readiness-check
     next:
-      primary: /gaia-sprint-plan
+      primary: /gaia-create-story
+      note: "Create and validate story files before sprint planning"
 
   # ═══════════════════════════════════════════
   # PHASE 4: IMPLEMENTATION (loops & branches)
   # ═══════════════════════════════════════════
-
-  sprint-planning:
-    phase: 4-implementation
-    command: /gaia-sprint-plan
-    next:
-      primary: /gaia-create-story
-      alternatives:
-        - command: /gaia-sprint-status
-          context: "To review current sprint state"
 
   create-story:
     phase: 4-implementation
     command: /gaia-create-story
     next:
       primary: /gaia-validate-story
+      alternatives:
+        - command: /gaia-create-story
+          context: "To create another story before validating"
 
   validate-story:
     phase: 4-implementation
     command: /gaia-validate-story
     next:
-      on_pass: /gaia-dev-story
+      on_pass: /gaia-create-story
+      on_pass_note: "Create more stories, or run /gaia-sprint-plan when all stories are ready"
       on_fail: /gaia-fix-story
+      alternatives:
+        - command: /gaia-sprint-plan
+          context: "When all stories are created and validated (ready-for-dev)"
 
   fix-story:
     phase: 4-implementation
     command: /gaia-fix-story
     next:
       primary: /gaia-validate-story
+
+  sprint-planning:
+    phase: 4-implementation
+    command: /gaia-sprint-plan
+    next:
+      primary: /gaia-dev-story
+      alternatives:
+        - command: /gaia-sprint-status
+          context: "To review current sprint state"
 
   dev-story:
     phase: 4-implementation

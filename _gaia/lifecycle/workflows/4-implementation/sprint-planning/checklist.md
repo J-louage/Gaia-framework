@@ -8,10 +8,11 @@ validation-target: 'Sprint plan and status files'
 - [ ] Sprint ID assigned
 - [ ] Memory hygiene prompt shown to user (even when sidecars empty)
 ## Story Selection
-- [ ] Only stories with individual story files are selectable
+- [ ] Only stories with status 'ready-for-dev' are selectable
 - [ ] T-shirt-to-points mapping read from global.yaml sizing_map
 - [ ] Stories selected within velocity
-- [ ] Dependencies respected
+- [ ] Dependencies respected — stories with unresolved depends_on blocked
+- [ ] P0 stories not selected are flagged with warning
 - [ ] Priority ordering applied
 - [ ] Selected story files updated with sprint_id
 ## Testing Readiness

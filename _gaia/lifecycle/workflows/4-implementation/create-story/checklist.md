@@ -12,9 +12,7 @@ validation-target: 'Story file'
 - [ ] Each AC uses Given/When/Then format
 - [ ] Each AC is testable
 - [ ] Dependencies correctly declared
-- [ ] Status set to validating
-## Sprint Status
-- [ ] sprint-status.yaml updated with story status set to validating
+- [ ] Status set to backlog
 ## Output Verification
 - [ ] Story file exists at {implementation_artifacts}/{story_key}-{story_title_slug}.md
 - [ ] Filename starts with story key (e.g., 1.2-user-login.md)

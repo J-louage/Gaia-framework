@@ -5,7 +5,19 @@
   <mandate>Check web access availability if story references external APIs</mandate>
 </critical>
 <step n="1" title="Select Story">
-  <ask>Which story do you want to detail? (provide story key from sprint plan or epics)</ask>
+  <action>Read {planning_artifacts}/epics-and-stories.md — parse all stories with their keys, titles, priorities, sizes, risk levels, and dependencies.</action>
+  <action>Scan {implementation_artifacts}/ for existing story files matching *-*.md patterns. Record which story keys already have individual files.</action>
+  <action>Build a list of stories that do NOT yet have individual story files.</action>
+  <action>Sort the list by: Priority (P0 first, then P1, then P2), then dependency topology (stories with no dependencies first).</action>
+  <check if="user provided a story key (e.g., /gaia-create-story E1-S2)">
+    Use the provided story key directly — skip the selection list. Verify the key exists in epics-and-stories.md. If a story file already exists for this key, warn the user: "Story file for {key} already exists. Proceeding will overwrite it."
+  </check>
+  <check if="no story key provided">
+    Display the prioritized list of stories without files as a table:
+    | # | Key | Title | Priority | Size | Risk | Depends On |
+    Mark P0 stories with a ⚠ indicator.
+    <ask>Which story do you want to create? Select from the list above (provide the story key).</ask>
+  </check>
 </step>
 <step n="2" title="Load Context">
   <action>Read story summary from epics-and-stories.md</action>
@@ -31,16 +43,13 @@
 </step>
 <step n="6" title="Generate Output">
   <action>Read the story template from {project-root}/_gaia/lifecycle/templates/story-template.md</action>
+  <action>Set story status to 'backlog' in the story file header. Sprint assignment will happen later during /gaia-sprint-plan.</action>
   <template-output file="{implementation_artifacts}/{story_key}-{story_title_slug}.md">
-    Generate story file following the story-template.md structure. The filename must use the story key and slugified title (e.g., 1.2-user-login.md). Fill all template sections: User Story, Acceptance Criteria, Tasks/Subtasks (linked to AC numbers), Dev Notes, Technical Notes, Dependencies, Test Scenarios, Project Structure Notes, References, Dev Agent Record, and Estimate.
+    Generate story file following the story-template.md structure. The filename must use the story key and slugified title (e.g., 1.2-user-login.md). Fill all template sections: User Story, Acceptance Criteria, Tasks/Subtasks (linked to AC numbers), Dev Notes, Technical Notes, Dependencies, Test Scenarios, Project Structure Notes, References, Dev Agent Record, and Estimate. Set status to 'backlog'.
   </template-output>
 </step>
-<step n="7" title="Update Sprint Status">
-  <action>Read {implementation_artifacts}/sprint-status.yaml</action>
-  <action>Find the story entry matching {story_key} and update its status to validating</action>
-  <action>If sprint-status.yaml does not exist, create it with the story entry set to validating</action>
-  <template-output file="{implementation_artifacts}/sprint-status.yaml">
-    Update the sprint status file with the story status set to validating.
-  </template-output>
-</step>
+<next-step source="lifecycle-sequence.yaml">
+  <primary command="/gaia-validate-story">Validate the story file for completeness and quality</primary>
+  <alternative command="/gaia-create-story" context="To create another story before validating"/>
+</next-step>
 </workflow>

@@ -47,10 +47,12 @@
   </template-output>
 </step>
 <step n="8" title="Update Story Status">
-  <action>If overall verdict is PASS: update story status to 'ready-for-dev' in the story file header and in {implementation_artifacts}/sprint-status.yaml</action>
+  <action>If overall verdict is PASS: update story status to 'ready-for-dev' in the story file header</action>
   <action>If overall verdict is FAIL: keep story status as 'validating' — instruct user to run /gaia-fix-story then re-run /gaia-validate-story</action>
-  <template-output file="{implementation_artifacts}/sprint-status.yaml">
-    Update sprint-status.yaml with the story status: ready-for-dev (if PASS) or validating (if FAIL).
-  </template-output>
 </step>
+<next-step source="lifecycle-sequence.yaml">
+  <on_pass command="/gaia-create-story">Create more stories, or run /gaia-sprint-plan when all stories are ready</on_pass>
+  <on_fail command="/gaia-fix-story">Fix validation failures, then re-validate</on_fail>
+  <alternative command="/gaia-sprint-plan" context="When all stories are created and validated (ready-for-dev)"/>
+</next-step>
 </workflow>
