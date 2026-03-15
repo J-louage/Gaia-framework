@@ -7,8 +7,25 @@
   <ask>Which story to validate? (provide story key, e.g., 1.2)</ask>
   <action>Find and read the story file matching {story_key}-*.md in {implementation_artifacts}/</action>
 </step>
-<step n="2" title="Header Metadata">
-  <action>Verify header metadata is present and populated: Epic, Sprint, Date, Author, Status, Traces to</action>
+<step n="2" title="YAML Frontmatter Validation">
+  <action>Verify YAML frontmatter block exists (delimited by --- markers after the story title)</action>
+  <action>Check ALL 14 required fields are present and populated:
+    - key: must match the story key pattern (e.g., E1-S1)
+    - title: must not be empty
+    - epic: must reference a valid epic
+    - status: must be one of [backlog, validating, ready-for-dev, in-progress, blocked, review, done]
+    - priority: must be one of [P0, P1, P2]
+    - size: must be one of [S, M, L, XL]
+    - points: must be a number matching sizing_map (S→2, M→5, L→8, XL→13)
+    - risk: must be one of [high, medium, low]
+    - sprint_id: null or a valid sprint ID (e.g., sprint-1)
+    - depends_on: list of story keys (can be empty [])
+    - blocks: list of story keys (can be empty [])
+    - traces_to: list of requirement IDs (can be empty [])
+    - date: must be a valid date
+    - author: must not be empty
+  </action>
+  <action>FAIL if any required field is missing or has an invalid value. Report each missing/invalid field individually.</action>
 </step>
 <step n="3" title="Semantic Quality Checks">
   <action>Duplicate detection: load all story files for the same epic from {implementation_artifacts}/. Compare titles and acceptance criteria scope for overlap. Flag any stories with >70% AC overlap as potential duplicates.</action>

@@ -1,6 +1,6 @@
 <workflow name="create-story">
 <critical>
-  <mandate>Story files must include YAML frontmatter with key, status, dependencies</mandate>
+  <mandate>Story files must include complete YAML frontmatter with ALL required fields: key, title, epic, status, priority, size, points, risk, sprint_id, depends_on, blocks, traces_to, date, author</mandate>
   <mandate>All acceptance criteria MUST use Given/When/Then format: "Given {context}, when {action}, then {expected result}"</mandate>
   <mandate>Check web access availability if story references external APIs</mandate>
 </critical>
@@ -43,9 +43,25 @@
 </step>
 <step n="6" title="Generate Output">
   <action>Read the story template from {project-root}/_gaia/lifecycle/templates/story-template.md</action>
-  <action>Set story status to 'backlog' in the story file header. Sprint assignment will happen later during /gaia-sprint-plan.</action>
+  <action>Read sizing_map from {project-root}/_gaia/_config/global.yaml to resolve T-shirt size to story points (S→2, M→5, L→8, XL→13).</action>
+  <action>Populate ALL YAML frontmatter fields from epics-and-stories.md data:
+    - key: story key from epics (e.g., E1-S1)
+    - title: story title
+    - epic: epic key and name (e.g., "E1 — Framework Core")
+    - status: backlog (always — sprint assignment happens later in /gaia-sprint-plan)
+    - priority: P0/P1/P2 from epics
+    - size: S/M/L/XL from epics
+    - points: resolved from sizing_map (e.g., L → 8)
+    - risk: high/medium/low from epics or test-plan risk levels
+    - sprint_id: null (assigned by /gaia-sprint-plan)
+    - depends_on: list of story keys this story depends on (from epics)
+    - blocks: list of story keys this story blocks (from epics)
+    - traces_to: requirement IDs this story traces to (from epics)
+    - date: current date
+    - author: agent name (e.g., "Nate (Scrum Master)")
+  </action>
   <template-output file="{implementation_artifacts}/{story_key}-{story_title_slug}.md">
-    Generate story file following the story-template.md structure. The filename must use the story key and slugified title (e.g., 1.2-user-login.md). Fill all template sections: User Story, Acceptance Criteria, Tasks/Subtasks (linked to AC numbers), Dev Notes, Technical Notes, Dependencies, Test Scenarios, Project Structure Notes, References, Dev Agent Record, and Estimate. Set status to 'backlog'.
+    Generate story file following the story-template.md structure. The filename must use the story key and slugified title (e.g., E1-S1-user-login.md). Include complete YAML frontmatter with ALL 14 fields populated. Fill all template sections: User Story, Acceptance Criteria, Tasks/Subtasks (linked to AC numbers), Dev Notes, Technical Notes, Dependencies, Test Scenarios, Project Structure Notes, References, Dev Agent Record, and Estimate.
   </template-output>
 </step>
 <next-step source="lifecycle-sequence.yaml">
