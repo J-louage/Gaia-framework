@@ -42,7 +42,7 @@
   <action>Dependency blocking: for each candidate story, check its depends_on list. If any dependency story is NOT in 'done' status, the story CANNOT be included in this sprint. Display: "BLOCKED: Story {key} depends on {dep_key} (status: {dep_status}) — cannot be included until {dep_key} is done."</action>
   <action>Priority surfacing: after story selection, check for P0 stories that are 'ready-for-dev' but were NOT selected. If any found, display: "WARNING: The following P0/critical stories are ready but not selected for this sprint:" followed by the list with their sizes. Ask user to confirm they intentionally excluded these high-priority stories.</action>
   <action>If {test_artifacts}/test-plan.md exists: apply risk levels to story selection — buffer 20% for high-risk stories in velocity estimate</action>
-  <action>Flag any high-risk story that does not have a corresponding {test_artifacts}/atdd-{story_key}.md file — add a sprint risk note</action>
+  <action>ATDD check (high-risk ONLY): for each story with risk = high, check if {test_artifacts}/atdd-{story_key}.md exists. If missing, add a sprint risk note: "HIGH-RISK story {key} has no ATDD file — run /gaia-atdd {key} before development." Do NOT flag medium or low risk stories — ATDD is required only for high-risk stories.</action>
 </step>
 <step n="5" title="Update Story Files">
   <action>For each selected story that has an individual file in {implementation_artifacts}/: update the sprint_id field to "sprint-{N}"</action>
@@ -83,7 +83,7 @@
 </step>
 <step n="9" title="Generate Output">
   <template-output file="{implementation_artifacts}/sprint-{sprint_id}-plan.md">
-    Generate sprint plan document with: sprint goals, selected stories (ordered), velocity target, risk assessment, Sprint Burndown Estimate (points remaining per day), and a Testing Readiness section listing high-risk stories, ATDD file status for each, and any missing test artifacts.
+    Generate sprint plan document with: sprint goals, selected stories (ordered), velocity target, risk assessment, Sprint Burndown Estimate (points remaining per day), and a Testing Readiness section listing ONLY high-risk stories with their ATDD file status. Medium and low risk stories do NOT require ATDD and should NOT appear in the ATDD readiness checks.
   </template-output>
   <action>Write sprint-status.yaml to {implementation_artifacts}/sprint-status.yaml</action>
 </step>
