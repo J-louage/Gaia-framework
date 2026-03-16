@@ -110,6 +110,18 @@ sequence:
         - /gaia-threat-model
         - /gaia-infra-design
 
+  edit-architecture:
+    phase: 3-solutioning
+    command: /gaia-edit-arch
+    next:
+      primary: /gaia-adversarial
+      note: "Optional for MINOR edits, required for SIGNIFICANT"
+      alternatives:
+        - command: /gaia-add-stories
+          context: "If cascade creates new stories"
+        - command: /gaia-test-design
+          context: "If cascade affects test plan"
+
   create-epics-stories:
     phase: 3-solutioning
     command: /gaia-create-epics
@@ -247,7 +259,7 @@ sequence:
       alternatives:
         - command: /gaia-correct-course
           context: "If sprint scope needs adjustment"
-        - command: /gaia-create-arch
+        - command: /gaia-edit-arch
           context: "If architecture changes are needed"
 
   add-stories:

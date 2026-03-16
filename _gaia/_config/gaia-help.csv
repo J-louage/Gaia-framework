@@ -15,6 +15,7 @@ module,phase,name,code,command,required,agent-name,description,output-location
 "lifecycle","2-planning","edit-prd","edit-prd","gaia-edit-prd","false","pm","Edit an existing PRD","docs/planning-artifacts"
 "lifecycle","2-planning","create-ux-design","create-ux","gaia-create-ux","false","ux-designer","Create UX design specifications","docs/planning-artifacts"
 "lifecycle","3-solutioning","create-architecture","create-arch","gaia-create-arch","true","architect","Design system architecture","docs/planning-artifacts"
+"lifecycle","3-solutioning","edit-architecture","edit-arch","gaia-edit-arch","false","architect","Edit an existing architecture document","docs/planning-artifacts"
 "lifecycle","3-solutioning","create-epics-stories","create-epics","gaia-create-epics","true","pm","Break requirements into epics and stories","docs/planning-artifacts"
 "lifecycle","3-solutioning","implementation-readiness","readiness-check","gaia-readiness-check","true","architect","Validate readiness for implementation","docs/planning-artifacts"
 "lifecycle","4-implementation","sprint-planning","sprint-plan","gaia-sprint-plan","true","sm","Plan sprint from epics and stories","docs/implementation-artifacts"

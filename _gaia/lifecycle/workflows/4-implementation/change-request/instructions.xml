@@ -84,10 +84,10 @@
 
 <step n="8" title="Update Architecture" optional="true" condition="technical_impact != NONE AND cr_status == APPROVED">
   <action>Skip if technical_impact = NONE.</action>
-  <action>If technical_impact = MINOR: flag for manual architecture review — "Run /gaia-adversarial targeting architecture.md after making manual updates."</action>
-  <action>If technical_impact = SIGNIFICANT or BREAKING: spawn a subagent using the Agent tool: "Load {project-root}/_gaia/core/tasks/review-adversarial.xml. Read its entire contents. Target: {planning_artifacts}/architecture.md. Target label: architecture. Follow the task instructions EXACTLY." When subagent returns: verify adversarial-review-architecture-{date}.md exists.</action>
-  <action>Record: architecture_reviewed = true, manual_update_needed = {true if SIGNIFICANT/BREAKING}.</action>
-  <action>If manual_update_needed: inform user — "Architecture needs manual updates for this change. Run /gaia-create-arch to revise, then re-run adversarial review."</action>
+  <action>If technical_impact = MINOR: spawn a subagent using the Agent tool: "Load {project-root}/_gaia/core/engine/workflow.xml, then process {project-root}/_gaia/lifecycle/workflows/3-solutioning/edit-architecture/workflow.yaml as workflow-config. Run in YOLO mode. Follow the workflow engine instructions EXACTLY. Context: This is change request {cr_id}. Apply these changes to the architecture: {change_description}. Technical impact is MINOR. Use CR ID {cr_id} when prompted."</action>
+  <action>If technical_impact = SIGNIFICANT: spawn a subagent using the Agent tool: "Load {project-root}/_gaia/core/engine/workflow.xml, then process {project-root}/_gaia/lifecycle/workflows/3-solutioning/edit-architecture/workflow.yaml as workflow-config. Run in YOLO mode. Follow the workflow engine instructions EXACTLY. Context: This is change request {cr_id}. Apply these changes to the architecture: {change_description}. Technical impact is SIGNIFICANT — adversarial review is required. Use CR ID {cr_id} when prompted."</action>
+  <action>If technical_impact = BREAKING: warn user — "BREAKING architectural change detected. Consider /gaia-create-arch for full regeneration, or /gaia-edit-arch for targeted major changes." Let user choose approach.</action>
+  <action>When subagent returns: verify architecture.md version note references {cr_id}. Record: architecture_updated = true.</action>
 </step>
 
 <step n="9" title="Update Stories" optional="true" condition="new_stories_needed OR existing_stories_affected AND cr_status == APPROVED">
@@ -118,6 +118,6 @@
     If REJECTED: include rejection reason and impact analysis for future reference.
   </template-output>
   <action>If cr_status == APPROVED and stories were added: recommend "/gaia-correct-course with CR ID {cr_id}" or "/gaia-create-story {story_key}" as next steps.</action>
-  <action>If cr_status == APPROVED and manual architecture update needed: recommend "/gaia-create-arch to revise architecture".</action>
+  <action>If cr_status == APPROVED and architecture update needed: recommend "/gaia-edit-arch to update architecture".</action>
 </step>
 </workflow>

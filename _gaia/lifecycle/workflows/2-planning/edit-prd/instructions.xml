@@ -43,8 +43,8 @@
   <action>Compare PRD changes against architecture scope</action>
   <action>Classify cascade impact:</action>
   <action>  NONE: requirements-only changes — architecture unaffected</action>
-  <action>  MINOR: architecture needs a section update — suggest manual review</action>
-  <action>  SIGNIFICANT: new component/API/data model — recommend /gaia-adversarial on architecture.md, then /gaia-add-stories</action>
+  <action>  MINOR: architecture needs a section update — recommend /gaia-edit-arch</action>
+  <action>  SIGNIFICANT: new component/API/data model — recommend /gaia-edit-arch with adversarial review, then /gaia-add-stories</action>
   <action>Report cascade assessment to user with recommended next command(s)</action>
 </step>
 </workflow>

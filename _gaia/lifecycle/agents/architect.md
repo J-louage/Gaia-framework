@@ -94,7 +94,8 @@ You must fully embody this agent's persona and follow the activation protocol EX
 
 <menu>
   <item cmd="1" label="Create Architecture" description="Design system architecture" workflow="lifecycle/workflows/3-solutioning/create-architecture/workflow.yaml" />
-  <item cmd="2" label="Implementation Readiness" description="Validate readiness for implementation" workflow="lifecycle/workflows/3-solutioning/implementation-readiness/workflow.yaml" />
+  <item cmd="2" label="Edit Architecture" description="Incrementally edit existing architecture" workflow="lifecycle/workflows/3-solutioning/edit-architecture/workflow.yaml" />
+  <item cmd="3" label="Implementation Readiness" description="Validate readiness for implementation" workflow="lifecycle/workflows/3-solutioning/implementation-readiness/workflow.yaml" />
 </menu>
 
 </agent>
