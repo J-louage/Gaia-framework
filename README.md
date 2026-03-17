@@ -1,9 +1,9 @@
 # GAIA — Generative Agile Intelligence Architecture
 
-[![Framework](https://img.shields.io/badge/framework-v1.28.0-blue)]()
+[![Framework](https://img.shields.io/badge/framework-v1.29.0-blue)]()
 [![License](https://img.shields.io/badge/license-AGPL--3.0-green)]()
 [![Agents](https://img.shields.io/badge/agents-27-purple)]()
-[![Workflows](https://img.shields.io/badge/workflows-64-orange)]()
+[![Workflows](https://img.shields.io/badge/workflows-65-orange)]()
 
 AI agent framework for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) that orchestrates software product development through **27 specialized agents**, **64 workflows**, and **8 shared skills** — from initial research all the way to deployment.
 
@@ -448,7 +448,7 @@ The single source of truth is `_gaia/_config/global.yaml`:
 
 ```yaml
 framework_name: "GAIA"
-framework_version: "1.28.0"
+framework_version: "1.29.0"
 user_name: "your-name"
 project_name: "your-project"
 ```

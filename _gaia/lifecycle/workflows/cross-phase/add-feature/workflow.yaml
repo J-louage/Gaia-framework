@@ -1,10 +1,10 @@
-name: add-stories
-description: 'Add new stories to existing epics or create new epics with stories'
+name: add-feature
+description: 'Guided orchestrator for adding a new feature — cascades through PRD, architecture, test plan, stories, traceability, and readiness'
 module: lifecycle
-agent: pm
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/add-stories.yaml"
+agent: orchestrator
+config_resolved: "{project-root}/_gaia/lifecycle/.resolved/add-feature.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
-installed_path: "{project-root}/_gaia/lifecycle/workflows/4-implementation/add-stories"
+installed_path: "{project-root}/_gaia/lifecycle/workflows/cross-phase/add-feature"
 instructions: "{installed_path}/instructions.xml"
 validation: "{installed_path}/checklist.md"
 input_file_patterns:
@@ -14,17 +14,19 @@ input_file_patterns:
   architecture:
     whole: "{planning_artifacts}/architecture.md"
     load_strategy: "SELECTIVE_LOAD"
-  epics:
-    whole: "{planning_artifacts}/epics-and-stories.md"
-    load_strategy: "FULL_LOAD"
   test_plan:
     whole: "{test_artifacts}/test-plan.md"
     load_strategy: "SELECTIVE_LOAD"
+  epics:
+    whole: "{planning_artifacts}/epics-and-stories.md"
+    load_strategy: "SELECTIVE_LOAD"
   sprint_status:
     whole: "{implementation_artifacts}/sprint-status.yaml"
-    load_strategy: "FULL_LOAD"
+    load_strategy: "SELECTIVE_LOAD"
 quality_gates:
   pre_start:
+    - check: "prd_exists"
+      on_fail: "HALT: prd.md does not exist. Run /gaia-create-prd first."
     - check: "epics_exists"
       on_fail: "HALT: epics-and-stories.md does not exist. Run /gaia-create-epics first."
 on_error:
