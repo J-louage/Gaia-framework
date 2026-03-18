@@ -5,6 +5,17 @@
   "bin": {
     "gaia-framework": "./bin/gaia-framework.js"
   },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:unit": "vitest run test/unit",
+    "test:validation": "vitest run test/validation/tier1",
+    "test:integration": "vitest run test/integration",
+    "test:shell": "bats test/shell/",
+    "test:all": "vitest run && bats test/shell/",
+    "fixtures:check": "node test/fixtures/sync-check.js"
+  },
   "keywords": [
     "gaia",
     "ai",
@@ -25,5 +36,12 @@
   "files": [
     "bin/",
     "gaia-install.sh"
-  ]
+  ],
+  "devDependencies": {
+    "vitest": "^3.1.0",
+    "@vitest/coverage-v8": "^3.1.0",
+    "js-yaml": "^4.1.0",
+    "fast-xml-parser": "^5.2.0",
+    "csv-parse": "^5.6.0"
+  }
 }

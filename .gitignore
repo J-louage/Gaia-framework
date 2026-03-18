@@ -1,7 +1,6 @@
 # GAIA Framework — runtime artifacts
-_gaia/_memory/checkpoints/*.yaml
-_gaia/_memory/*-sidecar/*.md
-_gaia/_memory/*-sidecar/*.yaml
+_memory/checkpoints/
+_memory/*-sidecar/archive/
 _gaia/**/.resolved/*.yaml
 !_gaia/**/.resolved/.gitkeep
 

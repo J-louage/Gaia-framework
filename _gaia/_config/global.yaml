@@ -37,5 +37,5 @@ sizing_map:
 # Framework paths
 installed_path: "{project-root}/_gaia"
 config_path: "{project-root}/_gaia/_config"
-memory_path: "{project-root}/_gaia/_memory"
-checkpoint_path: "{project-root}/_gaia/_memory/checkpoints"
+memory_path: "{project-root}/_memory"
+checkpoint_path: "{project-root}/_memory/checkpoints"
