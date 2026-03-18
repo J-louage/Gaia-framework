@@ -266,12 +266,13 @@ sequence:
     phase: 4-implementation
     command: /gaia-add-stories
     next:
-      primary: /gaia-sprint-plan
+      primary: /gaia-trace
+      note: "Update traceability matrix with new stories"
       alternatives:
+        - command: /gaia-sprint-plan
+          context: "To plan a sprint with the new stories"
         - command: /gaia-correct-course
           context: "If current sprint scope needs adjustment"
-        - command: /gaia-trace
-          context: "To update traceability matrix with new stories"
 
   tech-debt-review:
     phase: 4-implementation
