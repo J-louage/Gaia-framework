@@ -20,7 +20,7 @@ When any `/gaia-*` command is invoked:
 2. The command file specifies a workflow.yaml or agent.md to process
 3. If a workflow: load the pre-resolved config from `_gaia/{module}/.resolved/` first; fall back to runtime resolution
 4. Follow the engine instructions EXACTLY — execute steps in order, save outputs at checkpoints
-5. Write a checkpoint to `_gaia/_memory/checkpoints/` after each significant step
+5. Write a checkpoint to `_memory/checkpoints/` after each significant step
 
 ## Framework Location
 
@@ -85,7 +85,7 @@ GAIA supports separating the framework from the application source code. The `pr
 - In planning mode: present execution plan BEFORE processing steps; wait for user approval; user selects normal or yolo for runtime
 
 ### Checkpoint Discipline
-- Write a checkpoint to `_gaia/_memory/checkpoints/` after each step completes
+- Write a checkpoint to `_memory/checkpoints/` after each step completes
 - Include: workflow name, step number, key variables, output file path
 - Include `files_touched` with sha256 checksums (`shasum -a 256`) for every file created/modified during the workflow
 - On resume: validate checksums — warn user of changed files, offer Proceed / Start fresh / Review

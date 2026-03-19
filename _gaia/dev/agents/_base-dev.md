@@ -65,7 +65,7 @@ abstract: true
 - Override resolution: agent-specific customize.yaml → all-dev.customize.yaml → default skill-registry path
 
 ## Checkpoint Writing
-- After each subtask: write checkpoint to `_gaia/_memory/checkpoints/`
+- After each subtask: write checkpoint to `_memory/checkpoints/`
 - Include: story key, subtask index, files changed, test results
 - Include `files_touched` with sha256 checksums (`shasum -a 256 {path}`) and last_modified (ISO 8601) for every file created/modified
 - On resume: if checkpoint has `files_touched`, validate checksums before offering resume — flag changed/deleted files
