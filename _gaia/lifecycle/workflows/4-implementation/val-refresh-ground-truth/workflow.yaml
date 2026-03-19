@@ -1,0 +1,31 @@
+name: val-refresh-ground-truth
+description: 'Rescan filesystem and update verified facts in ground-truth.md'
+module: lifecycle
+agent: validator
+execution_mode: normal
+config_resolved: "{project-root}/_gaia/lifecycle/.resolved/val-refresh-ground-truth.yaml"
+config_source: "{project-root}/_gaia/lifecycle/config.yaml"
+installed_path: "{project-root}/_gaia/lifecycle/workflows/4-implementation/val-refresh-ground-truth"
+instructions: "{installed_path}/instructions.xml"
+validation: "{installed_path}/checklist.md"
+parameters:
+  incremental:
+    flag: "--incremental"
+    description: "Only scan files modified since last refresh timestamp. Full refresh is default."
+    default: false
+required_skill_sections:
+  - "ground-truth-management:full-refresh"
+  - "ground-truth-management:incremental-refresh"
+  - "ground-truth-management:entry-structure"
+  - "ground-truth-management:conflict-resolution"
+  - "ground-truth-management:token-budget"
+input_file_patterns:
+  ground_truth:
+    whole: "{project-root}/_memory/validator-sidecar/ground-truth.md"
+    load_strategy: "FULL_LOAD"
+on_error:
+  missing_file: "ask_user"
+  unresolved_variable: "halt"
+
+output:
+  primary: "{project-root}/_memory/validator-sidecar/ground-truth.md"
