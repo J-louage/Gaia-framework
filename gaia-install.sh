@@ -6,7 +6,7 @@ set -euo pipefail
 # Installs, updates, validates, and reports on GAIA installations.
 # ─────────────────────────────────────────────────────────────────────────────
 
-readonly VERSION="1.35.1"
+readonly VERSION="1.35.2"
 readonly GITHUB_REPO="https://github.com/jlouage/Gaia-framework.git"
 readonly MANIFEST_REL="_gaia/_config/manifest.yaml"
 
@@ -473,12 +473,14 @@ cmd_update() {
     "core/engine"
     "core/agents"
     "core/tasks"
+    "core/protocols"
     "core/workflows"
     "lifecycle/agents"
     "lifecycle/workflows"
     "lifecycle/templates"
     "lifecycle/checklists"
     "lifecycle/teams"
+    "lifecycle/skills"
     "dev/agents"
     "dev/skills"
     "dev/knowledge"
