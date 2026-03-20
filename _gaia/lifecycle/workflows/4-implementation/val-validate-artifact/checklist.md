@@ -19,7 +19,7 @@
 - [ ] `output.primary` references the target artifact itself
 
 ## instructions.xml Verification
-- [ ] Exactly 7 steps present
+- [ ] Exactly 8 steps present
 - [ ] Step 1: Parse Artifact — heading structure, section map, chunking strategy
 - [ ] Step 2: Extract Claims — JIT loads `claim-extraction` section, handles no-claims edge case
 - [ ] Step 3: Filesystem Verify — JIT loads `filesystem-verification` section
@@ -27,6 +27,7 @@
 - [ ] Step 5: Classify Findings — JIT loads `severity-classification` section, three severity levels (CRITICAL/WARNING/INFO)
 - [ ] Step 6: Discussion Loop — `template-output` checkpoint, user confirmation enforced
 - [ ] Step 7: Write Approved Findings — JIT loads `findings-formatting` section, replaces existing findings section
+- [ ] Step 8: Save to Val Memory — auto-saves decision-log + conversation-context (no user prompt)
 
 ## Skill Section References
 - [ ] `claim-extraction` referenced in Step 2
@@ -47,7 +48,7 @@
 - [ ] User confirmation mandatory before writing findings (template-output in Step 6)
 - [ ] `model_override: opus` enforced — workflow fails clearly if opus unavailable
 - [ ] Findings include timestamp and workflow version
-- [ ] `<next-step>` block references `/gaia-val-validate` and `/gaia-val-save`
+- [ ] `<next-step>` block references `/gaia-val-validate` (no /gaia-val-save — auto-save is built-in)
 
 ## Integration
 - [ ] `workflow-manifest.csv` has `val-validate-artifact` entry with correct fields

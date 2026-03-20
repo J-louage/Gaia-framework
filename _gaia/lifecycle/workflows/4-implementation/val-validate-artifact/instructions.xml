@@ -112,10 +112,34 @@
   <action>Release the "findings-formatting" skill section from context</action>
 </step>
 
+<step n="8" title="Save to Val Memory">
+  <action>Auto-save all validation results to Val's memory sidecar (no user prompt required):
+
+  1. Append to {project-root}/_memory/validator-sidecar/decision-log.md using standardized format:
+     ### [YYYY-MM-DD] Artifact Validation: {artifact_name}
+
+     - **Agent:** validator
+     - **Workflow:** val-validate-artifact
+     - **Sprint:** {sprint_id or "N/A"}
+     - **Status:** recorded
+     - **Related:** {artifact_path}
+
+     Validated artifact: {artifact_path}.
+     Claims checked: {total_claims}. Findings: {total_findings} ({critical_count} critical, {warning_count} warning, {info_count} info).
+     Approved: {approved_count}. Disputed: {disputed_count}.
+     {Brief summary of key findings}
+
+  2. Replace body of {project-root}/_memory/validator-sidecar/conversation-context.md (preserve header above first ---):
+     Last session: Artifact validation of {artifact_name}.
+     Date: {YYYY-MM-DD}. Claims: {total_claims}. Findings: {total_findings}.
+     Approved: {approved_count}. Disputed: {disputed_count}.
+
+  If _memory/validator-sidecar/ directory or files don't exist, create them with standard headers (see val-save-session workflow for templates).
+  If writing fails, log warning and continue — memory save is non-blocking.</action>
+</step>
 <next-step>
   Suggested next steps:
-  - /gaia-val-validate — run validation again on the same or a different artifact
-  - /gaia-val-save — save this validation session's decisions to Val's memory
+  - /gaia-val-validate — run validation again on a different artifact
 </next-step>
 
 </workflow>

@@ -19,6 +19,7 @@ validation-target: val-validate-plan workflow
 - [ ] Step 5: Architecture cross-reference checks ADR alignment (with ground truth fallback)
 - [ ] Step 6: Findings classified by severity (CRITICAL/WARNING/INFO) with discussion loop
 - [ ] Step 7: Approved findings written to plan artifact under Plan Validation Findings section
+- [ ] Step 8: Save to Val Memory — auto-saves decision-log + conversation-context (no user prompt)
 
 ## Quality
 - [ ] Val is read-only on plan content (append-only for findings section)

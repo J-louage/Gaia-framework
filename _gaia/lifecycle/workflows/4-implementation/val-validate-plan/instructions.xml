@@ -132,4 +132,29 @@
     Append Plan Validation Findings section with approved findings table, validation metadata, and summary counts.
   </template-output>
 </step>
+<step n="8" title="Save to Val Memory">
+  <action>Auto-save all validation results to Val's memory sidecar (no user prompt required):
+
+  1. Append to {project-root}/_memory/validator-sidecar/decision-log.md using standardized format:
+     ### [YYYY-MM-DD] Plan Validation: {plan_name}
+
+     - **Agent:** validator
+     - **Workflow:** val-validate-plan
+     - **Sprint:** {sprint_id or "N/A"}
+     - **Status:** recorded
+     - **Related:** {plan_artifact_path}
+
+     Validated plan: {plan_artifact_path}.
+     File targets: {file_target_count}. Version bumps: {version_bump_count}. ADR refs: {adr_count}.
+     Findings: {total_findings} ({approved_count} approved, {dismissed_count} dismissed).
+     {Brief summary of key findings}
+
+  2. Replace body of {project-root}/_memory/validator-sidecar/conversation-context.md (preserve header above first ---):
+     Last session: Plan validation of {plan_name}.
+     Date: {YYYY-MM-DD}. Findings: {total_findings}.
+     Approved: {approved_count}. Dismissed: {dismissed_count}.
+
+  If _memory/validator-sidecar/ directory or files don't exist, create them with standard headers (see val-save-session workflow for templates).
+  If writing fails, log warning and continue — memory save is non-blocking.</action>
+</step>
 </workflow>
