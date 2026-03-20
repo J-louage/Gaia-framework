@@ -1,7 +1,7 @@
 ---
 name: 'validate-story'
-description: 'Validate story completeness. Use when "validate story".'
-model: sonnet
+description: 'Full story validation with factual verification. Use when "validate story".'
+model: opus
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

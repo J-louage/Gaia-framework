@@ -1,7 +1,7 @@
 name: validate-story
-description: 'Validate story completeness and clarity'
+description: 'Full story validation — completeness, clarity, and factual verification'
 module: lifecycle
-agent: sm
+agent: validator
 config_resolved: "{project-root}/_gaia/lifecycle/.resolved/validate-story.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/4-implementation/validate-story"

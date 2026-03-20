@@ -2,17 +2,22 @@
 title: 'Story Validation Check'
 validation-target: 'Story validation'
 ---
-## Frontmatter
-- [ ] YAML frontmatter present with all 14 required fields: key, title, epic, status, priority, size, points, risk, sprint_id, depends_on, blocks, traces_to, date, author
-- [ ] Field values are valid (status in state machine, priority P0/P1/P2, size S/M/L/XL, points match sizing_map, risk high/medium/low)
-## Content
-- [ ] User Story follows As a / I want / So that format
-- [ ] All template sections present
-- [ ] ACs are testable (Given/When/Then)
-- [ ] Subtasks linked to AC numbers
-- [ ] Test Scenarios table populated
-- [ ] Dependencies valid
-- [ ] Definition of Done items defined
-## Output
+## Full Validation (Step 2)
+- [ ] YAML frontmatter — all 14 required fields present and valid
+- [ ] Completeness — all template sections present
+- [ ] Clarity — ACs in Given/When/Then, subtasks linked, DoD measurable
+- [ ] Semantic quality — duplicate detection, ADR cross-references
+- [ ] Dependencies — all declared dependencies exist and resolve
+- [ ] Factual verification — claims verified against filesystem and ground truth
+## Fix Loop (Step 3)
+- [ ] SM fixes findings, Val re-validates
+- [ ] Hard limit: 3 validation attempts max
+- [ ] PASS → status set to ready-for-dev
+- [ ] FAIL after 3 → status stays validating
+## Report (Step 4)
 - [ ] Validation result appended to story file
-- [ ] Status updated to ready-for-dev (if PASS) or kept as validating (if FAIL)
+- [ ] Separate validation report created at story-validation-{story_key}.md
+## Val Memory (Step 5)
+- [ ] Decision-log entry auto-saved with standardized format
+- [ ] Conversation-context updated with session summary
+- [ ] Memory save is non-blocking

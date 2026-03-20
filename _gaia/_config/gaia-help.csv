@@ -20,7 +20,7 @@ module,phase,name,code,command,required,agent-name,description,output-location
 "lifecycle","4-implementation","sprint-planning","sprint-plan","gaia-sprint-plan","true","sm","Plan sprint from epics and stories","docs/implementation-artifacts"
 "lifecycle","4-implementation","sprint-status","sprint-status","gaia-sprint-status","false","sm","Show current sprint status","docs/implementation-artifacts"
 "lifecycle","4-implementation","create-story","create-story","gaia-create-story","false","sm","Create detailed story file","docs/implementation-artifacts"
-"lifecycle","4-implementation","validate-story","validate-story","gaia-validate-story","false","sm","Validate story completeness","docs/implementation-artifacts"
+"lifecycle","4-implementation","validate-story","validate-story","gaia-validate-story","false","validator","Full story validation with factual verification","docs/implementation-artifacts"
 "lifecycle","4-implementation","dev-story","dev-story","gaia-dev-story","false","dev-*","Implement a user story","docs/implementation-artifacts"
 "lifecycle","4-implementation","code-review","code-review","gaia-code-review","false","dev-*","Perform code review","docs/implementation-artifacts"
 "lifecycle","4-implementation","qa-generate-tests","qa-tests","gaia-qa-tests","false","qa","Generate automated QA tests","docs/test-artifacts"
