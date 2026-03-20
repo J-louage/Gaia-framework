@@ -19,19 +19,20 @@ validation-target: 'Story file'
 - [ ] PM subagent loads epics-and-stories.md, prd.md, ux-design.md
 - [ ] Architect subagent loads architecture.md, test-plan.md, epics-and-stories.md
 - [ ] Consolidated agent responses presented for user review before proceeding
-## Pre-Save Validation
-- [ ] Pre-save validation step (Step 6) runs before Generate Output (Step 7)
-- [ ] Val validates ALL stories (no low-risk skip) — only skip is val_integration explicitly false
-- [ ] val_integration defaults to enabled — only skip when explicitly set to false
-- [ ] Draft written to temporary file (.draft-{story_key}.md) for Val to validate
-- [ ] Val invoked via invoke-workflow to val-validate-artifact on draft
-- [ ] Error handling: Val failure logs warning and continues (does not block story creation)
-- [ ] Approved findings applied to story content before final save
-- [ ] Draft file deleted after validation (whether passed, failed, or skipped)
+## Post-Save Validation (Steps 7-8)
+- [ ] Val validates saved story for completeness, clarity, semantics, dependencies, and factual accuracy
+- [ ] Val invoked via invoke-workflow to val-validate-artifact on saved file
+- [ ] On zero findings: status set to ready-for-dev
+- [ ] On findings: status set to validating, SM fixes, Val re-validates (loop)
+- [ ] Hard limit: 3 validation attempts — if 3rd fails, status stays validating and workflow exits
+- [ ] Error handling: Val failure logs warning, status stays backlog
+## Val Memory Persistence (Step 9)
 - [ ] Validation results auto-saved to Val memory sidecar (no user prompt)
 - [ ] Decision-log entry appended with standardized header format
 - [ ] Conversation-context updated with session summary (replace semantics)
 - [ ] Memory save is non-blocking — failure logs warning and continues
+## Next Step
+- [ ] next-step does NOT reference /gaia-validate-story (validation is built-in)
 ## Output Verification
 - [ ] Story file exists at {implementation_artifacts}/{story_key}-{story_title_slug}.md
 - [ ] Filename starts with story key (e.g., 1.2-user-login.md)

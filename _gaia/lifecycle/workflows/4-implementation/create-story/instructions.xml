@@ -81,55 +81,9 @@
 <step n="5" title="Definition of Done">
   <action>Append DoD checklist: all AC met, tests pass, code reviewed, docs updated</action>
 </step>
-<step n="6" title="Pre-Save Validation">
-  <action>Read {project-root}/_gaia/_config/global.yaml and check for val_integration field</action>
-  <check if="val_integration is explicitly set to false">Skip pre-save validation — val_integration is explicitly disabled. Proceed to Generate Output.</check>
-
+<step n="6" title="Generate Output">
   <action>Read the story template from {project-root}/_gaia/lifecycle/templates/story-template.md</action>
   <action>Read sizing_map from {project-root}/_gaia/_config/global.yaml to resolve T-shirt size to story points (S→2, M→5, L→8, XL→13).</action>
-  <action>Build the complete draft story content in memory using the template and all elaboration data. Write it to a temporary draft file: {implementation_artifacts}/.draft-{story_key}.md</action>
-
-  <action>Invoke Val validation as a subagent on the draft file. Wrap in error guard — if Val fails or crashes, log a warning, delete the draft, and continue to Generate Output.
-
-  On zero findings AND YOLO mode: delete draft, proceed silently.
-  On zero findings AND normal mode: delete draft, report "Pre-save validation passed — no findings." Proceed.
-  On non-zero findings (any mode): display findings table (severity, section, claim, finding, evidence).
-    For each finding, ask user: APPROVE (fix in draft before saving), DISPUTE (ignore), or EDIT (modify before approving).
-    Apply approved fixes to the story content in memory. Delete draft file.
-    If all findings disputed: report "All findings disputed — no changes." Delete draft. Proceed.
-
-  On failure: log warning "Pre-save validation could not complete: {error_reason}". Delete draft. Proceed to Generate Output.</action>
-
-  <invoke-workflow
-    target="{project-root}/_gaia/lifecycle/workflows/4-implementation/val-validate-artifact/workflow.yaml"
-    input_artifact="{implementation_artifacts}/.draft-{story_key}.md"
-    on_error="warn_and_continue"
-    model_override="opus" />
-
-  <action>Auto-save validation results to Val's memory sidecar (no user prompt required):
-
-  1. Append to {project-root}/_memory/validator-sidecar/decision-log.md using standardized format:
-     ### [YYYY-MM-DD] Pre-Save Validation: {story_key}
-
-     - **Agent:** validator
-     - **Workflow:** create-story (pre-save validation)
-     - **Sprint:** {sprint_id or "N/A"}
-     - **Status:** recorded
-     - **Related:** {story_key}
-
-     Validated draft story {story_key} ({story_title}).
-     Findings: {count} ({approved_count} approved, {disputed_count} disputed).
-     {Brief summary of key findings if any}
-
-  2. Replace body of {project-root}/_memory/validator-sidecar/conversation-context.md (preserve header above first ---):
-     Last session: Pre-save validation of {story_key} ({story_title}).
-     Date: {YYYY-MM-DD}. Findings: {count}. Outcome: {summary}.
-
-  If _memory/validator-sidecar/ directory or files don't exist, create them with standard headers (see val-save-session workflow for templates).
-  If writing fails, log warning and continue — memory save is non-blocking.</action>
-</step>
-<step n="7" title="Generate Output">
-  <action>If Step 6 was skipped (val_integration disabled): read the story template from {project-root}/_gaia/lifecycle/templates/story-template.md and read sizing_map from {project-root}/_gaia/_config/global.yaml now.</action>
   <action>Populate ALL YAML frontmatter fields from epics-and-stories.md data:
     - key: story key from epics (e.g., E1-S1)
     - title: story title
@@ -147,11 +101,76 @@
     - author: agent name (e.g., "Nate (Scrum Master)")
   </action>
   <template-output file="{implementation_artifacts}/{story_key}-{story_title_slug}.md">
-    Generate the final story file following the story-template.md structure, incorporating any fixes from pre-save validation. The filename must use the story key and slugified title (e.g., E1-S1-user-login.md). Include complete YAML frontmatter with ALL 14 fields populated. Fill all template sections: User Story, Acceptance Criteria, Tasks/Subtasks (linked to AC numbers), Dev Notes, Technical Notes, Dependencies, Test Scenarios, Project Structure Notes, References, Dev Agent Record, and Estimate.
+    Generate the story file following the story-template.md structure. The filename must use the story key and slugified title (e.g., E1-S1-user-login.md). Include complete YAML frontmatter with ALL 14 fields populated. Fill all template sections: User Story, Acceptance Criteria, Tasks/Subtasks (linked to AC numbers), Dev Notes, Technical Notes, Dependencies, Test Scenarios, Project Structure Notes, References, Dev Agent Record, and Estimate.
   </template-output>
 </step>
+<step n="7" title="Val Full Validation">
+  <action>Invoke Val as a subagent to perform full validation on the saved story file. Val validates:
+
+  (a) Completeness — all 14 YAML frontmatter fields present and valid, all template sections present
+  (b) Clarity — all ACs in Given/When/Then format, subtasks linked to AC numbers, DoD items measurable
+  (c) Semantic quality — duplicate detection across epic, ADR cross-references against architecture.md
+  (d) Dependencies — all declared dependencies exist and resolve
+  (e) Factual verification — extract verifiable claims (file paths, component references, API endpoints, versions), verify against filesystem and ground truth, classify as CRITICAL/WARNING/INFO
+
+  Val must load: the saved story file, {planning_artifacts}/architecture.md, {planning_artifacts}/epics-and-stories.md, and {project-root}/_memory/validator-sidecar/ground-truth.md (if exists).
+  Error guard: if Val fails or crashes, log warning, keep status as backlog, and skip to Step 9.</action>
+
+  <invoke-workflow
+    target="{project-root}/_gaia/lifecycle/workflows/4-implementation/val-validate-artifact/workflow.yaml"
+    input_artifact="{implementation_artifacts}/{story_key}-{story_title_slug}.md"
+    on_error="warn_and_continue"
+    model_override="opus" />
+</step>
+<step n="8" title="Validation Fix Loop">
+  <check if="Val returned zero findings">
+    <action>Update story status to 'ready-for-dev' in YAML frontmatter.</action>
+    <action>Report "Validation passed — story is ready for dev." Proceed to Step 9.</action>
+  </check>
+
+  <check if="Val returned findings">
+    <action>Set validation_attempt = 1.</action>
+    <action>Update story status to 'validating' in YAML frontmatter.</action>
+    <action>Present findings table to user (severity, section, claim, finding, evidence).</action>
+    <action>SM (Nate) addresses each finding:
+      - For each CRITICAL or WARNING finding: fix the story content directly
+      - For each INFO finding: fix or acknowledge with a note
+      Present the corrected story sections to user for confirmation.</action>
+    <action>After SM applies all fixes, write the updated story file. Increment validation_attempt.</action>
+    <action>Re-invoke Val validation on the updated story (same invoke-workflow as Step 7).
+      - If Val returns zero findings: update status to 'ready-for-dev'. Exit loop. Proceed to Step 9.
+      - If Val returns new findings AND validation_attempt &lt; 3: SM fixes again, Val re-validates.
+      - If Val returns findings AND validation_attempt = 3 (hard limit reached): keep status as 'validating', report "Validation limit reached — {N} findings remain. Run /gaia-validate-story {story_key} to continue." Proceed to Step 9.</action>
+  </check>
+</step>
+<step n="9" title="Save to Val Memory">
+  <action>Auto-save all validation results to Val's memory sidecar (no user prompt required):
+
+  1. Append to {project-root}/_memory/validator-sidecar/decision-log.md using standardized format:
+     ### [YYYY-MM-DD] Story Validation: {story_key}
+
+     - **Agent:** validator
+     - **Workflow:** create-story (post-save validation)
+     - **Sprint:** {sprint_id or "N/A"}
+     - **Status:** recorded
+     - **Related:** {story_key}
+
+     Validated story {story_key} ({story_title}).
+     Result: {PASS or FAIL after N attempts}.
+     Findings: {total_count} total, {fixed_count} fixed, {remaining_count} remaining.
+     Final status: {ready-for-dev or validating}.
+     {Brief summary of key findings and fixes}
+
+  2. Replace body of {project-root}/_memory/validator-sidecar/conversation-context.md (preserve header above first ---):
+     Last session: Story validation of {story_key} ({story_title}).
+     Date: {YYYY-MM-DD}. Result: {PASS/FAIL}. Attempts: {N}.
+     Findings: {count}. Fixed: {fixed_count}.
+
+  If _memory/validator-sidecar/ directory or files don't exist, create them with standard headers (see val-save-session workflow for templates).
+  If writing fails, log warning and continue — memory save is non-blocking.</action>
+</step>
 <next-step source="lifecycle-sequence.yaml">
-  <primary command="/gaia-validate-story">Validate the story file for completeness and quality</primary>
-  <alternative command="/gaia-create-story" context="To create another story before validating"/>
+  <primary command="/gaia-create-story">Create the next story</primary>
+  <alternative command="/gaia-sprint-plan" context="When all stories are created and validated (ready-for-dev)"/>
 </next-step>
 </workflow>
