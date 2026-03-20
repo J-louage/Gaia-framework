@@ -13,14 +13,21 @@ validation-target: 'Story file'
 - [ ] Each AC is testable
 - [ ] Dependencies correctly declared
 - [ ] Status set to backlog
-## Auto-Validation
-- [ ] Auto-validation step (Step 7) present in instructions.xml
-- [ ] Low-risk stories skip auto-validation silently
+## Elaboration
+- [ ] Step 4 offers [u] user answers or [a] agent-assisted elaboration
+- [ ] Agent-assisted mode spawns PM (Derek) and Architect (Theo) subagents in parallel
+- [ ] PM subagent loads epics-and-stories.md, prd.md, ux-design.md
+- [ ] Architect subagent loads architecture.md, test-plan.md, epics-and-stories.md
+- [ ] Consolidated agent responses presented for user review before proceeding
+## Pre-Save Validation
+- [ ] Pre-save validation step (Step 6) runs before Generate Output (Step 7)
+- [ ] Low-risk stories skip validation silently
 - [ ] val_integration config flag respected (absent/false = skip)
-- [ ] Val invoked via invoke-workflow to val-validate-artifact
+- [ ] Draft written to temporary file (.draft-{story_key}.md) for Val to validate
+- [ ] Val invoked via invoke-workflow to val-validate-artifact on draft
 - [ ] Error handling: Val failure logs warning and continues (does not block story creation)
-- [ ] YOLO mode: silent pass-through on zero findings, pause on non-zero
-- [ ] Discussion → selective sharing loop for findings matches E8-S6 pattern
+- [ ] Approved findings applied to story content before final save
+- [ ] Draft file deleted after validation (whether passed, failed, or skipped)
 ## Output Verification
 - [ ] Story file exists at {implementation_artifacts}/{story_key}-{story_title_slug}.md
 - [ ] Filename starts with story key (e.g., 1.2-user-login.md)

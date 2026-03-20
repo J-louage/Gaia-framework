@@ -29,11 +29,51 @@
 </step>
 <step n="4" title="Elaborate Story">
   <action>Present a brief summary of what was loaded from epics and architecture context for this story.</action>
-  <ask>Are there specific edge cases or error scenarios to call out in the acceptance criteria?</ask>
-  <ask>Any implementation preferences or constraints not in the architecture? (libraries, patterns, performance targets)</ask>
-  <ask>Should any acceptance criteria be split out or deprioritized?</ask>
-  <ask>Any additional context, stakeholder notes, or dependencies to include?</ask>
-  <action>Incorporate user responses into the story elaboration</action>
+  <ask>How would you like to elaborate this story?
+    [u] I'll answer the questions myself
+    [a] Let PM (Derek) and Architect (Theo) answer based on project artifacts</ask>
+
+  <check if="user chose [u]">
+    <ask>Are there specific edge cases or error scenarios to call out in the acceptance criteria?</ask>
+    <ask>Any implementation preferences or constraints not in the architecture? (libraries, patterns, performance targets)</ask>
+    <ask>Should any acceptance criteria be split out or deprioritized?</ask>
+    <ask>Any additional context, stakeholder notes, or dependencies to include?</ask>
+  </check>
+
+  <check if="user chose [a]">
+    <action>Spawn two subagents in parallel using the Agent tool (both calls in a single message):
+
+    PM subagent (Derek): "You are Derek, the Product Manager. Read the following files:
+      - {planning_artifacts}/epics-and-stories.md
+      - {planning_artifacts}/prd.md (if exists)
+      - {planning_artifacts}/ux-design.md (if exists)
+    For story {story_key} ({story_title}), answer these questions:
+    1. What specific edge cases or error scenarios should be called out in the acceptance criteria?
+    2. Should any acceptance criteria be split out or deprioritized? Why?
+    3. Any additional stakeholder notes, context, or dependencies to include?
+    Return your answers in a structured format."
+
+    Architect subagent (Theo): "You are Theo, the System Architect. Read the following files:
+      - {planning_artifacts}/architecture.md
+      - {test_artifacts}/test-plan.md (if exists)
+      - {planning_artifacts}/epics-and-stories.md
+    For story {story_key} ({story_title}), answer these questions:
+    1. Any implementation preferences or constraints not captured in the architecture? (libraries, patterns, performance targets)
+    2. Any technical dependencies or additional context to include?
+    Return your answers in a structured format."
+    </action>
+
+    <action>When both subagents return: merge responses into a consolidated summary. Present to user:</action>
+    <ask>Here are the responses from Derek (PM) and Theo (Architect):
+
+    {consolidated_summary}
+
+    [c] Continue with these responses
+    [e] Edit — I want to modify some answers
+    [a] Add — I want to add more context on top of these</ask>
+  </check>
+
+  <action>Incorporate responses (user's or agents') into the story elaboration</action>
   <action>Expand acceptance criteria in Given/When/Then format: "Given {context}, when {action}, then {expected result}"</action>
   <action>Add technical notes from architecture context</action>
   <action>Define subtasks for implementation</action>
@@ -41,9 +81,36 @@
 <step n="5" title="Definition of Done">
   <action>Append DoD checklist: all AC met, tests pass, code reviewed, docs updated</action>
 </step>
-<step n="6" title="Generate Output">
+<step n="6" title="Pre-Save Validation">
+  <action>Read {project-root}/_gaia/_config/global.yaml and check for val_integration field</action>
+  <check if="val_integration is false OR val_integration field is absent">Skip pre-save validation — val_integration is disabled or not configured. Proceed to Generate Output.</check>
+
+  <action>Read the risk level for this story from epics-and-stories.md</action>
+  <check if="risk == 'low'">Skip pre-save validation — low-risk stories bypass validation to avoid noise. Proceed to Generate Output.</check>
+
   <action>Read the story template from {project-root}/_gaia/lifecycle/templates/story-template.md</action>
   <action>Read sizing_map from {project-root}/_gaia/_config/global.yaml to resolve T-shirt size to story points (S→2, M→5, L→8, XL→13).</action>
+  <action>Build the complete draft story content in memory using the template and all elaboration data. Write it to a temporary draft file: {implementation_artifacts}/.draft-{story_key}.md</action>
+
+  <action>Invoke Val validation as a subagent on the draft file. Wrap in error guard — if Val fails or crashes, log a warning, delete the draft, and continue to Generate Output.
+
+  On zero findings AND YOLO mode: delete draft, proceed silently.
+  On zero findings AND normal mode: delete draft, report "Pre-save validation passed — no findings." Proceed.
+  On non-zero findings (any mode): display findings table (severity, section, claim, finding, evidence).
+    For each finding, ask user: APPROVE (fix in draft before saving), DISPUTE (ignore), or EDIT (modify before approving).
+    Apply approved fixes to the story content in memory. Delete draft file.
+    If all findings disputed: report "All findings disputed — no changes." Delete draft. Proceed.
+
+  On failure: log warning "Pre-save validation could not complete: {error_reason}". Delete draft. Proceed to Generate Output.</action>
+
+  <invoke-workflow
+    target="{project-root}/_gaia/lifecycle/workflows/4-implementation/val-validate-artifact/workflow.yaml"
+    input_artifact="{implementation_artifacts}/.draft-{story_key}.md"
+    on_error="warn_and_continue"
+    model_override="opus" />
+</step>
+<step n="7" title="Generate Output">
+  <action>If Step 6 was skipped (val_integration disabled or low-risk): read the story template from {project-root}/_gaia/lifecycle/templates/story-template.md and read sizing_map from {project-root}/_gaia/_config/global.yaml now.</action>
   <action>Populate ALL YAML frontmatter fields from epics-and-stories.md data:
     - key: story key from epics (e.g., E1-S1)
     - title: story title
@@ -61,34 +128,8 @@
     - author: agent name (e.g., "Nate (Scrum Master)")
   </action>
   <template-output file="{implementation_artifacts}/{story_key}-{story_title_slug}.md">
-    Generate story file following the story-template.md structure. The filename must use the story key and slugified title (e.g., E1-S1-user-login.md). Include complete YAML frontmatter with ALL 14 fields populated. Fill all template sections: User Story, Acceptance Criteria, Tasks/Subtasks (linked to AC numbers), Dev Notes, Technical Notes, Dependencies, Test Scenarios, Project Structure Notes, References, Dev Agent Record, and Estimate.
+    Generate the final story file following the story-template.md structure, incorporating any fixes from pre-save validation. The filename must use the story key and slugified title (e.g., E1-S1-user-login.md). Include complete YAML frontmatter with ALL 14 fields populated. Fill all template sections: User Story, Acceptance Criteria, Tasks/Subtasks (linked to AC numbers), Dev Notes, Technical Notes, Dependencies, Test Scenarios, Project Structure Notes, References, Dev Agent Record, and Estimate.
   </template-output>
-</step>
-<step n="7" title="Auto-Validate Story with Val">
-  <action>Read {project-root}/_gaia/_config/global.yaml and check for val_integration field</action>
-  <check if="val_integration is false OR val_integration field is absent">Skip auto-validation — val_integration is disabled or not configured. Proceed to next-step.</check>
-
-  <action>Read the risk field from the newly created story file's YAML frontmatter</action>
-  <check if="risk == 'low'">Skip auto-validation — low-risk stories bypass validation to avoid noise during batch creation. Proceed to next-step.</check>
-
-  <action>Invoke Val validation as a subagent. Wrap the invocation in an error guard — if the subagent fails or crashes, log a warning and continue. The story file is already saved; auto-validation is an enhancement, not a gate.
-
-  On success: check finding count from Val's response.
-    — If zero findings AND YOLO mode: complete silently — no output, no pause, proceed to next-step.
-    — If zero findings AND normal mode: report "Auto-validation complete — no findings." and proceed.
-    — If non-zero findings (any mode): pause and present findings using the discussion → selective sharing loop:
-      1. Display findings table (severity, section, claim, finding, evidence)
-      2. For each finding, ask user: APPROVE (include in story), DISPUTE (exclude), or EDIT (modify before approving)
-      3. Write approved findings to the story file under "## Validation Findings"
-      4. If all findings disputed: report "All findings disputed — no changes written." and proceed.
-
-  On failure: log warning "Auto-validation could not complete: {error_reason}" and proceed to next-step. Do NOT halt the workflow.</action>
-
-  <invoke-workflow
-    target="{project-root}/_gaia/lifecycle/workflows/4-implementation/val-validate-artifact/workflow.yaml"
-    input_artifact="{implementation_artifacts}/{story_key}-{story_title_slug}.md"
-    on_error="warn_and_continue"
-    model_override="opus" />
 </step>
 <next-step source="lifecycle-sequence.yaml">
   <primary command="/gaia-validate-story">Validate the story file for completeness and quality</primary>
