@@ -52,7 +52,7 @@ Updates ground truth by scanning only files changed since the last refresh.
 
 1. Run `git diff --name-only {last_refresh_commit}..HEAD` to get changed files
 2. If no git history: fall back to file modification timestamps vs. `last-verified` dates
-3. Filter to GAIA-relevant paths: `_gaia/`, `.claude/commands/`, `docs/`, config files
+3. Filter to project-relevant paths: `{project-path}/`, `docs/*-artifacts/`. Exclude: `_gaia/`, `.claude/`, `bin/`, `_memory/`, `node_modules/`, `.git/`
 
 ### Comparison Logic
 
@@ -82,13 +82,17 @@ Complete scan of the framework and project to rebuild or reconcile the entire gr
 
 | Target | Path Pattern | Facts Extracted |
 |--------|-------------|-----------------|
-| Agents | `_gaia/*/agents/*.md` | Agent count, IDs, modules, extends relations |
-| Workflows | `_gaia/*/workflows/**/*.yaml` | Workflow count, names, modules, instructions paths |
-| Skills | `_gaia/*/skills/*.md` | Skill count, section markers, line counts |
-| Slash commands | `.claude/commands/*.md` | Command count, names, referenced workflows |
-| Manifests | `_gaia/_config/*.csv`, `_gaia/_config/*.yaml` | Manifest row counts, registered entries |
-| Configs | `_gaia/_config/global.yaml`, `*/config.yaml` | Config keys, values, defaults |
-| Artifacts | `docs/*-artifacts/*.md` | Artifact count per category, key metadata |
+| Project source files | `{project-path}/**/*` | File inventory, directory structure, languages, entry points |
+| Project config files | `{project-path}/*.{json,yaml,yml,toml,xml,env.example}` | Config keys, settings, dependencies |
+| Package manifests | `{project-path}/**/package.json`, `pubspec.yaml`, `pom.xml`, etc. | Dependencies, versions, scripts |
+| Planning artifacts | `docs/planning-artifacts/*.md` | Artifact count, names, dates |
+| Implementation artifacts | `docs/implementation-artifacts/*.md` | Artifact count, story keys, types |
+| Test artifacts | `docs/test-artifacts/*.md` | Artifact count, coverage areas |
+
+### Exclusions
+
+Always skip these directories — they are framework internals, not project code:
+`_gaia/`, `.claude/`, `bin/`, `_memory/`, `node_modules/`, `.git/`, `build/`, `dist/`
 
 ### Output Format
 

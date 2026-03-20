@@ -35,69 +35,44 @@
 
 <step n="5" title="Scan Inventory Targets">
   <action>Load ground-truth-management skill section based on mode: full-refresh or incremental-refresh (JIT)</action>
-  <action>Scan the following 11 inventory targets, showing section-by-section progress to the user after each target completes:</action>
+  <action>Scan the following 6 inventory targets, showing section-by-section progress to the user after each target completes.</action>
 
-  <action title="Target 1: Lifecycle Agents">
-    Scan {project-root}/_gaia/lifecycle/agents/*.md
-    Extract: agent ID, name, model, persona summary
-    Report progress: "Scanning lifecycle agents... found N agents."
+  <action title="Exclusion list">
+    ALWAYS exclude these directories and files from scanning — they are framework internals, not project code:
+    _gaia/, .claude/, bin/, _memory/, node_modules/, .git/, build/, dist/, .DS_Store, *.lock
   </action>
 
-  <action title="Target 2: Lifecycle Workflows">
-    Scan {project-root}/_gaia/lifecycle/workflows/*/workflow.yaml (recursive)
-    Extract: workflow name, inputs, outputs, agent, phase
-    Report progress: "Scanning lifecycle workflows... found N workflows."
+  <action title="Target 1: Project Source Files">
+    Scan {project-path}/**/* (excluding the exclusion list above)
+    Extract: file inventory, directory structure, languages used, entry points
+    Report progress: "Scanning project source files... found N files across N directories."
   </action>
 
-  <action title="Target 3: Dev Agents">
-    Scan {project-root}/_gaia/dev/agents/*.md
-    Extract: agent ID, name, stack, extends reference
-    Report progress: "Scanning dev agents... found N agents."
+  <action title="Target 2: Project Config Files">
+    Scan {project-path}/*.{json,yaml,yml,toml,xml,env.example} (root-level config files)
+    Extract: config keys, settings, dependency declarations
+    Report progress: "Scanning project config files... found N config files."
   </action>
 
-  <action title="Target 4: Dev Skills">
-    Scan {project-root}/_gaia/dev/skills/*.md
-    Extract: skill name, sections list
-    Report progress: "Scanning dev skills... found N skills."
+  <action title="Target 3: Project Package Manifests">
+    Scan {project-path}/**/package.json, pubspec.yaml, pom.xml, build.gradle, requirements.txt, Cargo.toml, go.mod, Gemfile, *.csproj (whichever exist)
+    Extract: dependencies, versions, scripts, build targets
+    Report progress: "Scanning package manifests... found N manifests."
   </action>
 
-  <action title="Target 5: Lifecycle Skills">
-    Scan {project-root}/_gaia/lifecycle/skills/*.md
-    Extract: skill name, sections list
-    Report progress: "Scanning lifecycle skills... found N skills."
-  </action>
-
-  <action title="Target 6: Slash Commands">
-    Scan {project-root}/.claude/commands/gaia-*.md
-    Extract: command name, model, workflow path reference
-    Report progress: "Scanning slash commands... found N commands."
-  </action>
-
-  <action title="Target 7: Workflow Manifest">
-    Scan {project-root}/_gaia/_config/workflow-manifest.csv
-    Extract: all entries, cross-reference against discovered workflows
-    Report progress: "Scanning workflow manifest... found N entries."
-  </action>
-
-  <action title="Target 8: Global Config">
-    Scan {project-root}/_gaia/_config/global.yaml
-    Extract: framework version, project settings, output paths
-    Report progress: "Scanning global config... extracted framework settings."
-  </action>
-
-  <action title="Target 9: Planning Artifacts">
+  <action title="Target 4: Planning Artifacts">
     Scan {project-root}/docs/planning-artifacts/*.md
     Extract: artifact name, type, date
     Report progress: "Scanning planning artifacts... found N artifacts."
   </action>
 
-  <action title="Target 10: Implementation Artifacts">
+  <action title="Target 5: Implementation Artifacts">
     Scan {project-root}/docs/implementation-artifacts/*.md
     Extract: artifact name, type, story key if applicable
     Report progress: "Scanning implementation artifacts... found N artifacts."
   </action>
 
-  <action title="Target 11: Test Artifacts">
+  <action title="Target 6: Test Artifacts">
     Scan {project-root}/docs/test-artifacts/*.md
     Extract: artifact name, type, coverage area
     Report progress: "Scanning test artifacts... found N artifacts."
