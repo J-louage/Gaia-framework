@@ -32,6 +32,7 @@
   <action>Calculate Debt Score = (Impact + Risk of Inaction) - Effort</action>
   <action>Map to priority: Score >= 7 = FIX NOW, 4-6 = PLAN NEXT, 1-3 = TRACK</action>
   <action>Sort all items by Debt Score descending</action>
+  <action if="yolo_mode">In YOLO mode: auto-confirm the recommended scores for all items — skip the user review prompt below.</action>
   <ask>Review the top 5 scored items — confirm or adjust the scores</ask>
 </step>
 <step n="4" title="Calculate Aging">
@@ -67,5 +68,31 @@
   <action>  If INFRASTRUCTURE debt dominates: "Run /gaia-ci-setup to close CI/CD gaps"</action>
   <action>  If items were auto-escalated: "Review escalated items — aging has upgraded their priority"</action>
   <action>Present the specific /gaia-* command chain for each top-priority item</action>
+</step>
+<step n="7" title="Save to Val Memory">
+  <action>Auto-save tech debt review decisions to Val's memory sidecar (no user prompt required):
+
+  1. Append to {project-root}/_memory/validator-sidecar/decision-log.md:
+     ### [YYYY-MM-DD] Tech Debt Review: {total_count} items
+
+     - **Agent:** validator
+     - **Workflow:** tech-debt-review
+     - **Sprint:** {sprint_id}
+     - **Status:** recorded
+
+     Dashboard: {total_count} items. FIX NOW: {fix_now_count}. PLAN NEXT: {plan_next_count}. TRACK: {track_count}.
+     Overdue: {overdue_count}. Auto-escalated: {escalated_count}.
+     Debt ratio: {ratio}%. Trend: {delta vs previous} ({up/down/stable}).
+     Top category: {dominant_category} ({count} items).
+     Top 3 FIX NOW items: {brief list with scores}.
+     Recommendations: {list of recommended /gaia-* commands}.
+
+  2. Replace body of {project-root}/_memory/validator-sidecar/conversation-context.md (preserve header above first ---):
+     Last session: Tech debt review for {sprint_id}.
+     Date: {YYYY-MM-DD}. Items: {total_count}. FIX NOW: {fix_now_count}. Overdue: {overdue_count}.
+     Debt ratio: {ratio}%. Trend: {up/down/stable}.
+
+  If _memory/validator-sidecar/ directory or files don't exist, create them with standard headers.
+  If writing fails, log warning and continue — memory save is non-blocking.</action>
 </step>
 </workflow>
