@@ -46,7 +46,9 @@
 </step>
 <step n="5" title="Update Story Files">
   <action>For each selected story that has an individual file in {implementation_artifacts}/: update the sprint_id field to "sprint-{N}"</action>
-  <action>Set status to 'backlog' for the sprint — the story transitions from 'ready-for-dev' to 'backlog' when assigned to a sprint</action>
+  <action>For each selected story: invoke status-sync protocol to set status to 'backlog' — the story transitions from 'ready-for-dev' to 'backlog' when assigned to a sprint.
+    <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="backlog" source_workflow="sprint-planning" />
+    Note: sprint-status.yaml may not exist yet at this point (created in Step 8) — the protocol will skip the sprint-status.yaml update if the file doesn't exist.</action>
   <action>Include all modified story files in the checkpoint files_touched with sha256 checksums</action>
 </step>
 <step n="6" title="Optional: Mobile Testing">

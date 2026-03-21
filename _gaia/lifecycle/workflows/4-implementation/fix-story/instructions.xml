@@ -50,8 +50,14 @@
     - Clarity: verify ACs are in Given/When/Then format, subtasks linked to AC numbers, DoD items are measurable
     - Dependencies: verify declared dependencies exist and are resolvable
   </action>
-  <check if="all_checks_pass">If all checks pass: update story status to 'ready-for-dev' and inform user "Story {story_key} passed re-validation and is now ready for development."</check>
-  <check if="issues_remain">If any checks still fail: list remaining issues, keep status as 'validating', and inform user: "Some issues remain after fixes — run /gaia-fix-story again or manually edit, then /gaia-validate-story."</check>
+  <check if="all_checks_pass">
+    <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="ready-for-dev" source_workflow="fix-story" />
+    Inform user "Story {story_key} passed re-validation and is now ready for development."
+  </check>
+  <check if="issues_remain">
+    <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="validating" source_workflow="fix-story" />
+    List remaining issues and inform user: "Some issues remain after fixes — run /gaia-fix-story again or manually edit, then /gaia-validate-story."
+  </check>
 </step>
 <step n="6" title="Save Corrected Story">
   <template-output file="{implementation_artifacts}/{story_key}-{story_title_slug}.md">

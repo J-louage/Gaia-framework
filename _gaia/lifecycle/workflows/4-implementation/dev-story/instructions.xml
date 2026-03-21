@@ -32,8 +32,7 @@
   <check if="checkpoint_exists">Offer to resume from last checkpoint or start fresh</check>
 </step>
 <step n="4" title="Update Status">
-  <action>Set story status to 'in-progress' in story file frontmatter</action>
-  <action>Update sprint-status.yaml: set story to 'in-progress'</action>
+  <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="in-progress" source_workflow="dev-story" />
 </step>
 <step n="5" title="Plan Implementation">
   <action>Load relevant sections from {planning_artifacts}/architecture.md — identify architectural components, patterns, and ADRs that apply to this story's scope</action>
@@ -216,8 +215,7 @@
   <check if="any_dod_unchecked">HALT: All Definition of Done items must be checked before moving to review. Unchecked items: {list}. Return to Step 10 to resolve.</check>
 </step>
 <step n="14" title="Update Status">
-  <action>Set story status to 'review' in story file</action>
-  <action>Update sprint-status.yaml: set story to 'review'</action>
+  <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="review" source_workflow="dev-story" />
   <action>Append files changed list to story file</action>
   <action>Initialize Review Gate section in story file: set all six rows (Code Review, QA Tests, Security Review, Test Automation, Test Review, Performance Review) to PENDING with report link "—". If Review Gate section already exists, reset all rows to PENDING.</action>
   <template-output file="{implementation_artifacts}/{story_key}-*.md">

@@ -186,6 +186,7 @@ execution modes (normal/yolo/planning), checkpoints, and quality gates.
   <protocol name="preflight-check" file="protocols/preflight-check.xml" />
   <protocol name="handoff" file="protocols/handoff.xml" />
   <protocol name="review-gate-check" file="protocols/review-gate-check.xml" />
+  <protocol name="status-sync" file="protocols/status-sync.xml" />
 </protocols>
 
 <llm final="true">

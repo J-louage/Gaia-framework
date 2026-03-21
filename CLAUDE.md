@@ -1,4 +1,4 @@
-# GAIA Framework v1.37.1
+# GAIA Framework v1.38.0
 
 This project uses the **GAIA** (Generative Agile Intelligence Architecture) framework — an AI agent framework for Claude Code that orchestrates software product development through 25 specialized agents, 65 workflows, and 8 shared skills.
 
@@ -106,9 +106,9 @@ GAIA supports separating the framework from the application source code. The `pr
 
 ### Sprint-Status Write Safety
 - **Story file is source of truth** — sprint-status.yaml is a derived/cached view
-- **Review workflows (6)** MUST NOT write to sprint-status.yaml — update only the story file
-- **All other workflows** MUST re-read sprint-status.yaml immediately before writing
-- Running `/gaia-sprint-status` reconciles sprint-status.yaml with story files
+- **All status transitions** MUST use the `status-sync` protocol (`_gaia/core/protocols/status-sync.xml`) — this updates both the story file and sprint-status.yaml atomically
+- **Review workflows (6)** update only the Review Gate table — the `review-gate-check` protocol handles the `review → done` transition via status-sync
+- Running `/gaia-sprint-status` reconciles sprint-status.yaml with story files (catches any remaining drift)
 
 ## Naming Conventions
 

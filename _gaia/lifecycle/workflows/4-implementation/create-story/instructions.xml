@@ -126,13 +126,13 @@
 </step>
 <step n="8" title="Validation Fix Loop">
   <check if="Val returned zero findings">
-    <action>Update story status to 'ready-for-dev' in YAML frontmatter.</action>
+    <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="ready-for-dev" source_workflow="create-story" />
     <action>Report "Validation passed — story is ready for dev." Proceed to Step 9.</action>
   </check>
 
   <check if="Val returned findings">
     <action>Set validation_attempt = 1.</action>
-    <action>Update story status to 'validating' in YAML frontmatter.</action>
+    <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="validating" source_workflow="create-story" />
     <action>Present findings table to user (severity, section, claim, finding, evidence).</action>
     <action>SM (Nate) addresses each finding:
       - For each CRITICAL or WARNING finding: fix the story content directly
@@ -140,7 +140,7 @@
       Present the corrected story sections to user for confirmation.</action>
     <action>After SM applies all fixes, write the updated story file. Increment validation_attempt.</action>
     <action>Re-invoke Val validation on the updated story (same invoke-workflow as Step 7).
-      - If Val returns zero findings: update status to 'ready-for-dev'. Exit loop. Proceed to Step 9.
+      - If Val returns zero findings: invoke status-sync with new_status='ready-for-dev'. Exit loop. Proceed to Step 9.
       - If Val returns new findings AND validation_attempt &lt; 3: SM fixes again, Val re-validates.
       - If Val returns findings AND validation_attempt = 3 (hard limit reached): keep status as 'validating', report "Validation limit reached — {N} findings remain. Run /gaia-validate-story {story_key} to continue." Proceed to Step 9.</action>
   </check>

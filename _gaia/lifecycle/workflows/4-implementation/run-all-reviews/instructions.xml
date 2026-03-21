@@ -67,7 +67,9 @@
   <action>Read story file — parse full Review Gate table</action>
   <action>Generate summary table: review name | verdict | report link</action>
   <action>If ALL 6 PASSED: invoke the review-gate-check protocol to evaluate DoD and transition story to 'done' if appropriate.</action>
-  <action>If any FAILED: set story status to 'in-progress' in story file frontmatter. List failed reviews with report links. Report: "Story {story_key} moved to in-progress — fix issues and re-run failed reviews."</action>
+  <action>If any FAILED:
+    <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="in-progress" source_workflow="run-all-reviews" />
+    List failed reviews with report links. Report: "Story {story_key} moved to in-progress — fix issues and re-run failed reviews."</action>
   <invoke-protocol name="review-gate-check" file="{project-root}/_gaia/core/protocols/review-gate-check.xml" />
   <template-output file="{implementation_artifacts}/{story_key}-review-summary.md">
     Generate review summary: story key, date, all 6 review verdicts with report links, final story status, and next actions if any reviews failed.
