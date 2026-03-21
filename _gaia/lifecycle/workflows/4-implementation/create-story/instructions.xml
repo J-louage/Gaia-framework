@@ -29,6 +29,7 @@
 </step>
 <step n="4" title="Elaborate Story">
   <action>Present a brief summary of what was loaded from epics and architecture context for this story.</action>
+  <action if="yolo_mode">In YOLO mode: auto-select [a] — let PM (Derek) and Architect (Theo) answer based on project artifacts. Skip the elaboration method prompt below.</action>
   <ask>How would you like to elaborate this story?
     [u] I'll answer the questions myself
     [a] Let PM (Derek) and Architect (Theo) answer based on project artifacts</ask>
@@ -64,6 +65,7 @@
     </action>
 
     <action>When both subagents return: merge responses into a consolidated summary. Present to user:</action>
+    <action if="yolo_mode">In YOLO mode: auto-continue with the subagent responses — skip the [c]/[e]/[a] prompt below.</action>
     <ask>Here are the responses from Derek (PM) and Theo (Architect):
 
     {consolidated_summary}
