@@ -13,11 +13,16 @@
 <step n="2" title="Scan Story Files">
   <action>List all .md files in {implementation_artifacts}/</action>
   <action>For each file, read ONLY the YAML frontmatter (stop at closing ---)</action>
-  <action>Extract: story key, status, sprint_id (if present)</action>
+  <action>Extract: story key, title, status, sprint_id (if present), author</action>
   <action>Skip non-story files (e.g., sprint-status.yaml, epic-status.md)</action>
 </step>
 <step n="3" title="Aggregate Status">
   <action>Join scanned story statuses to epic-story mapping from step 1</action>
+  <action>For each story, resolve the display title using this priority:
+    1. Story file frontmatter title (from Step 2) — primary source, always preferred
+    2. Title from epics-and-stories.md (from Step 1) — fallback if no story file exists
+    3. If neither available: show "(no title)" with the story key
+    If the story was created by triage (author field contains "Triage"): append " ⚑" flag after the title to indicate triage origin</action>
   <action>Stories in manifest but with no file: mark as backlog</action>
   <action>Per epic: count done, in-progress, blocked, review, ready-for-dev, validating, backlog</action>
   <action>Per epic: compute completion percentage (done / total * 100)</action>

@@ -2,6 +2,7 @@ name: epic-status
 description: 'Show epic completion dashboard across all sprints'
 module: lifecycle
 agent: sm
+template_output_prompt: "[c] Continue"
 config_resolved: "{project-root}/_gaia/lifecycle/.resolved/epic-status.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/4-implementation/epic-status"
