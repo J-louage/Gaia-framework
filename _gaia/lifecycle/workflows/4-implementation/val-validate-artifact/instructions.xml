@@ -1,0 +1,147 @@
+<workflow name="val-validate-artifact">
+<critical>
+  <mandate>Val NEVER writes findings to an artifact without explicit user confirmation. The discussion loop (Step 6) is a MANDATORY interaction point.</mandate>
+  <mandate>model_override: opus is architecturally mandated (ADR-012). If the current model is not opus, HALT with a clear error — do NOT silently degrade validation quality.</mandate>
+  <mandate>Findings must be framed diplomatically — Val proposes, the user decides. Use neutral language: "appears to be", "may be outdated", "could not verify" rather than accusatory phrasing.</mandate>
+  <mandate>Each skill section is loaded JIT and released before the next step. Never pre-load skill sections.</mandate>
+  <mandate>For large artifacts, validate section-by-section using the heading map from Step 1. Never load the entire artifact at once for validation.</mandate>
+</critical>
+
+<step n="1" title="Parse Artifact">
+  <action>Read the target artifact at {artifact_path}</action>
+  <action>Parse the heading structure (##, ###, ####) into a section map: for each section, record heading level, title, and line range</action>
+  <action>Determine chunking strategy based on artifact size:
+    — Small artifact (under 200 lines): treat as single chunk, validate all at once
+    — Medium artifact (200–600 lines): chunk by top-level sections (## headings)
+    — Large artifact (over 600 lines): chunk by second-level sections (### headings) for finer granularity</action>
+  <action>If the artifact has no headings (e.g., flat content): treat the entire artifact as a single chunk</action>
+  <action>Present the section map to confirm scope: "{N} sections identified, {M} chunks for validation"</action>
+</step>
+
+<step n="2" title="Extract Claims">
+  <!-- SKILL-REF: validation-patterns.md SECTION: claim-extraction -->
+  <action>Load the "claim-extraction" section from the validation-patterns skill (JIT)</action>
+  <action>For each chunk from Step 1, extract all verifiable factual claims:
+    — File paths: any reference to a file or directory (e.g., "_gaia/dev/agents/", "docs/planning-artifacts/prd.md")
+    — Component counts: numerical assertions about how many agents, workflows, skills, etc. exist
+    — Agent/workflow/skill references: named references to framework components
+    — FR/ADR cross-references: requirement IDs (FR-*) and architectural decision references (ADR-*)
+    — Version numbers: framework version, module versions, dependency versions
+    — Structural assertions: claims about directory structure, file contents, or configuration values</action>
+  <action>For each claim, record: claim text, source section, source line (approximate), claim type</action>
+  <action>If no verifiable factual claims are found in the entire artifact: produce a report stating "No factual claims identified for verification" and skip to workflow completion — do NOT write an empty findings section</action>
+  <action>Release the "claim-extraction" skill section from context</action>
+</step>
+
+<step n="3" title="Filesystem Verify">
+  <!-- SKILL-REF: validation-patterns.md SECTION: filesystem-verification -->
+  <action>Load the "filesystem-verification" section from the validation-patterns skill (JIT)</action>
+  <action>For each extracted claim, verify against the actual filesystem:
+    — File path claims: check if the file/directory exists at the stated path using glob or direct read
+    — Count claims: enumerate actual items and compare against the stated count
+    — Content assertions: read the referenced file and verify the stated content matches
+    — Structural claims: verify directory structures match the described layout</action>
+  <action>For each claim, record verification result: VERIFIED (claim matches reality) or FAILED (claim does not match) with evidence</action>
+  <action>Release the "filesystem-verification" skill section from context</action>
+</step>
+
+<step n="4" title="Cross-Reference Ground Truth">
+  <!-- SKILL-REF: validation-patterns.md SECTION: cross-reference -->
+  <action>Check if {memory_path}/validator-sidecar/ground-truth.md exists and is non-empty</action>
+  <action>If ground-truth.md is missing or empty: skip cross-reference checks. Record a note: "Ground truth not available — cross-reference checks skipped." Proceed to Step 5. Filesystem verification results from Step 3 are still valid.</action>
+  <action>If ground-truth.md exists and is non-empty:
+    — Load the "cross-reference" section from the validation-patterns skill (JIT)
+    — For each claim that was VERIFIED in Step 3, cross-reference against ground truth:
+      — Check if ground truth contains a contradicting fact
+      — Check if ground truth has a more recent or more precise version of the same fact
+      — Flag any discrepancies between the artifact claim and ground truth
+    — Release the "cross-reference" skill section from context</action>
+</step>
+
+<step n="5" title="Classify Findings">
+  <!-- SKILL-REF: validation-patterns.md SECTION: severity-classification -->
+  <action>Load the "severity-classification" section from the validation-patterns skill (JIT)</action>
+  <action>Compile all findings from Steps 3 and 4 — only FAILED verifications and ground-truth discrepancies</action>
+  <action>Classify each finding into exactly one severity level:
+    — **CRITICAL**: Wrong file path (file does not exist), incorrect count (stated N but actual is M), broken reference (FR/ADR/component does not exist), contradicts ground truth on a verified fact
+    — **WARNING**: Outdated reference (file exists but content has changed), stale data (version number is behind), ground truth has newer information
+    — **INFO**: Style suggestion (naming inconsistency), minor inconsistency (non-breaking), cosmetic discrepancy</action>
+  <action>If no findings were produced (all claims verified, no discrepancies): report "All {N} claims verified — no findings." Skip Steps 6 and 7 — proceed to workflow completion.</action>
+  <action>Release the "severity-classification" skill section from context</action>
+</step>
+
+<step n="6" title="Discussion Loop">
+  <action>Present all classified findings to the user in a structured table:
+
+  | # | Severity | Section | Claim | Finding | Evidence |
+  |---|----------|---------|-------|---------|----------|
+  (one row per finding)
+
+  Summary: {total} findings — {critical_count} CRITICAL, {warning_count} WARNING, {info_count} INFO</action>
+
+  <template-output file="{memory_path}/validator-sidecar/val-findings-draft.md">
+    Draft findings table with all classified findings, severity counts, and evidence for each.
+    This is a DRAFT — only user-approved findings will be written to the artifact.
+  </template-output>
+
+  <action>For each finding, ask the user to confirm or dispute:
+    — APPROVE: finding is correct, include in written output
+    — DISPUTE: finding is incorrect or not applicable, exclude from written output
+    — EDIT: modify the finding description before approving</action>
+  <action>Only findings explicitly approved by the user proceed to Step 7</action>
+  <action>If the user disputes ALL findings: report "All findings disputed — no changes written to artifact." Complete the workflow gracefully.</action>
+</step>
+
+<step n="7" title="Write Approved Findings">
+  <!-- SKILL-REF: validation-patterns.md SECTION: findings-formatting -->
+  <action>Load the "findings-formatting" section from the validation-patterns skill (JIT)</action>
+  <action>Check if the target artifact already contains a "## Validation Findings" section</action>
+  <action>If an existing "## Validation Findings" section is found: replace it entirely with the new findings. Do NOT append — each validation run is a fresh assessment. Prior findings are preserved in git history.</action>
+  <action>Write the approved findings to the target artifact under a new "## Validation Findings" section:
+
+  ## Validation Findings
+
+  > Validated: {date} | Workflow: val-validate-artifact v{framework_version} | Model: opus
+
+  | # | Severity | Finding | Reference |
+  |---|----------|---------|-----------|
+  (one row per approved finding — severity tag, one-line summary, what was checked)
+
+  Summary: {approved_count} finding(s) from {total_checked} claims verified.
+  </action>
+  <action>Release the "findings-formatting" skill section from context</action>
+</step>
+
+<step n="8" title="Save to Val Memory">
+  <action>Auto-save all validation results to Val's memory sidecar (no user prompt required):
+
+  1. Append to {memory_path}/validator-sidecar/decision-log.md using standardized format:
+     ### [YYYY-MM-DD] Artifact Validation: {artifact_name}
+
+     - **Agent:** validator
+     - **Workflow:** val-validate-artifact
+     - **Sprint:** {sprint_id or "N/A"}
+     - **Status:** recorded
+     - **Related:** {artifact_path}
+
+     Validated artifact: {artifact_path}.
+     Claims checked: {total_claims}. Findings: {total_findings} ({critical_count} critical, {warning_count} warning, {info_count} info).
+     Approved: {approved_count}. Disputed: {disputed_count}.
+     {Brief summary of key findings}
+
+  2. Replace body of {memory_path}/validator-sidecar/conversation-context.md (preserve header above first ---):
+     Last session: Artifact validation of {artifact_name}.
+     Date: {YYYY-MM-DD}. Claims: {total_claims}. Findings: {total_findings}.
+     Approved: {approved_count}. Disputed: {disputed_count}.
+
+  If _memory/validator-sidecar/ directory or files don't exist, create them with standard headers:
+  decision-log.md: "# Val Validator — Decision Log\n\n> Chronological record of validation decisions.\n\n---"
+  conversation-context.md: "# Val Validator — Conversation Context\n\n> Rolling summary of the most recent validation session.\n\n---\n\nNo sessions recorded yet."
+  If writing fails, log warning and continue — memory save is non-blocking.</action>
+</step>
+<next-step>
+  Suggested next steps:
+  - /gaia-val-validate — run validation again on a different artifact
+</next-step>
+
+</workflow>

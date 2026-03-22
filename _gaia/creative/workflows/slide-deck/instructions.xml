@@ -1,0 +1,39 @@
+<workflow name="slide-deck">
+<critical>
+  <mandate>Every slide must have exactly one key message</mandate>
+  <mandate>Visual hierarchy drives attention — master it</mandate>
+  <mandate>Narrative arc must flow: hook, build, payoff</mandate>
+</critical>
+<step n="1" title="Audience and Purpose">
+  <action>Define the target audience: who are they, what do they know</action>
+  <action>Define the takeaway: what should the audience do, think, or feel after</action>
+  <action>Determine presentation context: live talk, async review, workshop</action>
+</step>
+<step n="2" title="Content Inventory">
+  <action>Identify existing material: docs, data, images, research</action>
+  <action>Extract key data points, quotes, and evidence</action>
+  <action>Identify gaps — what content needs to be created</action>
+</step>
+<step n="3" title="Narrative Arc">
+  <action>Define the story structure: hook (attention), build (evidence), payoff (action)</action>
+  <action>Create the throughline: one sentence that connects every slide</action>
+  <action>Plan emotional beats: surprise, tension, resolution</action>
+</step>
+<step n="4" title="Slide Outline">
+  <action>One slide = one idea. Plan each slide with: title, key message, supporting visual</action>
+  <action>Include transition logic: how each slide connects to the next</action>
+  <action>Mark slides as: inform, persuade, transition, or evidence</action>
+  <action>Target: 1 slide per minute of talk time</action>
+</step>
+<step n="5" title="Visual Design">
+  <action>Define color palette: 2-3 primary colors, 1 accent</action>
+  <action>Define typography: heading font, body font, sizes</action>
+  <action>Define layout patterns: title slide, content, comparison, data, quote</action>
+  <action>Specify consistency rules: margins, alignment, spacing</action>
+</step>
+<step n="6" title="Generate Output">
+  <template-output file="{creative_artifacts}/slide-deck-{date}.md">
+    Generate slide deck specification with: audience brief, narrative arc, slide-by-slide content with speaker notes, visual design system, and layout specs.
+  </template-output>
+</step>
+</workflow>

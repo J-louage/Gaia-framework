@@ -1,0 +1,100 @@
+<workflow name="add-stories">
+<critical>
+  <mandate>Story protection is ENFORCED — stories with status in-progress, review, ready-for-dev, or done are READ-ONLY. Never modify them.</mandate>
+  <mandate>New stories MUST follow the exact format used in existing epics-and-stories.md</mandate>
+  <mandate>Story and epic IDs must not collide with existing IDs — auto-increment from highest existing</mandate>
+  <mandate>Append to existing content — never overwrite or reorder existing stories or epics</mandate>
+</critical>
+
+<step n="1" title="Load and Analyze Existing State">
+  <action>Read {planning_artifacts}/epics-and-stories.md in full</action>
+  <action>Read {implementation_artifacts}/sprint-status.yaml in full</action>
+  <action>Parse all existing epic IDs and names</action>
+  <action>Parse all existing story IDs per epic — identify highest ID per epic and overall</action>
+  <action>Build protection map: for each story, record its current status from sprint-status.yaml:
+    - LOCKED: done, review, in-progress, ready-for-dev — cannot be modified
+    - PROTECTED: blocked — cannot be modified by default
+    - CAUTIOUS: validating, backlog — modification requires explicit user confirmation
+    - OPEN: new stories not yet in sprint-status — full read/write</action>
+  <action>Display summary: total epics, total stories, stories by protection level (locked/protected/cautious/open)</action>
+</step>
+
+<step n="2" title="Identify New Requirements">
+  <check if="triggered_by_orchestrator">Inherit feature_description, prd_diff (new FR/NFR IDs), arch_diff (architecture changes), and cr_id from triggering workflow context. Skip user questions — proceed to Step 3.</check>
+  <ask>What new stories need to be added? Describe the feature or requirements.</ask>
+  <ask>Do these belong to an existing epic, or is a new epic needed?</ask>
+  <ask>Is this linked to a change request? If so, provide the CR ID.</ask>
+  <action>Read relevant sections of {planning_artifacts}/prd.md for context — focus on NEW requirements if prd_diff is available</action>
+  <action>Read relevant sections of {planning_artifacts}/architecture.md for technical context — focus on changes if arch_diff is available</action>
+</step>
+
+<step n="3" title="Epic Decision — New or Existing?">
+  <action>Analyze the new requirements against existing epics</action>
+  <action>For each requirement cluster, determine fit:
+    - Extends existing epic: new stories naturally belong under an existing epic's theme/goal
+    - New epic needed: the feature is a distinct capability that doesn't fit any existing epic
+    - Mixed: some stories extend existing epics, others need a new epic</action>
+  <ask>Present recommendation: "I recommend [creating new Epic {N}: {name} / adding to existing Epic {X}: {name}] for this feature. [Count] stories will be created. Do you agree?"</ask>
+  <action>User confirms or adjusts the epic assignment</action>
+</step>
+
+<step n="4" title="Create New Epic" optional="true" condition="new_epic_needed">
+  <action>Skip if all new stories fit into existing epics.</action>
+  <action>Auto-increment epic ID from highest existing (e.g., if E2 exists, new epic is E3)</action>
+  <action>Define epic with: name, description, goal, success criteria, estimated story count</action>
+  <action>Present epic definition to user for confirmation</action>
+</step>
+
+<step n="5" title="Define New Stories">
+  <action>For each new story:
+    - Title using "As a [user], I want to [action] so that [benefit]"
+    - Description with context
+    - Acceptance criteria (AC1, AC2, etc.)
+    - Size: S/M/L/XL
+    - Priority: P0/P1/P2
+    - Assign to correct epic (existing or newly created)
+    - Auto-increment story ID within the epic (e.g., if E2 has S1-S5, new stories start at E2-S6; if new E3, start at E3-S1)</action>
+  <action>If {test_artifacts}/test-plan.md exists: apply risk levels (high/medium/low) based on architectural complexity and test coverage</action>
+  <action>Declare depends_on and blocks against ALL existing stories</action>
+  <action>ENFORCE PROTECTION: dependency links FROM new stories TO locked/protected stories are allowed (read-only reference). But locked/protected stories themselves are NEVER modified.</action>
+  <action>Verify no circular dependencies introduced</action>
+  <action>If CR ID provided, add Source: CR-{cr_id} to each story</action>
+</step>
+
+<step n="6" title="Protection Validation">
+  <action>Scan all proposed changes against the protection map from Step 1</action>
+  <action>Verify: ZERO modifications to stories with status in-progress, review, ready-for-dev, done, or blocked</action>
+  <action>If any backlog or validating story would be modified: present the specific change and ask for explicit user confirmation with documented reason</action>
+  <action>Display protection report: "{count} locked stories verified READ-ONLY. {count} protected stories verified READ-ONLY. {count} new stories will be created."</action>
+  <action>If any protection violation detected: HALT — do not proceed until resolved</action>
+</step>
+
+<step n="7" title="Append to Epics and Stories">
+  <action>If new epic created: append entire epic section at end of document with all new stories</action>
+  <action>If adding to existing epic: append new stories after the last story in that epic</action>
+  <action>Add change log entry: date, feature name, CR ID (if applicable), epics affected, stories added</action>
+  <template-output file="{planning_artifacts}/epics-and-stories.md">
+    Append new stories to existing epics-and-stories.md. Each new story formatted as:
+    ### Story {epic-N}-{story-N}: {Title}
+    - Epic: {epic name}
+    - Priority: {P0/P1/P2}
+    - Size: {S/M/L/XL}
+    - Risk: {high/medium/low}
+    - Depends on: [{story-ids}]
+    - Blocks: [{story-ids}]
+    - Source: CR-{cr_id} (if applicable)
+    - Acceptance Criteria:
+      - AC1: {criteria}
+    If new epic: include epic header with name, description, goal, success criteria before its stories.
+    Prepend a Change Log entry if not already present.
+  </template-output>
+</step>
+
+<step n="8" title="Next Steps">
+  <action>Report summary: new epic(s) created (if any), stories added with IDs and epic assignments</action>
+  <action>For each new story: "Run /gaia-create-story {story_key} to elaborate before development"</action>
+  <action>If stories should enter current sprint: "Run /gaia-correct-course to inject into sprint"</action>
+  <action>If stories should wait: "Stories are in backlog. Include in next /gaia-sprint-plan"</action>
+  <action>Recommend: "Run /gaia-trace to update traceability matrix with new stories"</action>
+</step>
+</workflow>

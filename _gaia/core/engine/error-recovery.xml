@@ -1,0 +1,28 @@
+<error-recovery>
+<objective>Handle runtime errors during workflow execution</objective>
+
+<handlers>
+  <handler type="missing_file">
+    <action>Report which file is missing and its expected path</action>
+    <action>Ask user to provide the correct path or create the file</action>
+    <action>Retry the step after user provides the file</action>
+  </handler>
+
+  <handler type="unresolved_variable">
+    <action>Report the variable name and where it was expected</action>
+    <action>HALT execution — do not guess or use defaults</action>
+  </handler>
+
+  <handler type="validation_failure">
+    <action>Report which validation check failed and why</action>
+    <action>Retry the step once with user correction</action>
+    <action>If retry also fails: HALT with full error details</action>
+  </handler>
+
+  <handler type="quality_gate_failure">
+    <action>Report which gate failed (pre_start or post_complete)</action>
+    <action>Report the specific check condition that failed</action>
+    <action>HALT — never bypass quality gates</action>
+  </handler>
+</handlers>
+</error-recovery>

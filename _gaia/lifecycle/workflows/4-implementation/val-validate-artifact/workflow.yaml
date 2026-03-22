@@ -1,0 +1,29 @@
+name: val-validate-artifact
+description: 'Validate artifact against codebase and ground truth — parse, extract claims, verify, classify, discuss, write findings'
+module: lifecycle
+agent: validator
+model_override: opus
+config_resolved: "{project-root}/_gaia/lifecycle/.resolved/val-validate-artifact.yaml"
+config_source: "{project-root}/_gaia/lifecycle/config.yaml"
+installed_path: "{project-root}/_gaia/lifecycle/workflows/4-implementation/val-validate-artifact"
+instructions: "{installed_path}/instructions.xml"
+validation: "{installed_path}/checklist.md"
+input_file_patterns:
+  artifact:
+    whole: "{artifact_path}"
+    load_strategy: "INDEX_GUIDED"
+  ground_truth:
+    whole: "{memory_path}/validator-sidecar/ground-truth.md"
+    load_strategy: "FULL_LOAD"
+quality_gates:
+  pre_start:
+    - check: "artifact_path is provided and file exists"
+      on_fail: "HALT: Target artifact path is required. Usage: /gaia-val-validate <path-to-artifact>"
+    - check: "model_override == opus"
+      on_fail: "HALT: Val requires opus model. model_override must be set to opus (ADR-012)."
+on_error:
+  missing_file: "skip_and_note"
+  unresolved_variable: "halt"
+
+output:
+  primary: "{artifact_path}"

@@ -1,0 +1,44 @@
+<workflow name="infrastructure-design">
+<critical>
+  <mandate>Architecture doc must exist before starting infrastructure design</mandate>
+  <mandate>Record all infrastructure decisions in devops-sidecar</mandate>
+  <mandate>Every environment must have a defined purpose and access policy</mandate>
+</critical>
+<step n="1" title="Load Architecture">
+  <action>Read {planning_artifacts}/architecture.md</action>
+  <action>Extract component inventory, service boundaries, data stores</action>
+  <action>Identify compute, storage, and networking requirements</action>
+</step>
+<step n="2" title="Environment Design">
+  <action>Define environments: dev, staging, production (+ preview if needed)</action>
+  <action>Specify environment parity strategy — how close staging mirrors production</action>
+  <action>Define access policies and promotion gates between environments</action>
+</step>
+<step n="3" title="Deployment Topology">
+  <action>Define container orchestration strategy (Kubernetes, ECS, serverless, etc.)</action>
+  <action>Design service mesh and load balancing approach</action>
+  <action>Specify scaling strategy: horizontal, vertical, auto-scaling triggers</action>
+  <action>Define networking: VPC, subnets, security groups, CDN</action>
+</step>
+<step n="4" title="IaC Structure">
+  <action>Define Infrastructure-as-Code project structure and module design</action>
+  <action>Specify IaC tool and conventions (Terraform, Pulumi, CloudFormation)</action>
+  <action>Design module boundaries matching service boundaries</action>
+  <action>Define state management strategy</action>
+</step>
+<step n="5" title="Observability Plan">
+  <action>Define logging strategy: structured logs, log aggregation, retention</action>
+  <action>Define metrics: application metrics, infrastructure metrics, custom dashboards</action>
+  <action>Define tracing: distributed tracing, correlation IDs</action>
+  <action>Define alerting: SLO-based alerts, escalation policies, on-call rotation</action>
+</step>
+<step n="6" title="Generate Output">
+  <action>Record key decisions in {memory_path}/devops-sidecar/infrastructure-decisions.md</action>
+  <template-output file="{planning_artifacts}/infrastructure-design.md">
+    Generate infrastructure design with: environment matrix, deployment topology, IaC structure, observability plan, and decision rationale.
+  </template-output>
+</step>
+<next-step source="lifecycle-sequence.yaml">
+  <primary command="/gaia-trace">Generate requirements-to-tests traceability matrix</primary>
+</next-step>
+</workflow>

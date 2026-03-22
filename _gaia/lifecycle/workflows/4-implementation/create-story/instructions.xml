@@ -1,0 +1,194 @@
+<workflow name="create-story">
+<critical>
+  <mandate>Story files must include complete YAML frontmatter with ALL required fields: key, title, epic, status, priority, size, points, risk, sprint_id, depends_on, blocks, traces_to, date, author</mandate>
+  <mandate>All acceptance criteria MUST use Given/When/Then format: "Given {context}, when {action}, then {expected result}"</mandate>
+  <mandate>Check web access availability if story references external APIs</mandate>
+</critical>
+<step n="1" title="Select Story">
+  <action>Read {planning_artifacts}/epics-and-stories.md — parse all stories with their keys, titles, priorities, sizes, risk levels, and dependencies.</action>
+  <action>Scan {implementation_artifacts}/ for existing story files matching *-*.md patterns. Record which story keys already have individual files.</action>
+  <action>Build a list of stories that do NOT yet have individual story files.</action>
+  <action>Sort the list by: Priority (P0 first, then P1, then P2), then dependency topology (stories with no dependencies first).</action>
+  <check if="user provided a story key (e.g., /gaia-create-story E1-S2)">
+    Use the provided story key directly — skip the selection list. Verify the key exists in epics-and-stories.md.
+    If a story file already exists for this key:
+      1. Read its YAML frontmatter status field
+      2. If status is 'backlog': warn "Story file exists with status backlog. Proceeding will regenerate it." Allow continue.
+      3. If status is anything else (validating, ready-for-dev, in-progress, blocked, review, done):
+         HALT: "Story {key} is in '{status}' status. Overwriting would destroy work in progress.
+         - To edit the story: use /gaia-fix-story {key}
+         - To reset to backlog and recreate: manually set frontmatter status to 'backlog' first"
+         Do NOT proceed — this is a hard gate. Even in YOLO mode, do NOT bypass this check.
+  </check>
+  <check if="no story key provided">
+    Display the prioritized list of stories without files as a table:
+    | # | Key | Title | Priority | Size | Risk | Depends On |
+    Mark P0 stories with a ⚠ indicator.
+    <ask>Which story do you want to create? Select from the list above (provide the story key).</ask>
+  </check>
+</step>
+<step n="2" title="Load Context">
+  <action>Read story summary from epics-and-stories.md</action>
+  <action>Read architecture.md for technical context</action>
+</step>
+<step n="3" title="Web Access Guard">
+  <check if="story_references_external_apis">Check if web tools available for API documentation lookup</check>
+  <check if="no_web_access">Note limitation in story file</check>
+</step>
+<step n="4" title="Elaborate Story">
+  <action>Present a brief summary of what was loaded from epics and architecture context for this story.</action>
+  <action if="yolo_mode">In YOLO mode: auto-select [a] — let PM (Derek) and Architect (Theo) answer based on project artifacts. Skip the elaboration method prompt below.</action>
+  <ask>How would you like to elaborate this story?
+    [u] I'll answer the questions myself
+    [a] Let PM (Derek) and Architect (Theo) answer based on project artifacts</ask>
+
+  <check if="user chose [u]">
+    <ask>Are there specific edge cases or error scenarios to call out in the acceptance criteria?</ask>
+    <ask>Any implementation preferences or constraints not in the architecture? (libraries, patterns, performance targets)</ask>
+    <ask>Should any acceptance criteria be split out or deprioritized?</ask>
+    <ask>Any additional context, stakeholder notes, or dependencies to include?</ask>
+  </check>
+
+  <check if="user chose [a]">
+    <action>Spawn two subagents in parallel using the Agent tool (both calls in a single message):
+
+    PM subagent (Derek): "You are Derek, the Product Manager. Read the following files:
+      - {planning_artifacts}/epics-and-stories.md
+      - {planning_artifacts}/prd.md (if exists)
+      - {planning_artifacts}/ux-design.md (if exists)
+    For story {story_key} ({story_title}), answer these questions:
+    1. What specific edge cases or error scenarios should be called out in the acceptance criteria?
+    2. Should any acceptance criteria be split out or deprioritized? Why?
+    3. Any additional stakeholder notes, context, or dependencies to include?
+    Return your answers in a structured format."
+
+    Architect subagent (Theo): "You are Theo, the System Architect. Read the following files:
+      - {planning_artifacts}/architecture.md
+      - {test_artifacts}/test-plan.md (if exists)
+      - {planning_artifacts}/epics-and-stories.md
+    For story {story_key} ({story_title}), answer these questions:
+    1. Any implementation preferences or constraints not captured in the architecture? (libraries, patterns, performance targets)
+    2. Any technical dependencies or additional context to include?
+    Return your answers in a structured format."
+    </action>
+
+    <action>When both subagents return: merge responses into a consolidated summary. Present to user:</action>
+    <action if="yolo_mode">In YOLO mode: auto-continue with the subagent responses — skip the [c]/[e]/[a] prompt below.</action>
+    <ask>Here are the responses from Derek (PM) and Theo (Architect):
+
+    {consolidated_summary}
+
+    [c] Continue with these responses
+    [e] Edit — I want to modify some answers
+    [a] Add — I want to add more context on top of these</ask>
+  </check>
+
+  <action>Incorporate responses (user's or agents') into the story elaboration</action>
+  <action>Expand acceptance criteria in Given/When/Then format: "Given {context}, when {action}, then {expected result}"</action>
+  <action>Add technical notes from architecture context</action>
+  <action>Define subtasks for implementation</action>
+</step>
+<step n="5" title="Definition of Done">
+  <action>Append DoD checklist: all AC met, tests pass, code reviewed, docs updated</action>
+</step>
+<step n="6" title="Generate Output">
+  <action>Read the story template from {project-root}/_gaia/lifecycle/templates/story-template.md</action>
+  <action>Read sizing_map from {project-root}/_gaia/_config/global.yaml to resolve T-shirt size to story points (S→2, M→5, L→8, XL→13).</action>
+  <action>Populate ALL YAML frontmatter fields from epics-and-stories.md data:
+    - key: story key from epics (e.g., E1-S1)
+    - title: story title
+    - epic: epic key and name (e.g., "E1 — Framework Core")
+    - status: backlog (always — sprint assignment happens later in /gaia-sprint-plan)
+    - priority: P0/P1/P2 from epics
+    - size: S/M/L/XL from epics
+    - points: resolved from sizing_map (e.g., L → 8)
+    - risk: high/medium/low from epics or test-plan risk levels
+    - sprint_id: null (assigned by /gaia-sprint-plan)
+    - depends_on: list of story keys this story depends on (from epics)
+    - blocks: list of story keys this story blocks (from epics)
+    - traces_to: requirement IDs this story traces to (from epics)
+    - date: current date
+    - author: agent name (e.g., "Nate (Scrum Master)")
+  </action>
+  <template-output file="{implementation_artifacts}/{story_key}-{story_title_slug}.md">
+    Generate the story file following the story-template.md structure. The filename must use the story key and slugified title (e.g., E1-S1-user-login.md). Include complete YAML frontmatter with ALL 14 fields populated. Fill all template sections: User Story, Acceptance Criteria, Tasks/Subtasks (linked to AC numbers), Dev Notes, Technical Notes, Dependencies, Test Scenarios, Project Structure Notes, References, Dev Agent Record, and Estimate. IMPORTANT: The body "**Status:**" line MUST match the frontmatter status field exactly. Both must say the same status value.
+  </template-output>
+  <action>Add the new story to {implementation_artifacts}/story-index.yaml:
+    1. Read story-index.yaml (create with header if doesn't exist)
+    2. Add entry for {story_key}: title, epic (extract key from epic field), status (backlog), sprint_id (null), priority, risk, author, file ({story_key}-{story_title_slug}.md)
+    3. Update last_updated timestamp
+    4. Non-blocking — if write fails, log warning and continue</action>
+</step>
+<step n="7" title="Val Full Validation">
+  <action>Invoke Val as a subagent to perform full validation on the saved story file. Val validates:
+
+  (a) Completeness — all 14 YAML frontmatter fields present and valid, all template sections present
+  (b) Clarity — all ACs in Given/When/Then format, subtasks linked to AC numbers, DoD items measurable
+  (c) Semantic quality — duplicate detection across epic, ADR cross-references against architecture.md
+  (d) Dependencies — all declared dependencies exist and resolve
+  (e) Factual verification — extract verifiable claims (file paths, component references, API endpoints, versions), verify against filesystem and ground truth, classify as CRITICAL/WARNING/INFO
+
+  Val must load: the saved story file, {planning_artifacts}/architecture.md, {planning_artifacts}/epics-and-stories.md, and {memory_path}/validator-sidecar/ground-truth.md (if exists).
+  Error guard: if Val fails or crashes, log warning, keep status as backlog, and skip to Step 9.</action>
+
+  <invoke-workflow
+    target="{project-root}/_gaia/lifecycle/workflows/4-implementation/val-validate-artifact/workflow.yaml"
+    input_artifact="{implementation_artifacts}/{story_key}-{story_title_slug}.md"
+    on_error="warn_and_continue"
+    model_override="opus" />
+</step>
+<step n="8" title="Validation Fix Loop">
+  <check if="Val returned zero findings">
+    <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="ready-for-dev" source_workflow="create-story" />
+    <action>Verify: re-read the story file and confirm that BOTH the frontmatter status field AND the body "**Status:**" line say "ready-for-dev". If the body still shows a different status, update it directly. This prevents frontmatter/body drift.</action>
+    <action>Report "Validation passed — story is ready for dev." Proceed to Step 9.</action>
+  </check>
+
+  <check if="Val returned findings">
+    <action>Set validation_attempt = 1.</action>
+    <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="validating" source_workflow="create-story" />
+    <action>Present findings table to user (severity, section, claim, finding, evidence).</action>
+    <action>SM (Nate) addresses each finding:
+      - For each CRITICAL or WARNING finding: fix the story content directly
+      - For each INFO finding: fix or acknowledge with a note
+      Present the corrected story sections to user for confirmation.</action>
+    <action>After SM applies all fixes, write the updated story file. Increment validation_attempt.</action>
+    <action>Re-invoke Val validation on the updated story (same invoke-workflow as Step 7).
+      - If Val returns zero findings: invoke status-sync with new_status='ready-for-dev'. Exit loop. Proceed to Step 9.
+      - If Val returns new findings AND validation_attempt &lt; 3: SM fixes again, Val re-validates.
+      - If Val returns findings AND validation_attempt = 3 (hard limit reached): keep status as 'validating', report "Validation limit reached — {N} findings remain. Run /gaia-validate-story {story_key} to continue." Proceed to Step 9.</action>
+  </check>
+</step>
+<step n="9" title="Save to Val Memory">
+  <action>Auto-save all validation results to Val's memory sidecar (no user prompt required):
+
+  1. Append to {memory_path}/validator-sidecar/decision-log.md using standardized format:
+     ### [YYYY-MM-DD] Story Validation: {story_key}
+
+     - **Agent:** validator
+     - **Workflow:** create-story (post-save validation)
+     - **Sprint:** {sprint_id or "N/A"}
+     - **Status:** recorded
+     - **Related:** {story_key}
+
+     Validated story {story_key} ({story_title}).
+     Result: {PASS or FAIL after N attempts}.
+     Findings: {total_count} total, {fixed_count} fixed, {remaining_count} remaining.
+     Final status: {ready-for-dev or validating}.
+     {Brief summary of key findings and fixes}
+
+  2. Replace body of {memory_path}/validator-sidecar/conversation-context.md (preserve header above first ---):
+     Last session: Story validation of {story_key} ({story_title}).
+     Date: {YYYY-MM-DD}. Result: {PASS/FAIL}. Attempts: {N}.
+     Findings: {count}. Fixed: {fixed_count}.
+
+  If _memory/validator-sidecar/ directory or files don't exist, create them with standard headers:
+  decision-log.md: "# Val Validator — Decision Log\n\n> Chronological record of validation decisions.\n\n---"
+  conversation-context.md: "# Val Validator — Conversation Context\n\n> Rolling summary of the most recent validation session.\n\n---\n\nNo sessions recorded yet."
+  If writing fails, log warning and continue — memory save is non-blocking.</action>
+</step>
+<next-step source="lifecycle-sequence.yaml">
+  <primary command="/gaia-create-story">Create the next story</primary>
+  <alternative command="/gaia-sprint-plan" context="When all stories are created and validated (ready-for-dev)"/>
+</next-step>
+</workflow>

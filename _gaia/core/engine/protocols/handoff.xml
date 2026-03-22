@@ -1,0 +1,21 @@
+<protocol name="handoff">
+<objective>Generate structured handoff output for downstream workflow consumption</objective>
+
+<flow>
+  <step n="1">Collect all template-output file paths produced during this workflow execution</step>
+  <step n="2">Summarize key decisions and resolved variables that downstream workflows may need</step>
+  <step n="3">Write handoff file to: _memory/handoffs/{workflow-name}-{date}.yaml</step>
+  <step n="4">Handoff file format:
+    workflow_name: string        # Name of completed workflow
+    completed_date: datetime     # ISO 8601 timestamp
+    output_files:                # List of all files produced
+      - path: string
+        description: string
+    key_variables:               # Variables downstream workflows may need
+      field: value
+    next_suggested_workflow: string  # What the user should run next
+    notes: string                # Any important context for the next workflow
+  </step>
+  <step n="5">Report handoff complete with summary of outputs and next suggested action</step>
+</flow>
+</protocol>

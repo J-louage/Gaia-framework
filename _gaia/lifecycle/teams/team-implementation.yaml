@@ -1,0 +1,8 @@
+name: "Implementation Team"
+description: "Sprint execution and code delivery"
+agents:
+  - sm
+  - dev-*
+  - qa
+use_case: "Sprint execution and code delivery"
+phases: [4-implementation]

@@ -1,0 +1,35 @@
+name: edit-test-plan
+description: 'Edit an existing test plan — add test cases for new features without regenerating'
+module: testing
+agent: test-architect
+config_resolved: "{project-root}/_gaia/testing/.resolved/edit-test-plan.yaml"
+config_source: "{project-root}/_gaia/testing/config.yaml"
+installed_path: "{project-root}/_gaia/testing/workflows/edit-test-plan"
+instructions: "{installed_path}/instructions.xml"
+validation: "{installed_path}/checklist.md"
+input_file_patterns:
+  test_plan:
+    whole: "{test_artifacts}/test-plan.md"
+    load_strategy: "FULL_LOAD"
+  prd:
+    whole: "{planning_artifacts}/prd.md"
+    load_strategy: "SELECTIVE_LOAD"
+  architecture:
+    whole: "{planning_artifacts}/architecture.md"
+    load_strategy: "SELECTIVE_LOAD"
+  epics:
+    whole: "{planning_artifacts}/epics-and-stories.md"
+    load_strategy: "SELECTIVE_LOAD"
+quality_gates:
+  pre_start:
+    - check: "test_plan_exists"
+      on_fail: "HALT: test-plan.md does not exist. Run /gaia-test-design first to create the initial test plan."
+  post_complete:
+    - check: "coverage_advisory"
+      on_fail: "WARNING: New requirements have test cases but coverage percentage has not been re-calculated."
+on_error:
+  missing_file: "ask_user"
+  unresolved_variable: "halt"
+
+output:
+  primary: "{test_artifacts}/test-plan.md"

@@ -1,0 +1,12 @@
+# Accessibility Testing Checklist
+- [ ] WCAG level declared (A, AA, or AAA)
+- [ ] Automated checks cover all target pages
+- [ ] axe-core or pa11y integration designed
+- [ ] Manual test procedures defined for keyboard navigation
+- [ ] Screen reader testing procedure documented
+- [ ] Color contrast verification steps included
+- [ ] ARIA roles and labels reviewed
+- [ ] Focus management checked for dynamic content
+- [ ] Live regions validated for updates
+- [ ] Findings categorized by severity (Critical/High/Medium/Low)
+- [ ] At least 1 remediation recommendation per critical finding

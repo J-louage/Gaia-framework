@@ -1,0 +1,52 @@
+<workflow name="validate-prd">
+<critical>
+  <mandate>Output must include machine-readable PASS/FAIL status in YAML frontmatter</mandate>
+  <mandate>Report ALL findings, not just the first failure</mandate>
+</critical>
+<step n="1" title="Load PRD">
+  <action>Read {planning_artifacts}/prd.md</action>
+  <action>Parse all sections and requirements</action>
+</step>
+<step n="2" title="Completeness Check">
+  <action>Verify all required sections exist: overview, personas, functional reqs, NFRs, user journeys, data, integrations, constraints, success criteria</action>
+  <action>Flag any missing sections as critical findings</action>
+</step>
+<step n="3" title="Structural Validation">
+  <action>Verify all functional requirements are numbered sequentially (FR-001, FR-002, ...)</action>
+  <action>Verify all non-functional requirements are numbered sequentially (NFR-001, NFR-002, ...)</action>
+  <action>For each FR: verify acceptance criteria exist and are specific (not blank or generic)</action>
+  <action>For each NFR: verify a measurable target exists (e.g., "response time &lt; 200ms" not "fast response")</action>
+  <action>Verify every requirement has a priority assigned (P0/P1/P2/P3 or Must/Should/Could/Won't)</action>
+  <action>Verify user personas referenced in requirements match personas defined in the personas section</action>
+  <action>Flag any structural gaps as critical findings</action>
+</step>
+<step n="4" title="Quality Check">
+  <action>For each requirement verify: testable, unambiguous, prioritized</action>
+  <action>Check acceptance criteria are measurable</action>
+  <action>Flag vague requirements (e.g., "fast", "easy to use" without quantification)</action>
+</step>
+<step n="5" title="Consistency Check">
+  <action>Cross-reference all sections for contradictions</action>
+  <action>Verify terminology is used consistently</action>
+  <action>Check that priorities don't conflict</action>
+</step>
+<step n="6" title="Generate Validation Report">
+  <template-output file="{planning_artifacts}/prd-validation.md">
+    Generate validation report with YAML frontmatter containing machine-readable status:
+    ---
+    status: PASS or FAIL
+    critical_issues: (count)
+    warnings: (count)
+    findings:
+      - severity: critical/warning/info
+        section: "(section name)"
+        issue: "(description)"
+    ---
+    Then detailed findings with recommendations.
+  </template-output>
+</step>
+<next-step source="lifecycle-sequence.yaml">
+  <on-pass command="/gaia-create-ux">Create UX design specifications</on-pass>
+  <on-fail command="/gaia-edit-prd">Edit the PRD to address validation findings</on-fail>
+</next-step>
+</workflow>

@@ -1,0 +1,62 @@
+<workflow name="epic-status">
+<critical>
+  <mandate>Read ONLY frontmatter from story files — never load full story content (token budget protection)</mandate>
+  <mandate>Stories with no .md file are counted as backlog status</mandate>
+  <mandate>Cross-sprint aggregation — do NOT filter by current sprint</mandate>
+  <mandate>Story files with an epic field in frontmatter belong to that epic — even if not listed in epics-and-stories.md</mandate>
+</critical>
+<step n="1" title="Load Epics Manifest">
+  <action>Read {planning_artifacts}/epics-and-stories.md</action>
+  <action>Parse all epics: extract epic number, title, goal, done criteria</action>
+  <action>Extract all story keys associated with each epic</action>
+  <action>Build epic-to-stories mapping</action>
+</step>
+<step n="2" title="Scan Story Data">
+  <action>ALWAYS scan all .md files in {implementation_artifacts}/ for story files:
+    For each file, read ONLY the YAML frontmatter (stop at closing ---)
+    Extract: story key, title, status, sprint_id (if present), epic, author
+    Skip non-story files (e.g., sprint-status.yaml, epic-status.md, tech-debt-dashboard.md, sprint-plan.md, story-index.yaml, retro-*.md, sprint-reconciliation-*.md)
+    The story file frontmatter is ALWAYS the source of truth for status — never rely solely on story-index.yaml which may be incomplete.</action>
+  <action>If {implementation_artifacts}/story-index.yaml exists: use it as a supplementary source for stories that have no .md file (e.g., stories listed in epics-and-stories.md but with no file yet). Do NOT use it as a replacement for scanning actual story files.</action>
+</step>
+<step n="3" title="Aggregate Status">
+  <action>Join scanned story data to epic-story mapping from Step 1</action>
+  <action>For stories found in Step 2 that are NOT in the Step 1 epic-story mapping:
+    1. Read the story's epic field (from index or frontmatter, e.g., "E9 — Enhanced Agent Memory")
+    2. Extract the epic key (e.g., "E9")
+    3. If the epic key matches an existing epic from Step 1: add this story to that epic's story list
+    4. Do NOT put it in "untracked" if it has a valid epic key
+    5. Only stories with NO epic field go to "untracked"</action>
+  <action>For each story, resolve the display title using this priority:
+    1. Story file frontmatter title (from Step 2) — primary source, always preferred
+    2. Title from epics-and-stories.md (from Step 1) — fallback if no story file exists
+    3. If neither available: show "(no title)" with the story key
+    If the story was created by triage (author field contains "Triage"): append " ⚑" flag after the title to indicate triage origin</action>
+  <action>Stories in manifest but with no file and no index entry: mark as backlog</action>
+  <action>Per epic: count done, in-progress, blocked, review, ready-for-dev, validating, backlog</action>
+  <action>Per epic: compute completion percentage (done / total * 100)</action>
+  <action>Compute overall totals across all epics</action>
+  <action>Collect any story files found that are NOT in any epic (no epic field) as untracked</action>
+  <action>Mark epics where all stories are done as [COMPLETE]</action>
+</step>
+<step n="4" title="Dependency Analysis">
+  <action>For each story scanned in Step 2: check frontmatter for `dependencies` or `blocked_by` fields (list of story keys this story depends on)</action>
+  <action>Build cross-epic dependency graph: for each dependency, check if the depended-on story belongs to a different epic. Record cross-epic edges.</action>
+  <action>Identify blocked stories: stories whose dependencies include stories that are NOT yet `done`. List each blocked story with its blocker(s) and blocker status.</action>
+  <action>Calculate critical path: find the longest chain of sequential dependent stories across all epics. Report the chain and its total length.</action>
+  <action>If no story files contain dependency metadata: note "No dependency data available — add `dependencies` field to story frontmatter for cross-epic tracking." Skip blocked story and critical path calculations.</action>
+</step>
+<step n="5" title="Generate Dashboard">
+  <action>Format dashboard with standard header: "## Epic Status Dashboard — {date}" followed by summary line: "Epics: {complete}/{total} complete | Stories: {done}/{total} ({pct}%) | At Risk: {blocked_count}"</action>
+  <action>Load template from {project-root}/_gaia/lifecycle/templates/epic-status-template.md</action>
+  <action>Fill summary table with per-epic row: Total | Done | In Progress | Review | Blocked | Backlog | Completion %. Backlog = stories not yet started (no file, or status is backlog/ready-for-dev/validating). Do NOT use "Remaining" (total - done) as it overlaps with In Progress.</action>
+  <action>Fill per-epic detail sections with ASCII progress bar and story-level status table</action>
+  <action>ASCII progress bar: use filled blocks (█) for done, light blocks (░) for remaining, 20 chars wide</action>
+  <action>Fill untracked stories section</action>
+  <action>Fill dependency analysis section: cross-epic dependencies table (source story → target story → target epic → target status), blocked stories list with blockers, and critical path summary. If no dependency data, include the "no data" note from Step 4.</action>
+  <template-output file="{implementation_artifacts}/epic-status.md">
+    Write the completed epic status dashboard using the template.
+    Include all epics, all stories, completion percentages, progress bars, and dependency analysis.
+  </template-output>
+</step>
+</workflow>

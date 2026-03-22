@@ -1,0 +1,43 @@
+<task id="editorial-review-structure" name="Editorial Review — Structure">
+<objective>Structural editor that proposes cuts, reorganization, and simplification while preserving comprehension</objective>
+
+<critical>
+  <mandate>Review ONLY — never rewrite. Produce a structural findings report.</mandate>
+  <mandate>Focus on document organization, not prose quality (use editorial-review-prose for that)</mandate>
+  <mandate>Propose specific reorganization moves, not vague suggestions</mandate>
+</critical>
+
+<flow>
+  <step n="1" title="Load Document">
+    <action>Ask user for the document path</action>
+    <action>Read the entire document</action>
+    <action>Map the current structure: headings, sections, subsections</action>
+  </step>
+
+  <step n="2" title="Analyze Structure">
+    <action>Evaluate these dimensions:
+      - Information architecture: is the hierarchy logical?
+      - Section ordering: does the sequence support understanding?
+      - Section balance: are some sections disproportionately long/short?
+      - Redundancy: are topics covered in multiple places?
+      - Missing sections: are expected sections absent for this doc type?
+      - Depth: are there too many nesting levels (max 3 recommended)?
+      - Navigation: could a reader find information quickly?
+    </action>
+  </step>
+
+  <step n="3" title="Generate Report">
+    <action>Produce structural findings with:
+      - Current structure outline (with line counts per section)
+      - Proposed restructure outline (showing moves, merges, splits)
+      - Specific recommendations: cut, merge, split, reorder, add
+      - Priority: which changes would have the most impact
+    </action>
+  </step>
+</flow>
+
+<output>
+  <format>Markdown report with current vs proposed structure comparison</format>
+  <location>Displayed to user (not saved unless requested)</location>
+</output>
+</task>

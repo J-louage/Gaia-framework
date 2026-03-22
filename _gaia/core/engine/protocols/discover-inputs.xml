@@ -1,0 +1,31 @@
+<protocol name="discover-inputs">
+<objective>Load input files using the strategy declared in workflow.yaml</objective>
+
+<strategies>
+  <strategy name="FULL_LOAD">
+    Read all files matching the glob pattern.
+    Use when the entire document is needed (e.g., single PRD file).
+  </strategy>
+  <strategy name="SELECTIVE_LOAD">
+    Read only the file matching a specific template variable.
+    Use when a single shard is needed (e.g., one epic by number).
+  </strategy>
+  <strategy name="INDEX_GUIDED">
+    Read index.md first, identify relevant sections, load only those shards.
+    Use when the document is sharded and only some sections are relevant.
+  </strategy>
+</strategies>
+
+<flow>
+  <step n="1">Read input_file_patterns from workflow config</step>
+  <step n="2">For each declared pattern, determine load_strategy</step>
+  <step n="3">Execute the corresponding strategy:
+    - FULL_LOAD: Read the file at the resolved path using Read tool
+    - SELECTIVE_LOAD: Resolve the template variable (e.g., {{story_key}}), then read the matching file
+    - INDEX_GUIDED: Read index.md in the target directory, identify relevant sections, load only those files
+  </step>
+  <step n="4">Store loaded content in context variables for downstream step use</step>
+  <step n="5">If any declared input file is missing and not marked optional:
+    invoke error-recovery handler for missing_file</step>
+</flow>
+</protocol>

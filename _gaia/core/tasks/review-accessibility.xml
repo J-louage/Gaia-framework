@@ -1,0 +1,47 @@
+<task id="review-accessibility" name="Accessibility Review Task">
+<objective>Review code and UI for WCAG 2.1 compliance</objective>
+
+<critical>
+  <mandate>Check ARIA attributes and roles</mandate>
+  <mandate>Verify keyboard navigation support</mandate>
+  <mandate>Evaluate color contrast and screen reader support</mandate>
+</critical>
+
+<flow>
+  <step n="1" title="Scope">
+    <action>Ask user for code/component to review</action>
+    <action>Read the target files</action>
+  </step>
+  <step n="2" title="Semantic HTML and ARIA">
+    <action>Check for proper semantic HTML elements</action>
+    <action>Verify ARIA attributes, roles, and labels</action>
+    <action>Check for alt text on images, labels on form inputs</action>
+    <action>For each finding: cite the specific WCAG 2.1 success criterion (e.g., 1.1.1 Non-text Content, 1.3.1 Info and Relationships, 4.1.2 Name Role Value) and its conformance level (A/AA/AAA)</action>
+  </step>
+  <step n="3" title="Keyboard and Focus">
+    <action>Verify keyboard navigation support</action>
+    <action>Check focus management and tab order</action>
+    <action>Verify skip navigation links</action>
+    <action>For each finding: cite the specific WCAG 2.1 success criterion (e.g., 2.1.1 Keyboard, 2.4.3 Focus Order, 2.4.1 Bypass Blocks) and its conformance level (A/AA/AAA)</action>
+  </step>
+  <step n="4" title="Visual and Screen Reader">
+    <action>Evaluate color contrast ratios (4.5:1 for text, 3:1 for large text)</action>
+    <action>Check screen reader compatibility</action>
+    <action>Verify text scaling support</action>
+    <action>For each finding: cite the specific WCAG 2.1 success criterion (e.g., 1.4.3 Contrast Minimum, 1.3.3 Sensory Characteristics, 1.4.4 Resize Text) and its conformance level (A/AA/AAA)</action>
+  </step>
+  <step n="5" title="Report">
+    <template-output file="{test_artifacts}/accessibility-review-{date}.md">
+      Generate accessibility review report organized by category (semantic HTML, ARIA, keyboard, focus, visual, screen reader). Each finding MUST use this format: WCAG Criterion ID (e.g., 1.1.1) | Criterion Name | Conformance Level (A/AA/AAA) | Severity (Critical/High/Medium/Low) | Finding Description | Remediation Guidance.
+    </template-output>
+  </step>
+</flow>
+
+<output>
+  <format>Markdown accessibility findings with WCAG criteria</format>
+  <location>{test_artifacts}/accessibility-review-{date}.md</location>
+</output>
+<next-step source="lifecycle-sequence.yaml">
+  <primary command="/gaia-create-arch">Design system architecture (Phase 3 starts here)</primary>
+</next-step>
+</task>

@@ -1,0 +1,38 @@
+name: create-product-brief
+description: 'Create product brief through collaborative discovery'
+module: lifecycle
+agent: analyst
+config_resolved: "{project-root}/_gaia/lifecycle/.resolved/create-product-brief.yaml"
+config_source: "{project-root}/_gaia/lifecycle/config.yaml"
+installed_path: "{project-root}/_gaia/lifecycle/workflows/1-analysis/create-product-brief"
+instructions: "{installed_path}/instructions.xml"
+validation: "{installed_path}/checklist.md"
+input_file_patterns:
+  brainstorm:
+    whole: "{planning_artifacts}/project-brainstorm.md"
+    load_strategy: "FULL_LOAD"
+  market_research:
+    whole: "{planning_artifacts}/market-research.md"
+    load_strategy: "FULL_LOAD"
+  domain_research:
+    whole: "{planning_artifacts}/domain-research.md"
+    load_strategy: "FULL_LOAD"
+  technical_research:
+    whole: "{planning_artifacts}/technical-research.md"
+    load_strategy: "FULL_LOAD"
+  creative_outputs:
+    whole: "{creative_artifacts}/*.md"
+    load_strategy: "INDEX_GUIDED"
+quality_gates:
+  pre_start:
+    - check: "brainstorm_exists({planning_artifacts}/project-brainstorm.md)"
+      on_fail: "HALT: Brainstorm artifact not found at {planning_artifacts}/project-brainstorm.md. Run /gaia-brainstorm first."
+  post_complete:
+    - check: "product_brief_has_all_sections"
+      on_fail: "HALT: Product brief must include all sections: Vision Statement, Target Users, Problem Statement, Proposed Solution, Key Features, Scope and Boundaries, Risks and Assumptions, Competitive Landscape, Success Metrics"
+on_error:
+  missing_file: "ask_user"
+  unresolved_variable: "halt"
+
+output:
+  primary: "{planning_artifacts}/product-brief.md"

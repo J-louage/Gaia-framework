@@ -1,0 +1,9 @@
+name: "Planning Team"
+description: "Product analysis through architecture design"
+agents:
+  - analyst
+  - pm
+  - architect
+  - ux-designer
+use_case: "Product analysis through architecture design"
+phases: [1-analysis, 2-planning, 3-solutioning]

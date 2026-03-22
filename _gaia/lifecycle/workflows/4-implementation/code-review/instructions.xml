@@ -1,0 +1,50 @@
+<workflow name="code-review">
+<critical>
+  <mandate>Story must be in review status before code review</mandate>
+  <mandate>Output must include machine-readable APPROVE or REQUEST_CHANGES</mandate>
+  <mandate>When reading or running application source code, use {project-path} as the base directory — NOT {project-root}. {project-path} is resolved by the engine from global.yaml.</mandate>
+</critical>
+<step n="1" title="Load Story">
+  <action>Resolve story file: search for {story_key}-*.md in {implementation_artifacts}/ using glob pattern to match the full filename ({story_key}-{title_slug}.md)</action>
+  <action>Read story file, identify files changed</action>
+</step>
+<step n="2" title="Status Gate">
+  <action>Verify story is in 'review' status</action>
+  <check if="status != review">HALT: Story must be in review status</check>
+</step>
+<step n="3" title="Code Review">
+  <action>Review each changed file for: correctness, security, performance, readability, test coverage</action>
+</step>
+<step n="3b" title="Architecture Conformance">
+  <action>Load {planning_artifacts}/architecture.md — extract ADRs, component hierarchy, layer boundaries, and API patterns</action>
+  <action>For each changed file, verify:
+    - Component placement follows the documented hierarchy (e.g., controllers in controller layer, services in service layer)
+    - Dependencies flow in the correct direction per architecture (no upward dependencies across layers)
+    - API patterns match the architecture specification (naming, versioning, error format)
+    - Referenced ADRs exist and have status Accepted — flag if implementation contradicts an ADR decision
+  </action>
+  <action>Include an "Architecture Conformance" section in findings with PASS/FAIL per check</action>
+</step>
+<step n="4" title="Generate Findings">
+  <action>List issues by severity: critical, warning, suggestion</action>
+</step>
+<step n="5" title="Decision">
+  <action>If no critical issues: verdict is APPROVE</action>
+  <action>If critical issues found: verdict is REQUEST_CHANGES</action>
+</step>
+<step n="6" title="Generate Output">
+  <template-output file="{implementation_artifacts}/{story_key}-review.md">
+    Generate review report with machine-readable verdict (APPROVE/REQUEST_CHANGES) and findings.
+  </template-output>
+</step>
+<step n="7" title="Update Review Gate and Transition">
+  <action>Read story file, locate Review Gate table</action>
+  <action>If APPROVE: update Code Review row status to PASSED, link report file</action>
+  <action>If REQUEST_CHANGES: update Code Review row status to REQUEST_CHANGES, link report file. Do NOT change story status — the review-gate-check protocol or run-all-reviews orchestrator handles status transitions.</action>
+  <template-output file="{implementation_artifacts}/{story_key}-*.md">
+    Update story file Review Gate table with code review result and report link.
+  </template-output>
+  <action>Inform user: "Note: sprint-status.yaml may now be out of sync. Run /gaia-sprint-status to reconcile."</action>
+  <invoke-protocol name="review-gate-check" file="{project-root}/_gaia/core/protocols/review-gate-check.xml" />
+</step>
+</workflow>

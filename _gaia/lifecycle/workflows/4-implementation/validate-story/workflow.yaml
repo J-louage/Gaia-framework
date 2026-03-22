@@ -1,0 +1,24 @@
+name: validate-story
+description: 'Full story validation — completeness, clarity, and factual verification'
+module: lifecycle
+agent: validator
+config_resolved: "{project-root}/_gaia/lifecycle/.resolved/validate-story.yaml"
+config_source: "{project-root}/_gaia/lifecycle/config.yaml"
+installed_path: "{project-root}/_gaia/lifecycle/workflows/4-implementation/validate-story"
+instructions: "{installed_path}/instructions.xml"
+validation: "{installed_path}/checklist.md"
+input_file_patterns:
+  architecture:
+    whole: "{planning_artifacts}/architecture.md"
+    load_strategy: "INDEX_GUIDED"
+  epics:
+    whole: "{planning_artifacts}/epics-and-stories.md"
+    load_strategy: "INDEX_GUIDED"
+on_error:
+  missing_file: "ask_user"
+  unresolved_variable: "halt"
+
+output:
+  primary: "{implementation_artifacts}/{story_key}-{story_title_slug}.md"
+  secondary: "{implementation_artifacts}/sprint-status.yaml"
+  validation_report: "{implementation_artifacts}/story-validation-{story_key}.md"

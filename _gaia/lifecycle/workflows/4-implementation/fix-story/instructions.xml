@@ -1,0 +1,67 @@
+<workflow name="fix-story">
+<critical>
+  <mandate>Fix all FAIL findings from the validation report</mandate>
+  <mandate>Preserve all existing valid content — only modify sections flagged as FAIL</mandate>
+  <mandate>Remove the old validation report after fixes are applied</mandate>
+</critical>
+<step n="1" title="Load Story">
+  <ask>Which story to fix? (provide story key, e.g., 1.2)</ask>
+  <action>Find and read the story file matching {story_key}-*.md in {implementation_artifacts}/</action>
+</step>
+<step n="2" title="Parse Validation Report">
+  <action>Locate the "## Validation Report" section at the end of the story file (after the --- separator)</action>
+  <action>Extract all FAIL findings with their section names and issue descriptions</action>
+  <check if="no_validation_report">If no validation report is found, HALT and instruct the user to run /gaia-validate-story first</check>
+  <check if="all_pass">If all sections are PASS, inform user the story has no issues to fix and STOP</check>
+</step>
+<step n="3" title="Load Template Reference">
+  <action>Read the story template from {project-root}/_gaia/lifecycle/templates/story-template.md</action>
+  <action>Use the template as reference for expected structure and format of each section</action>
+</step>
+<step n="4" title="Fix Flagged Issues">
+  <action>For each FAIL finding, prepare the proposed fix:
+    - Missing sections: draft the section following the template structure
+    - Incomplete metadata: draft missing YAML frontmatter fields. Required fields: key, title, epic, status, priority, size, points, risk, sprint_id, depends_on, blocks, traces_to, date, author
+    - Unclear ACs: draft rewrite in Given/When/Then format, ensure each is testable
+    - Unlinked subtasks: draft links from each subtask to an AC number
+    - Empty Test Scenarios: draft the test scenarios table
+    - Missing DoD: draft specific, measurable Definition of Done items
+    - Other issues: draft fix per the validation finding description
+  </action>
+  <ask>For each proposed fix, present the section name, the issue found, and the proposed new content. Wait for user approval before applying. Example: "Section: Acceptance Criteria — Issue: Not in Given/When/Then format — Proposed fix: [content]. Apply this fix? (yes / no / edit)"</ask>
+  <action>Apply only user-approved fixes. If user chooses "edit", accept their revised content instead.</action>
+  <action>Preserve all existing valid content — do NOT rewrite sections that passed validation</action>
+</step>
+<step n="4b" title="Change Log">
+  <action>After all fixes are applied, append a "## Change Log" section at the end of the story file (before any validation report) with:
+    - Date: {current date}
+    - Source: fix-story workflow
+    - Sections modified: list each section that was fixed
+    - Summary: one-line description of changes made
+  </action>
+</step>
+<step n="5" title="Remove Validation Report">
+  <action>Remove the --- separator and the entire "## Validation Report" section from the end of the story</action>
+</step>
+<step n="5b" title="Re-Validate">
+  <action>Run inline validation checks on the corrected story (same criteria as /gaia-validate-story Steps 2-6):
+    - YAML frontmatter: verify all 14 required fields present (key, title, epic, status, priority, size, points, risk, sprint_id, depends_on, blocks, traces_to, date, author)
+    - Completeness: verify all sections present (User Story, AC, Tasks, Dev Notes, Technical Notes, Dependencies, Test Scenarios, Project Structure Notes, References, Dev Agent Record, Estimate, DoD)
+    - Clarity: verify ACs are in Given/When/Then format, subtasks linked to AC numbers, DoD items are measurable
+    - Dependencies: verify declared dependencies exist and are resolvable
+  </action>
+  <check if="all_checks_pass">
+    <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="ready-for-dev" source_workflow="fix-story" />
+    Inform user "Story {story_key} passed re-validation and is now ready for development."
+  </check>
+  <check if="issues_remain">
+    <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="validating" source_workflow="fix-story" />
+    List remaining issues and inform user: "Some issues remain after fixes — run /gaia-fix-story again or manually edit, then /gaia-validate-story."
+  </check>
+</step>
+<step n="6" title="Save Corrected Story">
+  <template-output file="{implementation_artifacts}/{story_key}-{story_title_slug}.md">
+    Save the corrected story file with all FAIL issues resolved and the old validation report removed. If re-validation passed, status is ready-for-dev. If issues remain, status stays validating.
+  </template-output>
+</step>
+</workflow>

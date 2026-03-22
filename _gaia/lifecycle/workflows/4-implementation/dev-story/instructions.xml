@@ -1,0 +1,235 @@
+<workflow name="dev-story">
+<critical>
+  <mandate>Story must be in ready-for-dev status before starting</mandate>
+  <mandate>Follow TDD cycle: red, green, refactor</mandate>
+  <mandate>TDD phases MUST be executed as separate, sequential steps — NEVER combine them. Do NOT write implementation code during the Red phase. Do NOT skip the Refactor phase. Each phase must produce its own checkpoint and wait for user confirmation before the next phase begins.</mandate>
+  <mandate>Write an intermediate checkpoint to {checkpoint_path}/dev-story-{story_key}.yaml after EACH TDD phase completes (Steps 6, 7, 8). Each checkpoint must include: workflow name, current step number, phase status (red_complete/green_complete/refactor_complete), key variables (story_key, epic_key, risk_level), output file path, and files_touched with sha256 checksums (shasum -a 256) for every file created or modified in that phase.</mandate>
+  <mandate>Definition of Done checklist MUST be written to the story file and every item verified before marking complete. The DoD gate (Step 10) auto-fixes failing items up to 3 iterations before halting.</mandate>
+  <mandate>All tests must pass before marking complete</mandate>
+  <mandate>When reading or running application source code, use {project-path} as the base directory — NOT {project-root}. {project-path} is resolved by the engine from global.yaml.</mandate>
+</critical>
+<step n="1" title="Load Story File">
+  <action>Read story .md file, parse YAML frontmatter</action>
+  <action>Extract: key, status, acceptance criteria, subtasks, dependencies</action>
+  <action>Resolve story file path: search {implementation_artifacts}/ for {story_key}-*.md. If no match, try {story_key}.md. Use the resolved path for all subsequent reads and writes.</action>
+</step>
+<step n="2" title="Pre-Start Gate">
+  <action>Verify story status is 'ready-for-dev'</action>
+  <check if="status != ready-for-dev">HALT: Story must be in ready-for-dev status</check>
+  <action>Read story frontmatter: extract risk_level field (default: low if absent)</action>
+  <action>Extract epic_key from story_key — e.g., if story_key is "E1-S1", epic_key is "E1" (everything before the last hyphen-and-story-number)</action>
+  <check if="risk_level == high">
+    Search for ATDD file using BOTH patterns (epic-level first, then story-level):
+    1. Epic-level: {test_artifacts}/atdd-{epic_key}*.md (e.g., atdd-E1.md)
+    2. Story-level: {test_artifacts}/atdd-{story_key}*.md (e.g., atdd-E1-S1.md)
+    If EITHER pattern matches a file, the gate PASSES — log which file was found.
+    If NEITHER pattern matches: HALT — This story is marked high-risk. No ATDD file found (searched for atdd-{epic_key}*.md and atdd-{story_key}*.md). Run /gaia-atdd before implementation.
+  </check>
+</step>
+<step n="3" title="Check for WIP">
+  <action>Look for checkpoint file at _memory/checkpoints/dev-story-{story_key}.yaml</action>
+  <check if="checkpoint_exists and has files_touched">Validate checksums (shasum -a 256) for each entry in files_touched — flag DELETED or MODIFIED files, offer Proceed / Start fresh / Review before resuming</check>
+  <check if="checkpoint_exists">Offer to resume from last checkpoint or start fresh</check>
+</step>
+<step n="4" title="Update Status">
+  <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="in-progress" source_workflow="dev-story" />
+</step>
+<step n="5" title="Plan Implementation">
+  <action>Load relevant sections from {planning_artifacts}/architecture.md — identify architectural components, patterns, and ADRs that apply to this story's scope</action>
+  <action>Load relevant sections from {planning_artifacts}/ux-design.md if available — identify UI components, interaction patterns, navigation flows, and accessibility requirements for this story</action>
+  <action>Generate a detailed implementation plan with the following mandatory sections:
+
+  **Context** — Why this change is being made: the user need or requirement it addresses, which acceptance criteria it satisfies, and the intended outcome. Reference the story's epic context and how this story fits into the larger feature.
+
+  **Root Cause / Analysis** (if bug fix or refactor) — What is broken or suboptimal and why. For new features, describe the current state (what exists today) vs. the target state (what will exist after implementation).
+
+  **Implementation Steps** — Numbered steps, each with:
+    - Step title describing what it does
+    - File path(s) to create or modify
+    - What specifically changes in each file (new functions, modified logic, added config, etc.)
+    - Why this change is needed (not just what, but the reasoning)
+    - Any relevant ADR or architecture pattern being followed
+    - Dependencies on previous steps (if any)
+
+  **Files to Modify** — Summary table with columns: File | Change | Reason
+    - List every file that will be created, modified, or deleted
+    - Group by: new files, modified files, deleted files
+
+  **Architecture Alignment** — Which ADRs apply to this story and how the implementation follows them. Flag any deviations from architecture with justification.
+
+  **UX Alignment** (if frontend story) — Which screens, components, and interaction patterns from ux-design.md apply. Reference specific wireframes or flow names.
+
+  **Testing Strategy** — How each acceptance criterion will be tested:
+    - Map each AC to at least one test case
+    - Specify test type (unit, integration, e2e) for each
+    - Note any edge cases or boundary conditions to test
+    - Reference ATDD file if this is a high-risk story
+
+  **Risks and Considerations** — Known risks, potential issues, or assumptions the plan depends on. Include:
+    - API contracts that must be maintained
+    - Database migration concerns (if applicable)
+    - Performance implications
+    - Security considerations
+    - Backward compatibility
+
+  **Verification** — How to verify the implementation is correct end-to-end:
+    - Commands to run (build, test, lint)
+    - Manual verification steps if applicable
+    - Expected outputs or behaviors to confirm
+  </action>
+  <action>Present the full plan in a structured, readable format. Use markdown headers for each section and tables where appropriate.</action>
+  <ask>Here is the detailed implementation plan. Review the context, steps, files, testing strategy, and risks. Confirm to proceed, or request changes. [confirm / revise]</ask>
+</step>
+<step n="6" title="TDD Red Phase — Write Failing Tests">
+  <critical>
+    <mandate>RED PHASE ONLY: Write test files ONLY — do NOT write any implementation code in this step. Tests must define expected behavior and FAIL because the implementation does not exist yet.</mandate>
+  </critical>
+  <action>For each subtask: write failing test(s) that define expected behavior (RED)</action>
+  <action>Run the test suite — verify all new tests FAIL</action>
+  <check if="any_new_test_passes">Tests should NOT pass yet — no implementation exists. If a test passes without implementation, it is vacuous and must be rewritten to actually test behavior.</check>
+  <action>Write intermediate checkpoint to {checkpoint_path}/dev-story-{story_key}.yaml with: workflow: dev-story, step: 6, phase: red_complete, story_key, epic_key, risk_level, output_file: {story_key}-tdd-progress.md, files_touched (list every test file created with its sha256 checksum via shasum -a 256)</action>
+  <action>Print a formatted summary directly in the conversation so the user can review without opening the file:
+
+  ## RED Phase Complete
+
+  **Tests created:**
+  {bulleted list of each test file: file path, test name, what acceptance criterion or behavior it validates}
+
+  **Test runner output:**
+  ```
+  {paste the actual terminal output from the test runner showing all failures}
+  ```
+
+  **Status:** All {count} new tests FAILING as expected
+  </action>
+  <template-output file="{implementation_artifacts}/{story_key}-tdd-progress.md">
+    RED phase complete. Summary: test files created, test names, what each validates, confirmation all new tests fail. Include test runner output showing failures.
+  </template-output>
+  <action if="yolo_mode">Val auto-validates this TDD output (per val_auto_in_yolo). If Val returns CRITICAL/WARNING findings: auto-fix them, re-invoke Val, repeat up to 3 times. HALT if unresolved. Save all findings and fixes to validator-sidecar memory.</action>
+  <ask>Red phase complete — tests written and all failing as expected. Review test output above. [proceed to Green phase / revise tests]</ask>
+</step>
+<step n="7" title="TDD Green Phase — Implement to Pass">
+  <critical>
+    <mandate>GREEN PHASE: Write the MINIMUM implementation code needed to make failing tests pass. Do NOT write final/polished code — that is for the Refactor phase.</mandate>
+  </critical>
+  <check if="red_phase_not_complete">HALT: Red phase template-output must be saved before starting Green phase. Complete Step 6 first.</check>
+  <action>For each subtask: implement minimum code to make failing tests pass (GREEN)</action>
+  <action>Run the test suite — verify all tests PASS</action>
+  <check if="any_test_fails">HALT: All tests must pass before proceeding. Fix failing tests or implementation.</check>
+  <action>Mark each completed subtask in story file</action>
+  <action>Conditional checks — for each that applies:
+    — If API boundary changes: write or update contract tests (consumer/provider)
+    — If database schema changes: create reversible migration script (UP + DOWN)
+    — If gradual rollout needed: implement feature flag wrapping new code path</action>
+  <action>Write intermediate checkpoint to {checkpoint_path}/dev-story-{story_key}.yaml with: workflow: dev-story, step: 7, phase: green_complete, story_key, epic_key, risk_level, output_file: {story_key}-tdd-progress.md, files_touched (list every implementation file created/modified with its sha256 checksum via shasum -a 256)</action>
+  <action>Print a formatted summary directly in the conversation so the user can review without opening the file:
+
+  ## GREEN Phase Complete
+
+  **Files created/modified:**
+  {bulleted list: file path + what was added/changed in each}
+
+  **Contract tests / migrations (if applicable):**
+  {list any contract tests or DB migration scripts created, or "N/A"}
+
+  **Test runner output:**
+  ```
+  {paste the actual terminal output from the test runner showing all tests passing}
+  ```
+
+  **Status:** All {count} tests PASSING with minimal implementation
+  </action>
+  <template-output file="{implementation_artifacts}/{story_key}-tdd-progress.md">
+    GREEN phase complete. Summary: files created/modified, all tests passing, any contract tests or migrations created. Include test runner output showing all green.
+  </template-output>
+  <action if="yolo_mode">Val auto-validates this TDD output (per val_auto_in_yolo). If Val returns CRITICAL/WARNING findings: auto-fix them, re-invoke Val, repeat up to 3 times. HALT if unresolved. Save all findings and fixes to validator-sidecar memory.</action>
+  <ask>Green phase complete — all tests passing with minimal implementation. Review implementation above. [proceed to Refactor phase / revise implementation]</ask>
+</step>
+<step n="8" title="TDD Refactor Phase">
+  <critical>
+    <mandate>REFACTOR PHASE: Improve code quality, extract abstractions, decompose components, improve naming. Do NOT skip this step even if the Green phase code looks acceptable.</mandate>
+  </critical>
+  <check if="green_phase_not_complete">HALT: Green phase template-output must be saved before starting Refactor phase. Complete Step 7 first.</check>
+  <action>Refactor implementation while keeping all tests green: extract shared utilities, decompose large functions, improve naming, remove duplication</action>
+  <action>Run the test suite — verify all tests still PASS after refactoring</action>
+  <check if="any_test_fails">HALT: Refactoring broke tests. Revert or fix before proceeding.</check>
+  <action>Write intermediate checkpoint to {checkpoint_path}/dev-story-{story_key}.yaml with: workflow: dev-story, step: 8, phase: refactor_complete, story_key, epic_key, risk_level, output_file: {story_key}-tdd-progress.md, files_touched (list ALL files created/modified across all 3 phases with sha256 checksums via shasum -a 256)</action>
+  <action>Print a formatted summary directly in the conversation so the user can review without opening the file:
+
+  ## REFACTOR Phase Complete
+
+  **What was refactored:**
+  {bulleted list: what changed and why — extracted utilities, decomposed functions, improved naming, removed duplication}
+
+  **Test runner output:**
+  ```
+  {paste the actual terminal output from the test runner confirming all tests still pass}
+  ```
+
+  **Status:** All {count} tests STILL PASSING after refactor
+  </action>
+  <template-output file="{implementation_artifacts}/{story_key}-tdd-progress.md">
+    REFACTOR phase complete. Summary: what was refactored, why, confirmation all tests still pass. Include test runner output.
+  </template-output>
+  <action if="yolo_mode">Val auto-validates this TDD output (per val_auto_in_yolo). If Val returns CRITICAL/WARNING findings: auto-fix them, re-invoke Val, repeat up to 3 times. HALT if unresolved. Save all findings and fixes to validator-sidecar memory.</action>
+  <ask>Refactor phase complete — all tests still passing. Review refactored code. [proceed / continue refactoring]</ask>
+</step>
+<step n="9" title="Capture Findings">
+  <action>Review any out-of-scope issues discovered during implementation (e.g., missing setup scripts, environment gaps, tech debt, broken tooling)</action>
+  <action>For each finding: add a row to the Findings table in the story file with type, severity, finding description, and suggested action</action>
+  <action>If no findings were discovered, leave the Findings table empty</action>
+</step>
+<step n="10" title="Definition of Done Verification">
+  <action>Write or update the "Definition of Done" section in the story file with the following checklist items. For each item, run the verification described and mark it [x] if it passes or [ ] if it fails:</action>
+  <action>- [ ] **Code compiles** — run the project build command (e.g., npm run build, mvn compile, flutter build). Mark [x] if exit code 0, [ ] if errors.</action>
+  <action>- [ ] **All tests pass** — run the full test suite. Mark [x] if all tests pass, [ ] if any fail.</action>
+  <action>- [ ] **All acceptance criteria met** — compare each AC from the story against the implementation. Mark [x] only if every AC is demonstrably satisfied.</action>
+  <action>- [ ] **No linting/formatting errors** — run the project linter (e.g., eslint, pylint, dart analyze). Mark [x] if no errors, [ ] if errors found.</action>
+  <action>- [ ] **Code follows project conventions** — verify naming, file structure, and patterns match existing codebase. Mark [x] if consistent.</action>
+  <action>- [ ] **No hardcoded secrets or credentials** — scan new/modified files for API keys, passwords, tokens, connection strings. Mark [x] if clean.</action>
+  <action>- [ ] **All subtasks marked complete** — verify every subtask in the story file is checked off. Mark [x] if all done.</action>
+  <action>- [ ] **Documentation updated** — if the change affects APIs, configs, or user-facing behavior, verify that relevant docs are updated. Mark [x] if not applicable or if docs are updated.</action>
+  <action>AUTO-FIX LOOP: After running all checks, if any item is marked [ ] (failing):
+    1. Identify each failing item and the specific issue causing it to fail
+    2. Auto-fix the issue (fix lint errors, fix failing tests, update docs, complete missed subtasks, remove hardcoded secrets, etc.)
+    3. Re-run ALL 8 DoD checks from the top and update the checklist in the story file
+    4. Repeat steps 1-3 up to a maximum of 3 fix iterations
+    5. If all 8 items pass (all marked [x]) at any point: auto-proceed to Step 11 — no user prompt needed
+    6. If items still fail after 3 iterations: HALT with a clear list of unresolved items</action>
+  <check if="dod_unresolved_after_3_attempts">HALT: Could not resolve all Definition of Done items after 3 auto-fix attempts. Unresolved: {list of failing items with reasons}. Manual intervention required.</check>
+</step>
+<step n="11" title="Load Skills JIT">
+  <action>Load git-workflow:commits section for commit conventions</action>
+  <action>Apply conventional commit format to all commits</action>
+</step>
+<step n="12" title="Commit Changes">
+  <action>Stage all changes</action>
+  <action>Commit with conventional commit format: type(scope): description</action>
+</step>
+<step n="13" title="Post-Complete Gate">
+  <action>Verify all tests pass (final confirmation)</action>
+  <action>Verify all acceptance criteria met</action>
+  <action>Verify all subtasks marked complete</action>
+  <action>Re-read the "Definition of Done" section from the story file — verify every item is checked (- [x]). Required items: code compiles, all tests pass, acceptance criteria met, no lint errors, project conventions followed, no hardcoded secrets, all subtasks complete, documentation updated.</action>
+  <check if="any_test_fails">HALT: All tests must pass before marking complete</check>
+  <check if="any_dod_unchecked">HALT: All Definition of Done items must be checked before moving to review. Unchecked items: {list}. Return to Step 10 to resolve.</check>
+</step>
+<step n="14" title="Update Status">
+  <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="review" source_workflow="dev-story" />
+  <action>Append files changed list to story file</action>
+  <action>Initialize Review Gate section in story file: set all six rows (Code Review, QA Tests, Security Review, Test Automation, Test Review, Performance Review) to PENDING with report link "—". If Review Gate section already exists, reset all rows to PENDING.</action>
+  <template-output file="{implementation_artifacts}/{story_key}-*.md">
+    Update story file with status change to 'review', list of files changed, and initialized Review Gate table (all 6 rows PENDING).
+  </template-output>
+</step>
+<step n="15" title="Auto-Run Reviews (YOLO only)">
+  <action if="not yolo_mode">Skip this step — in normal mode, user runs /gaia-run-all-reviews manually when ready.</action>
+  <action if="yolo_mode">Spawn a subagent using the Agent tool with this prompt:
+    "Load {project-root}/_gaia/core/engine/workflow.xml, then process {project-root}/_gaia/lifecycle/workflows/4-implementation/run-all-reviews/workflow.yaml as workflow-config. The story key is {story_key}. Run in YOLO mode — auto-proceed past all template-outputs. Follow the workflow engine instructions EXACTLY."
+  </action>
+  <action if="yolo_mode">When subagent returns: read the story file, parse the Review Gate table.
+    - If ALL 6 reviews PASSED: report "All reviews passed. Story {story_key} is ready for done status."
+    - If any review FAILED: report "{N} review(s) failed: {list of failed reviews}. Story moved to in-progress. Fix issues and re-run /gaia-run-all-reviews."
+  </action>
+</step>
+</workflow>

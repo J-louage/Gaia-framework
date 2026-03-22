@@ -1,0 +1,42 @@
+<task id="editorial-review-prose" name="Editorial Review — Prose">
+<objective>Clinical copy-editing that reviews text for communication clarity, consistency, and readability</objective>
+
+<critical>
+  <mandate>Review ONLY — never rewrite the document. Produce a findings report.</mandate>
+  <mandate>Flag issues with specific line references and suggested fixes</mandate>
+  <mandate>Categorize findings by severity: critical, major, minor, style</mandate>
+</critical>
+
+<flow>
+  <step n="1" title="Load Document">
+    <action>Ask user for the document path (or use current selection)</action>
+    <action>Read the entire document</action>
+    <action>Note document type: PRD, story, architecture, readme, etc.</action>
+  </step>
+
+  <step n="2" title="Analyze Prose">
+    <action>Check for these categories:
+      - Ambiguity: vague terms, unclear referents, multiple interpretations
+      - Inconsistency: terms used differently in different places
+      - Redundancy: repeated information, verbose phrases
+      - Jargon: unexplained technical terms, acronyms without definition
+      - Passive voice: where active voice would be clearer
+      - Sentence complexity: overly long or nested sentences
+      - Tone shifts: inconsistent voice or formality level
+    </action>
+  </step>
+
+  <step n="3" title="Generate Report">
+    <action>Produce findings report with:
+      - Executive summary (one paragraph)
+      - Findings table: severity, location, issue, suggested fix
+      - Overall readability score: Clear / Mostly Clear / Needs Work / Major Issues
+    </action>
+  </step>
+</flow>
+
+<output>
+  <format>Markdown findings report with table of issues</format>
+  <location>Displayed to user (not saved unless requested)</location>
+</output>
+</task>

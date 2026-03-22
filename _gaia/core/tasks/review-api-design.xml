@@ -1,0 +1,38 @@
+<task id="review-api-design" name="API Design Review Task">
+<objective>Review REST API design against standards and best practices</objective>
+
+<critical>
+  <mandate>Check naming conventions, HTTP methods, status codes</mandate>
+  <mandate>Verify versioning strategy</mandate>
+  <mandate>Reference RFC 7807 for error responses</mandate>
+</critical>
+
+<flow>
+  <step n="1" title="Scope">
+    <action>Ask user for API specification or code to review</action>
+    <action>Read the target files</action>
+  </step>
+  <step n="2" title="Naming Conventions">
+    <action>Check resource naming: plural nouns, kebab-case, no verbs in URLs</action>
+    <action>Verify consistent naming across endpoints</action>
+  </step>
+  <step n="3" title="HTTP Methods and Status Codes">
+    <action>Verify correct HTTP method usage: GET, POST, PUT, PATCH, DELETE</action>
+    <action>Check status codes are appropriate: 2xx, 4xx, 5xx</action>
+  </step>
+  <step n="4" title="Error Format and Versioning">
+    <action>Check error response format follows RFC 7807 or consistent pattern</action>
+    <action>Verify API versioning strategy (URL, header, or query param)</action>
+  </step>
+  <step n="5" title="Report">
+    <template-output file="{planning_artifacts}/api-design-review-{date}.md">
+      Generate API design review report with findings by category (naming, HTTP methods, status codes, error format, versioning), severity levels, and recommendations.
+    </template-output>
+  </step>
+</flow>
+
+<output>
+  <format>Markdown API design findings report</format>
+  <location>{planning_artifacts}/api-design-review-{date}.md</location>
+</output>
+</task>

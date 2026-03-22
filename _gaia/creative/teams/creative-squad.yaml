@@ -1,0 +1,10 @@
+name: "Creative Squad"
+description: "Creative intelligence sessions and brainstorming"
+agents:
+  - brainstorming-coach
+  - problem-solver
+  - design-thinking-coach
+  - innovation-strategist
+  - storyteller
+use_case: "Creative intelligence sessions, brainstorming, design thinking, innovation strategy, storytelling"
+phases: [anytime]

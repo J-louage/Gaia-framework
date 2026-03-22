@@ -1,0 +1,135 @@
+<workflow name="sprint-planning">
+<critical>
+  <mandate>Use sprint state machine: backlog, validating, ready-for-dev, in-progress, blocked, review, done</mandate>
+  <mandate>Support multi-sprint via sprint_id tracking</mandate>
+  <mandate>Only stories with status 'ready-for-dev' are selectable for a sprint</mandate>
+</critical>
+<step n="1" title="Load Epics, Stories, and Previous Retro">
+  <action>Read {planning_artifacts}/epics-and-stories.md</action>
+  <action>Parse all stories with their priorities, sizes, dependencies</action>
+  <action>Scan {implementation_artifacts}/ for individual story files matching {story_key}-*.md. For each file found, read its frontmatter Status field.</action>
+  <action>Classify stories into selectable and non-selectable:
+    - SELECTABLE: stories with individual files AND status = 'ready-for-dev'
+    - NOT SELECTABLE: stories without individual files → "Story {key} has no individual file — run /gaia-create-story {key} first."
+    - NOT SELECTABLE: stories with files but status ≠ 'ready-for-dev' → "Story {key} is in '{status}' status — must be 'ready-for-dev' to be selectable. Run /gaia-validate-story {key} first."
+  </action>
+  <action>Display the classification to the user: selectable stories table (Key | Title | Priority | Size | Risk | Status) and non-selectable stories with reasons.</action>
+  <action>Load most recent retro-{sprint_id}.md from {implementation_artifacts}/ if available</action>
+  <action>If retro found: extract open action items — carry forward as sprint constraints or tasks. Present to user: "Previous retro action items to carry forward:" with status of each.</action>
+</step>
+<step n="2" title="Optional: Memory Hygiene Check" optional="true">
+  <action>Check if any sidecar directories under {memory_path}/*-sidecar/ contain content beyond their template header</action>
+  <check if="any sidecars have content">
+    <ask>Agent memory sidecars contain decisions from previous sessions. Would you like to run memory hygiene? This spawns a subagent in a separate context. Recommended if architecture or requirement changes occurred since last sprint. (yes / skip)</ask>
+    <action>If yes: spawn a subagent using the Agent tool: "Load {project-root}/_gaia/core/engine/workflow.xml, then process {project-root}/_gaia/lifecycle/workflows/anytime/memory-hygiene/workflow.yaml as workflow-config. Run in YOLO mode. Follow the workflow engine instructions EXACTLY."</action>
+    <action>If skip: memory hygiene can be run anytime with /gaia-memory-hygiene</action>
+  </check>
+  <check if="no sidecars have content">
+    <ask>No agent memory sidecar data found. Would you like to run memory hygiene anyway? This is typically skipped for first sprints. (yes / skip)</ask>
+    <action>If yes: spawn subagent as above</action>
+    <action>If skip: continue to next step</action>
+  </check>
+</step>
+<step n="3" title="Sprint Scoping">
+  <ask>Sprint duration (1 week / 2 weeks / custom)?</ask>
+  <ask>Team velocity estimate (story points)?</ask>
+  <ask>Sprint number (for multi-sprint tracking)?</ask>
+</step>
+<step n="4" title="Story Selection">
+  <action>Read sizing_map from {project-root}/_gaia/_config/global.yaml. Use these canonical point values for T-shirt sizes (S/M/L/XL → points). Display the mapping to the user before selection.</action>
+  <action>Select stories for this sprint based on priority and dependencies — only from stories classified as SELECTABLE in Step 1 (status = 'ready-for-dev').</action>
+  <action>Ensure total size fits within velocity estimate using the sizing_map point values</action>
+  <action>Dependency blocking: for each candidate story, check its depends_on list. If any dependency story is NOT in 'done' status, the story CANNOT be included in this sprint. Display: "BLOCKED: Story {key} depends on {dep_key} (status: {dep_status}) — cannot be included until {dep_key} is done."</action>
+  <action>Priority surfacing: after story selection, check for P0 stories that are 'ready-for-dev' but were NOT selected. If any found, display: "WARNING: The following P0/critical stories are ready but not selected for this sprint:" followed by the list with their sizes. Ask user to confirm they intentionally excluded these high-priority stories.</action>
+  <action>If {test_artifacts}/test-plan.md exists: apply risk levels to story selection — buffer 20% for high-risk stories in velocity estimate</action>
+  <action>ATDD check (high-risk ONLY): for each story with risk = high, check if {test_artifacts}/atdd-{story_key}.md exists. If missing, add a sprint risk note: "HIGH-RISK story {key} has no ATDD file — run /gaia-atdd {key} before development." Do NOT flag medium or low risk stories — ATDD is required only for high-risk stories.</action>
+</step>
+<step n="5" title="Update Story Files">
+  <action>For each selected story that has an individual file in {implementation_artifacts}/: update the sprint_id field to "sprint-{N}"</action>
+  <action>For each selected story: invoke status-sync protocol to assign the sprint — keep status as 'ready-for-dev' (do NOT change to backlog). Stories remain ready-for-dev until /gaia-dev-story transitions them to in-progress.
+    <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="ready-for-dev" sprint_id="sprint-{N}" source_workflow="sprint-planning" />
+    Note: sprint-status.yaml may not exist yet at this point (created in Step 8) — the protocol will skip the sprint-status.yaml update if the file doesn't exist.</action>
+  <action>Include all modified story files in the checkpoint files_touched with sha256 checksums</action>
+</step>
+<step n="6" title="Optional: Mobile Testing">
+  <ask>Would you like to create a mobile test plan? This spawns a subagent in a separate context. Recommended for mobile or responsive applications. (yes / skip)</ask>
+  <action>If yes: spawn a subagent using the Agent tool: "Load {project-root}/_gaia/core/engine/workflow.xml, then process {project-root}/_gaia/testing/workflows/mobile-testing/workflow.yaml as workflow-config. Run in YOLO mode. Follow the workflow engine instructions EXACTLY."</action>
+  <action>If skip: mobile testing can be set up anytime later with /gaia-mobile-testing</action>
+</step>
+<step n="7" title="Sprint Plan Generation">
+  <action>Create sprint plan with story assignments and execution order</action>
+  <action>Order by dependency resolution + priority</action>
+  <action>Generate a Sprint Burndown Estimate table showing projected points remaining per day based on wave/story completion schedule. Format: Day | Points Remaining | Stories Completing. This helps the team track expected progress and identify deviations early.</action>
+</step>
+<step n="8" title="Status Initialization">
+  <action>All selected stories remain in 'ready-for-dev' status (assigned to sprint but not yet started)</action>
+  <action>Generate sprint-status.yaml with standardized schema:
+    sprint_id: "sprint-{N}"
+    duration: "{1 week / 2 weeks / custom}"
+    velocity_capacity: {velocity estimate from Step 3}
+    team_size: {number of developers}
+    total_points: {sum of all selected story points}
+    capacity_utilization: "{total_points / velocity_capacity * 100}%"
+    started: "{date}"
+    end_date: "{date}"
+    stories:
+      - key: "{story-key}"
+        title: "{story title}"
+        status: "ready-for-dev"
+        points: {story points from sizing_map}
+        risk_level: "{high/medium/low}"
+        assignee: null
+        blocked_by: null
+        updated: "{date}"
+  </action>
+</step>
+<step n="9" title="Generate Output">
+  <template-output file="{implementation_artifacts}/{sprint_id}-plan.md">
+    Generate sprint plan document with: sprint goals, selected stories (ordered), velocity target, risk assessment, Sprint Burndown Estimate (points remaining per day), and a Testing Readiness section listing ONLY high-risk stories with their ATDD file status. Medium and low risk stories do NOT require ATDD and should NOT appear in the ATDD readiness checks.
+  </template-output>
+  <action>Write sprint-status.yaml to {implementation_artifacts}/sprint-status.yaml</action>
+</step>
+<step n="10" title="Val Validation">
+  <action>Invoke Val to validate the sprint plan. Val verifies:
+    (a) All selected story keys exist as story files with status 'ready-for-dev'
+    (b) Dependency ordering is correct — no story selected before its blocking dependency is 'done'
+    (c) Points math is correct — total selected points ≤ velocity capacity
+    (d) No duplicate story keys in the selection
+    (e) Sprint-status.yaml entries match the sprint plan document
+    If findings: SM auto-fixes (e.g., remove invalid stories, fix ordering), re-validates.
+    If Val fails or crashes: log warning and continue — validation is non-blocking for sprint planning.</action>
+  <invoke-workflow
+    target="{project-root}/_gaia/lifecycle/workflows/4-implementation/val-validate-artifact/workflow.yaml"
+    input_artifact="{implementation_artifacts}/{sprint_id}-plan.md"
+    on_error="warn_and_continue"
+    model_override="opus" />
+</step>
+<step n="11" title="Save to Val Memory">
+  <action>Auto-save sprint planning decisions to Val's memory sidecar (no user prompt required):
+
+  1. Append to {memory_path}/validator-sidecar/decision-log.md:
+     ### [YYYY-MM-DD] Sprint Planning: {sprint_id}
+
+     - **Agent:** validator
+     - **Workflow:** sprint-planning
+     - **Sprint:** {sprint_id}
+     - **Status:** recorded
+
+     Sprint {sprint_id} planned. Duration: {duration}. Velocity: {velocity_capacity} pts.
+     Stories selected: {count} ({total_points} pts, {utilization}% capacity).
+     Story keys: {comma-separated list}.
+     High-risk stories: {count} (ATDD: {verified/missing}).
+     Retro action items carried forward: {count or "none"}.
+
+  2. Replace body of {memory_path}/validator-sidecar/conversation-context.md (preserve header above first ---):
+     Last session: Sprint planning for {sprint_id}.
+     Date: {YYYY-MM-DD}. Stories: {count} ({total_points} pts). Velocity: {velocity_capacity}.
+
+  If {memory_path}/validator-sidecar/ directory or files don't exist, create them with standard headers.
+  If writing fails, log warning and continue — memory save is non-blocking.</action>
+</step>
+<next-step source="lifecycle-sequence.yaml">
+  <primary command="/gaia-dev-story">Start implementing the first story from the sprint</primary>
+  <alternative command="/gaia-sprint-status" context="To review current sprint state"/>
+</next-step>
+</workflow>

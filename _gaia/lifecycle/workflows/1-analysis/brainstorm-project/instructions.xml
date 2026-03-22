@@ -1,0 +1,39 @@
+<workflow name="brainstorm-project">
+<critical>
+  <mandate>Check creative-artifacts/ for prior brainstorming output before starting</mandate>
+  <mandate>All findings must be grounded in user-provided information</mandate>
+</critical>
+<step n="1" title="Discover Context">
+  <action>Check docs/creative-artifacts/ for prior brainstorming output from creative module</action>
+  <action>If found, load and incorporate insights into the session</action>
+  <action>If not found, note that no prior creative work exists</action>
+</step>
+<step n="2" title="Elicit Project Vision">
+  <ask>What is the business idea or problem you want to explore?</ask>
+  <ask>Who are the target users?</ask>
+  <ask>What pain points does this address?</ask>
+  <ask>What makes this different from existing solutions?</ask>
+</step>
+<step n="3" title="Competitive Landscape">
+  <action>Based on user-provided information, analyze the competitive landscape</action>
+  <action>Note: no web access — use user-provided info and general knowledge only</action>
+  <action>Identify direct and indirect competitors</action>
+  <action>Map competitive positioning</action>
+</step>
+<step n="4" title="Opportunity Synthesis">
+  <action>Synthesize findings into 3-5 opportunity areas</action>
+  <action>For each opportunity: describe it, estimate impact, note evidence</action>
+  <action>Rank opportunities by potential impact and feasibility</action>
+  <action>Collect all ideas explored during the session that did not make the top opportunity list into a "Parking Lot" — for each, note the idea, why it was deprioritized, and under what conditions it might become viable</action>
+</step>
+<step n="5" title="Generate Output">
+  <template-output file="{planning_artifacts}/project-brainstorm.md">
+    Generate structured brainstorm output with: vision summary, target users, pain points, competitive landscape, opportunity areas (ranked), Parking Lot (deprioritized ideas with reasoning and revival conditions), and next steps per lifecycle-sequence.yaml.
+  </template-output>
+</step>
+<next-step source="lifecycle-sequence.yaml">
+  <primary command="/gaia-market-research">Conduct market research to validate competitive landscape</primary>
+  <alternative command="/gaia-domain-research" context="If domain-specific research is needed first"/>
+  <alternative command="/gaia-tech-research" context="If technology evaluation is needed first"/>
+</next-step>
+</workflow>

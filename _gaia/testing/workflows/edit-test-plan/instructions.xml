@@ -1,0 +1,65 @@
+<workflow name="edit-test-plan">
+<critical>
+  <mandate>Preserve all existing test plan content — test strategy, environments, entry/exit criteria, existing test cases</mandate>
+  <mandate>New test cases must follow the same format as existing ones</mandate>
+  <mandate>Test case IDs must auto-increment from the highest existing ID</mandate>
+  <mandate>Never remove or modify existing test cases</mandate>
+</critical>
+
+<step n="1" title="Load Existing Test Plan">
+  <action>Read {test_artifacts}/test-plan.md in full</action>
+  <action>GATE: verify test-plan.md exists. If missing, HALT and recommend /gaia-test-design.</action>
+  <action>Identify existing test case count and highest test case ID (for auto-increment)</action>
+  <action>Identify existing test areas/categories (e.g., unit, integration, E2E, performance, security)</action>
+  <action>Display current test plan structure summary to user: section count, test case count, coverage areas</action>
+</step>
+
+<step n="2" title="Capture Change Scope">
+  <check if="triggered_by_orchestrator">Inherit feature_description, prd_diff (new FR/NFR IDs), arch_diff (architecture changes) from triggering workflow context. Skip user questions — proceed to identifying test needs.</check>
+  <ask>What new test cases are needed? Describe the feature or change requiring test coverage.</ask>
+  <ask>Which FR/NFR IDs need test coverage?</ask>
+  <action>Read relevant sections of {planning_artifacts}/prd.md for requirement context</action>
+  <action>Read relevant sections of {planning_artifacts}/architecture.md for technical context</action>
+  <action>Record: new_requirements, change_description, affected_test_areas</action>
+</step>
+
+<step n="3" title="Define New Test Cases">
+  <action>For each new requirement, define test cases:
+    - Test case ID (auto-incremented from highest existing)
+    - Title and description
+    - Test type (unit, integration, E2E, performance, security, accessibility)
+    - Pre-conditions and test steps
+    - Expected results
+    - Priority (critical/high/medium/low)
+    - Validates: {FR-* / NFR-* IDs this test case validates}</action>
+  <action>Determine if new test areas/categories are needed or if cases fit existing categories</action>
+  <action>Present proposed test cases to user for review and confirmation</action>
+</step>
+
+<step n="4" title="Update Test Plan">
+  <action>Append new test cases to the appropriate test area sections</action>
+  <action>If new test area needed: create section header with description before adding test cases</action>
+  <action>Update test scope section to reflect expanded coverage</action>
+  <action>Update coverage summary if present (new requirements covered / total)</action>
+  <action>Preserve all existing content exactly as-is — no reordering, no reformatting, no removal</action>
+</step>
+
+<step n="5" title="Add Version Note and Save">
+  <action>Append version note to test plan:
+    ## Version History
+    | Date | Change | New Test Cases | FR/NFR IDs Covered |
+    |------|--------|---------------|-------------------|
+    | {date} | {change summary} | {new test case IDs} | {FR/NFR IDs} |
+  </action>
+  <action>If no Version History section exists, create one</action>
+  <template-output file="{test_artifacts}/test-plan.md">
+    Save updated test plan with new test cases appended, coverage updated, and version note added.
+  </template-output>
+</step>
+
+<step n="6" title="Next Steps">
+  <action>Report test cases added: list new IDs, their types, and requirements covered</action>
+  <action>If high-risk stories need acceptance tests: "Recommend running /gaia-atdd for stories: {story_keys}"</action>
+  <action>If traceability update needed: "Recommend running /gaia-trace to update traceability matrix"</action>
+</step>
+</workflow>
