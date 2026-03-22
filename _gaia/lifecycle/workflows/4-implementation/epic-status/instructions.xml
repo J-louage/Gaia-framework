@@ -12,12 +12,12 @@
   <action>Build epic-to-stories mapping</action>
 </step>
 <step n="2" title="Scan Story Data">
-  <action>Check if {implementation_artifacts}/story-index.yaml exists</action>
-  <action if="story-index.yaml exists">Read story-index.yaml for all story metadata (key, title, status, sprint_id, epic, priority, risk, author). This is a fast single-file read — no need to scan individual story files.</action>
-  <action if="story-index.yaml does NOT exist">Fall back to scanning all .md files in {implementation_artifacts}/:
+  <action>ALWAYS scan all .md files in {implementation_artifacts}/ for story files:
     For each file, read ONLY the YAML frontmatter (stop at closing ---)
     Extract: story key, title, status, sprint_id (if present), epic, author
-    Skip non-story files (e.g., sprint-status.yaml, epic-status.md, tech-debt-dashboard.md, sprint-plan.md, story-index.yaml)</action>
+    Skip non-story files (e.g., sprint-status.yaml, epic-status.md, tech-debt-dashboard.md, sprint-plan.md, story-index.yaml, retro-*.md, sprint-reconciliation-*.md)
+    The story file frontmatter is ALWAYS the source of truth for status — never rely solely on story-index.yaml which may be incomplete.</action>
+  <action>If {implementation_artifacts}/story-index.yaml exists: use it as a supplementary source for stories that have no .md file (e.g., stories listed in epics-and-stories.md but with no file yet). Do NOT use it as a replacement for scanning actual story files.</action>
 </step>
 <step n="3" title="Aggregate Status">
   <action>Join scanned story data to epic-story mapping from Step 1</action>
