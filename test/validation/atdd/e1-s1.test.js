@@ -9,7 +9,6 @@ import yaml from "js-yaml";
  *
  * Red-phase acceptance tests for story E1-S1.
  * Each test maps 1:1 to an acceptance criterion.
- * All tests MUST FAIL until the story is implemented.
  *
  * AC1: Structural field validation (instructions, agent, config_source, validation/checklist)
  * AC2: Quality gate reference validation
@@ -42,9 +41,6 @@ const VALID_VARIABLE_REFS = [
   "{spec_name}",
   "{plan_artifact_path}",
   "{artifact_path}",
-];
-
-function findWorkflowFiles() {
   "{memory_path}",
   "{checkpoint_path}",
   "{data_path}",
@@ -52,7 +48,6 @@ function findWorkflowFiles() {
 ];
 
 function findWorkflowFiles() {
-  const { execSync } = require("child_process");
   const result = execSync(
     `find -L "${GAIA_ROOT}" -name "workflow.yaml" -not -path "*/node_modules/*" -not -path "*/_backups/*"`,
     { encoding: "utf8" },
@@ -114,7 +109,7 @@ describe("ATDD E1-S1: Workflow Definition Validation", () => {
 
       it("agent field maps to an existing agent persona (if declared)", () => {
         if (!config?.agent || config.agent === "orchestrator") return;
-        if (config.agent === "dev-*") return; // wildcard — resolved at runtime
+        if (config.agent === "dev-*") return;
 
         const module = config.module || "lifecycle";
         const agentPath = join(
@@ -182,29 +177,6 @@ describe("ATDD E1-S1: Workflow Definition Validation", () => {
       ).toBeGreaterThan(0);
     });
 
-    describe.each(
-      workflowsWithGates.map((w) => [w.path, w.config]),
-    )("%s", (wPath, wConfig) => {
-      const gates = [
-        ...(wConfig.quality_gates?.pre_start || []),
-        ...(wConfig.quality_gates?.post_complete || []),
-      ];
-
-      it.each(gates)(
-        "gate '%s' has a verifiable check and on_fail message",
-        (gate) => {
-          // Each gate entry must have 'check' and 'on_fail' fields
-          expect(
-            gate.check,
-            `Gate missing 'check' field in ${wPath}`,
-          ).toBeTruthy();
-          expect(
-            gate.on_fail,
-            `Gate missing 'on_fail' field in ${wPath}`,
-          ).toBeTruthy();
-        },
-      );
-    });
     describe.each(workflowsWithGates.map((w) => [w.path, w.config]))(
       "%s",
       (wPath, wConfig) => {
@@ -216,7 +188,6 @@ describe("ATDD E1-S1: Workflow Definition Validation", () => {
         it.each(gates)(
           "gate '%s' has a verifiable check and on_fail message",
           (gate) => {
-            // Each gate entry must have 'check' and 'on_fail' fields
             expect(
               gate.check,
               `Gate missing 'check' field in ${wPath}`,
@@ -250,33 +221,6 @@ describe("ATDD E1-S1: Workflow Definition Validation", () => {
       ).toBeGreaterThan(0);
     });
 
-    describe.each(
-      workflowsWithOutput.map((w) => [w.path, w.config]),
-    )("%s", (wPath, wConfig) => {
-      const outputPaths = [];
-      if (wConfig.output?.primary) outputPaths.push(wConfig.output.primary);
-      if (wConfig.output?.artifacts) {
-        if (Array.isArray(wConfig.output.artifacts)) {
-          outputPaths.push(...wConfig.output.artifacts);
-        } else if (typeof wConfig.output.artifacts === "string") {
-          outputPaths.push(wConfig.output.artifacts);
-        }
-      }
-
-      it.each(outputPaths)(
-        "output path '%s' uses only valid variable references",
-        (outputPath) => {
-          // Extract all {variable} references from the path
-          const varRefs = outputPath.match(/\{[^}]+\}/g) || [];
-          for (const ref of varRefs) {
-            expect(
-              VALID_VARIABLE_REFS,
-              `Invalid variable reference '${ref}' in output path of ${wPath}`,
-            ).toContain(ref);
-          }
-        },
-      );
-    });
     describe.each(workflowsWithOutput.map((w) => [w.path, w.config]))(
       "%s",
       (wPath, wConfig) => {
@@ -293,7 +237,6 @@ describe("ATDD E1-S1: Workflow Definition Validation", () => {
         it.each(outputPaths)(
           "output path '%s' uses only valid variable references",
           (outputPath) => {
-            // Extract all {variable} references from the path
             const varRefs = outputPath.match(/\{[^}]+\}/g) || [];
             for (const ref of varRefs) {
               expect(
@@ -328,20 +271,6 @@ describe("ATDD E1-S1: Workflow Definition Validation", () => {
 
   // ── AC5: Clear error messages ─────────────────────────────────────
   describe("AC5: Validation produces clear error messages identifying specific workflow and failing check", () => {
-    // This AC validates that EVERY assertion above includes the workflow path
-    // in its error message. We verify this structurally by checking that
-    // the test file itself embeds workflow identifiers in expect() messages.
-    //
-    // At the acceptance level: run the full suite and verify that any failure
-    // message contains the workflow file path so the developer can locate the issue.
-
-    it("test file contains workflow-identifying error messages in assertions", () => {
-      const thisFile = readFileSync(import.meta.filename, "utf8");
-      // Count expect() calls that include a workflow path variable in the message
-      const assertionsWithContext = (
-        thisFile.match(/\$\{w(?:orkflow)?Path\}/g) || []
-      ).length;
-      // We expect at least 5 assertions that embed the workflow path
     it("test file contains workflow-identifying error messages in assertions", () => {
       const thisFile = readFileSync(import.meta.filename, "utf8");
       const assertionsWithContext = (
@@ -354,7 +283,6 @@ describe("ATDD E1-S1: Workflow Definition Validation", () => {
     });
 
     it("failure output includes the specific workflow file path", () => {
-      // Pick a non-existent workflow to verify error formatting
       const fakeWorkflow = "/non/existent/workflow.yaml";
       const errorMsg = `Instructions file not found: /fake/path (workflow: ${fakeWorkflow})`;
       expect(errorMsg).toContain(fakeWorkflow);
@@ -436,10 +364,6 @@ describe("ATDD E1-S1: Workflow Definition Validation", () => {
       );
       if (!existsSync(targetPath)) return;
       const content = readFileSync(targetPath, "utf8");
-      expect(
-        content,
-        "workflows.test.js should validate output paths",
-      ).toMatch(/output.*artifact|output.*primary/i);
       expect(content, "workflows.test.js should validate output paths").toMatch(
         /output.*artifact|output.*primary/i,
       );
