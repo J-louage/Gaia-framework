@@ -15,10 +15,10 @@ function readCached(filePath) {
 
 /** Run `find` under a directory with a name pattern, excluding node_modules. */
 function findFiles(dir, namePattern, extraExcludes = []) {
-  const excludes = ['*/node_modules/*', ...extraExcludes]
+  const excludes = ['*/node_modules/*', '*/_backups/*', ...extraExcludes]
     .map((e) => `-not -path "${e}"`)
     .join(" ");
-  return execSync(`find "${dir}" -name "${namePattern}" ${excludes}`, {
+  return execSync(`find -L "${dir}" -name "${namePattern}" ${excludes}`, {
     encoding: "utf8",
   })
     .trim()

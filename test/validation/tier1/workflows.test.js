@@ -9,7 +9,7 @@ const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
 // Use glob to find all workflow.yaml files
 function findWorkflowFiles() {
   const result = execSync(
-    `find "${PROJECT_ROOT}/_gaia" -name "workflow.yaml" -not -path "*/node_modules/*"`,
+    `find -L "${PROJECT_ROOT}/_gaia" -name "workflow.yaml" -not -path "*/node_modules/*" -not -path "*/_backups/*"`,
     { encoding: "utf8" },
   );
   return result

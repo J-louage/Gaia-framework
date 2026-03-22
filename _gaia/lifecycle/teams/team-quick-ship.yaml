@@ -1,6 +1,0 @@
-name: "Quick Ship"
-description: "Quick spec and implementation"
-agents:
-  - dev-*
-use_case: "Quick spec and implementation"
-phases: [quick-flow]
