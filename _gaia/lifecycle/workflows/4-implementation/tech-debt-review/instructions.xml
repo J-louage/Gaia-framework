@@ -23,12 +23,29 @@
        - Target status = 'done' → STALE TARGET (story completed but debt still exists — finding was likely added after implementation)
     4. If target file doesn't exist → UNASSIGNED
     5. If target is not a valid story key (e.g., "cleanup", "later", free text) → UNASSIGNED</action>
+  <action>For each STALE TARGET item: verify whether the debt was actually resolved by the target story.
+    1. Read the finding description — identify what specific file, config, or pattern the debt refers to
+    2. Check the filesystem: does the issue still exist? (e.g., if finding says "duplicate file X", check if both copies still exist; if finding says "missing skill Y", check if it was created)
+    3. If the issue is RESOLVED (no longer exists in filesystem): mark as RESOLVED and exclude from classification/scoring
+    4. If the issue PERSISTS despite target story being done: keep as active debt with status STALE TARGET
+    5. Report: "{N} STALE TARGET items verified: {resolved_count} resolved (excluded), {persists_count} still active"</action>
   <action>Separate items into two pools: (a) untriaged findings still in story files, (b) triaged debt stories already in backlog</action>
-  <action>If untriaged findings exist: note count and recommend running /gaia-triage-findings first</action>
+  <action>If untriaged findings exist: include them in the analysis with Resolution Status = UNASSIGNED. Do NOT recommend running /gaia-triage-findings here — triage may have already run and these items fell through its filters. Flag them for Step 6 recommendations instead.</action>
   <action>If no debt items found at all: inform user "No technical debt detected" and stop</action>
 </step>
 <step n="2" title="Classify Debt">
-  <action>Assign each debt item a stable ID: TD-1, TD-2, TD-3, etc. in the order they were scanned. This ID stays with the item through ALL subsequent steps — never renumber.</action>
+  <action>Before assigning IDs, detect and merge duplicate findings that describe the same root cause:
+    1. Compare all items — two items are duplicates if they describe the same root cause:
+       - Same file/config/pattern referenced
+       - Same type of issue (e.g., "dual directories" from different source stories)
+       - One finding is a subset of another
+    2. For each group of duplicates: merge into a single item
+       - Use the most descriptive title
+       - Combine all source stories (e.g., "E8-S2, E8-S4")
+       - Keep the same target story
+       - Mark as "(merged from {count} findings)" in the Item column
+    3. Report: "Merged {N} duplicate findings into {M} items"</action>
+  <action>Assign each MERGED debt item a stable ID: TD-1, TD-2, TD-3, etc. IDs are assigned AFTER merging so they reflect the final deduplicated list. This ID stays with the item through ALL subsequent steps — never renumber.</action>
   <action>Categorize each debt item into exactly one category:</action>
   <action>  DESIGN — architectural shortcuts, missing abstractions, tight coupling, violation of design patterns</action>
   <action>  CODE — code smells, duplication, excessive complexity, naming inconsistencies, SOLID violations</action>
