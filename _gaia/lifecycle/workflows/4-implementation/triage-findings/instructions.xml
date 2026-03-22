@@ -35,7 +35,10 @@
   <action if="not yolo_mode">Present the recommendation, then let the user confirm or override for each finding:</action>
   <action>  a. CREATE STORY — generate a new story file with status 'backlog', referencing the source story and finding. Use when: the finding represents a standalone piece of work (bug fix, tech debt cleanup, missing feature) that needs its own acceptance criteria and testing.
     After choosing CREATE STORY, confirm timing: [n] Now (inject into sprint) | [s] Next sprint (P0) | [b] Backlog (standard priority)</action>
-  <action>  b. ADD TO EXISTING — append finding to an existing backlog story's tasks. Use when: the finding is closely related to an existing backlog story and can be addressed as part of that work. Present a list of candidate backlog stories for the user to pick from.</action>
+  <action>  b. ADD TO EXISTING — append finding to an existing story's tasks. Use when: the finding is closely related to an existing backlog story and can be addressed as part of that work.
+    When presenting candidate stories: only show stories with status 'backlog', 'validating', 'ready-for-dev', or 'in-progress'.
+    EXCLUDE stories with status 'done' or 'review' — adding a finding to a completed story won't be worked on.
+    If user tries to pick a done story: warn "Story {key} is already done. Adding a finding to a completed story won't be worked on. Choose a different story or use CREATE STORY instead."</action>
   <action>  c. DISMISS — finding is not actionable or already resolved. Use when: the finding was about a temporary state that no longer exists, the issue has been fixed by a subsequent change, or the risk is accepted.</action>
 </step>
 <step n="4" title="Create Backlog Stories">
