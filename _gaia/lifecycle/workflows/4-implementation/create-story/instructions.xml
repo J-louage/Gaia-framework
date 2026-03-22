@@ -10,7 +10,15 @@
   <action>Build a list of stories that do NOT yet have individual story files.</action>
   <action>Sort the list by: Priority (P0 first, then P1, then P2), then dependency topology (stories with no dependencies first).</action>
   <check if="user provided a story key (e.g., /gaia-create-story E1-S2)">
-    Use the provided story key directly — skip the selection list. Verify the key exists in epics-and-stories.md. If a story file already exists for this key, warn the user: "Story file for {key} already exists. Proceeding will overwrite it."
+    Use the provided story key directly — skip the selection list. Verify the key exists in epics-and-stories.md.
+    If a story file already exists for this key:
+      1. Read its YAML frontmatter status field
+      2. If status is 'backlog': warn "Story file exists with status backlog. Proceeding will regenerate it." Allow continue.
+      3. If status is anything else (validating, ready-for-dev, in-progress, blocked, review, done):
+         HALT: "Story {key} is in '{status}' status. Overwriting would destroy work in progress.
+         - To edit the story: use /gaia-fix-story {key}
+         - To reset to backlog and recreate: manually set frontmatter status to 'backlog' first"
+         Do NOT proceed — this is a hard gate. Even in YOLO mode, do NOT bypass this check.
   </check>
   <check if="no story key provided">
     Display the prioritized list of stories without files as a table:
