@@ -34,7 +34,7 @@ const DEV_STORY_DIR = join(
 
 // ─── Validation patterns ─────────────────────────────────────────
 /** Valid severity prefixes for quality gate on_fail messages */
-const GATE_SEVERITY_PATTERN = /^(HALT|WARN|WARNING|RECOMMEND):/;
+const GATE_SEVERITY_PATTERN = /^(HALT|WARN|WARNING|RECOMMEND|halt|warn|warning|recommend)[\s:—-]/;
 
 /** Known framework variable names used in workflow configs */
 const KNOWN_VARIABLES = new Set([
