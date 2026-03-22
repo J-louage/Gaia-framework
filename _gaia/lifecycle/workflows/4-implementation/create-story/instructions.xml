@@ -103,7 +103,7 @@
     - author: agent name (e.g., "Nate (Scrum Master)")
   </action>
   <template-output file="{implementation_artifacts}/{story_key}-{story_title_slug}.md">
-    Generate the story file following the story-template.md structure. The filename must use the story key and slugified title (e.g., E1-S1-user-login.md). Include complete YAML frontmatter with ALL 14 fields populated. Fill all template sections: User Story, Acceptance Criteria, Tasks/Subtasks (linked to AC numbers), Dev Notes, Technical Notes, Dependencies, Test Scenarios, Project Structure Notes, References, Dev Agent Record, and Estimate.
+    Generate the story file following the story-template.md structure. The filename must use the story key and slugified title (e.g., E1-S1-user-login.md). Include complete YAML frontmatter with ALL 14 fields populated. Fill all template sections: User Story, Acceptance Criteria, Tasks/Subtasks (linked to AC numbers), Dev Notes, Technical Notes, Dependencies, Test Scenarios, Project Structure Notes, References, Dev Agent Record, and Estimate. IMPORTANT: The body "**Status:**" line MUST match the frontmatter status field exactly. Both must say the same status value.
   </template-output>
   <action>Add the new story to {implementation_artifacts}/story-index.yaml:
     1. Read story-index.yaml (create with header if doesn't exist)
@@ -132,6 +132,7 @@
 <step n="8" title="Validation Fix Loop">
   <check if="Val returned zero findings">
     <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="ready-for-dev" source_workflow="create-story" />
+    <action>Verify: re-read the story file and confirm that BOTH the frontmatter status field AND the body "**Status:**" line say "ready-for-dev". If the body still shows a different status, update it directly. This prevents frontmatter/body drift.</action>
     <action>Report "Validation passed — story is ready for dev." Proceed to Step 9.</action>
   </check>
 
