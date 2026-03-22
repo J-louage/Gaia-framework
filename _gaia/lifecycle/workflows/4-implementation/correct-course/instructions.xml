@@ -35,7 +35,14 @@
   <action>Format change summary with standard header: "## Course Correction — {date}" followed by summary line: "Change Type: {type} | Stories Affected: {count} | Velocity Impact: {delta} points"</action>
   <action>Update sprint plan document</action>
   <action>For each story whose status changed during this course correction: invoke status-sync protocol to keep story file and sprint-status.yaml in sync.
-    <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="{new_status}" source_workflow="correct-course" />
+    - For stories REMOVED from the sprint (moved back to backlog or ready-for-dev):
+      <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="{new_status}" sprint_id="null" source_workflow="correct-course" />
+      This clears the sprint_id in the story file and removes the entry from sprint-status.yaml.
+    - For stories INJECTED into the sprint:
+      <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="backlog" sprint_id="{current_sprint_id}" source_workflow="correct-course" />
+      This sets the sprint_id and adds/updates the entry in sprint-status.yaml.
+    - For stories that changed status but remain in the sprint:
+      <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="{new_status}" source_workflow="correct-course" />
   </action>
   <action>Update sprint-status.yaml with any additional changes — include newly injected stories that don't yet have story files</action>
   <action>Log course correction reason, CR ID (if applicable), and changes made</action>
