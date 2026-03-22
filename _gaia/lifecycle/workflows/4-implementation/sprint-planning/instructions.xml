@@ -46,8 +46,8 @@
 </step>
 <step n="5" title="Update Story Files">
   <action>For each selected story that has an individual file in {implementation_artifacts}/: update the sprint_id field to "sprint-{N}"</action>
-  <action>For each selected story: invoke status-sync protocol to set status to 'backlog' — the story transitions from 'ready-for-dev' to 'backlog' when assigned to a sprint.
-    <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="backlog" source_workflow="sprint-planning" />
+  <action>For each selected story: invoke status-sync protocol to assign the sprint — keep status as 'ready-for-dev' (do NOT change to backlog). Stories remain ready-for-dev until /gaia-dev-story transitions them to in-progress.
+    <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="ready-for-dev" sprint_id="sprint-{N}" source_workflow="sprint-planning" />
     Note: sprint-status.yaml may not exist yet at this point (created in Step 8) — the protocol will skip the sprint-status.yaml update if the file doesn't exist.</action>
   <action>Include all modified story files in the checkpoint files_touched with sha256 checksums</action>
 </step>
@@ -62,7 +62,7 @@
   <action>Generate a Sprint Burndown Estimate table showing projected points remaining per day based on wave/story completion schedule. Format: Day | Points Remaining | Stories Completing. This helps the team track expected progress and identify deviations early.</action>
 </step>
 <step n="8" title="Status Initialization">
-  <action>Set all selected stories to 'backlog' status</action>
+  <action>All selected stories remain in 'ready-for-dev' status (assigned to sprint but not yet started)</action>
   <action>Generate sprint-status.yaml with standardized schema:
     sprint_id: "sprint-{N}"
     duration: "{1 week / 2 weeks / custom}"
@@ -75,7 +75,7 @@
     stories:
       - key: "{story-key}"
         title: "{story title}"
-        status: "backlog"
+        status: "ready-for-dev"
         points: {story points from sizing_map}
         risk_level: "{high/medium/low}"
         assignee: null
