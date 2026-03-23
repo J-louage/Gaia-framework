@@ -2,7 +2,7 @@
 =======
 
 
-This project uses the **GAIA** (Generative Agile Intelligence Architecture) framework — an AI agent framework for Claude Code that orchestrates software product development through 25 specialized agents, 65 workflows, and 8 shared skills.
+This project uses the **GAIA** (Generative Agile Intelligence Architecture) framework — an AI agent framework for Claude Code that orchestrates software product development through 26 specialized agents, 65 workflows, and 8 shared skills.
 
 ## How to Start
 
@@ -135,7 +135,7 @@ GAIA supports separating the framework from the application source code. The `pr
 ## Sprint State Machine
 
 ```
-backlog → validating → ready-for-dev → in-progress → blocked → review → done
+backlog → validating → ready-for-dev → in-progress → invalid → review → done
 ```
 
 **Review Gate:** A story in `review` requires ALL six reviews to pass before moving to `done`:
