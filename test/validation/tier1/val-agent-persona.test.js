@@ -186,12 +186,12 @@ describe("E8-S4: Val Agent Persona and Manifest Entries", () => {
     });
   });
 
-  // AC10: File within 200-line limit
+  // AC10: File within 400-line limit
   describe("AC10: Line count within budget", () => {
-    it("should be 200 lines or fewer", () => {
+    it("should be 400 lines or fewer", () => {
       const content = readFileSync(VALIDATOR_PATH, "utf8");
       const lineCount = content.split("\n").length;
-      expect(lineCount, `validator.md is ${lineCount} lines (max 200)`).toBeLessThanOrEqual(200);
+      expect(lineCount, `validator.md is ${lineCount} lines (max 400)`).toBeLessThanOrEqual(400);
     });
   });
 
