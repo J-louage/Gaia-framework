@@ -2,10 +2,10 @@
 
 [![Framework](https://img.shields.io/badge/framework-v1.48.0-blue)]()
 [![License](https://img.shields.io/badge/license-AGPL--3.0-green)]()
-[![Agents](https://img.shields.io/badge/agents-25-purple)]()
+[![Agents](https://img.shields.io/badge/agents-26-purple)]()
 [![Workflows](https://img.shields.io/badge/workflows-73-orange)]()
 
-AI agent framework for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) that orchestrates software product development through **25 specialized agents**, **73 workflows**, and **11 shared skills** — from initial research all the way to deployment.
+AI agent framework for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) that orchestrates software product development through **26 specialized agents**, **73 workflows**, and **11 shared skills** — from initial research all the way to deployment.
 
 ![GAIA Lifecycle Activity Diagram](GAIA_Lifecycle_Activity_Diagram.png)
 
@@ -20,7 +20,7 @@ Without guardrails, every AI session starts from zero. There's no traceability f
 **What this gives you:**
 
 - **A structured lifecycle, not ad-hoc prompting** — 5 phases from analysis to deployment, with quality gates that enforce standards at every transition
-- **25 specialized agents** — each with a persona, domain expertise, and persistent memory that improves over time
+- **26 specialized agents** — each with a persona, domain expertise, and persistent memory that improves over time
 - **Enforced quality gates** — 17 gates that HALT workflows when standards aren't met (not advisory — hard stops)
 - **6-gate review process** — every story passes code review, QA, security, test automation, test review, and performance review before completion
 - **Full traceability** — every line of code traces back through stories, epics, architecture decisions, and requirements to the original product brief
@@ -204,6 +204,7 @@ All developer agents extend a shared base with common dev patterns. Each adds st
 | Java Dev | Hugo | Spring Boot, JPA, microservices | `/gaia-agent-dev-java` |
 | Python Dev | Ravi | Django, FastAPI, data pipelines | `/gaia-agent-dev-python` |
 | Mobile Dev | Talia | React Native, Swift, Kotlin | `/gaia-agent-dev-mobile` |
+| Go Dev | Kai | Go, Gin, Fiber, gRPC | `/gaia-agent-dev-go` |
 
 ### Creative Agents
 
