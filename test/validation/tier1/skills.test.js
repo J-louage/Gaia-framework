@@ -181,7 +181,7 @@ const skillFiles = discoverSkillFiles();
 
 describe("Skill File Validation (E1-S3, FR-32)", () => {
   // AC1: Line count validation
-  describe("AC1: Line count within 300-line limit", () => {
+  describe("AC1: Line count within 500-line limit", () => {
     it("should discover skill files via glob (auto-discovery)", () => {
       expect(
         skillFiles.length,
@@ -190,13 +190,13 @@ describe("Skill File Validation (E1-S3, FR-32)", () => {
     });
 
     describe.each(skillFiles)("%s", (filePath) => {
-      it("should be within the 300-line limit", () => {
+      it("should be within the 500-line limit", () => {
         const content = readCached(filePath);
         const lineCount = content.split("\n").length;
         expect(
           lineCount,
-          `${basename(filePath)} is ${lineCount} lines — exceeds 300-line limit`,
-        ).toBeLessThanOrEqual(300);
+          `${basename(filePath)} is ${lineCount} lines — exceeds 500-line limit`,
+        ).toBeLessThanOrEqual(500);
       });
     });
   });

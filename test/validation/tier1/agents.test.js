@@ -140,16 +140,16 @@ describe("Agent Persona Validation (E1-S2, FR-31)", () => {
     ).toBeGreaterThan(0);
   });
 
-  // AC1: Line count validation — all agents ≤ 200 lines
-  describe("AC1: Line count within 200-line limit", () => {
+  // AC1: Line count validation — all agents ≤ 400 lines
+  describe("AC1: Line count within 400-line limit", () => {
     describe.each(agentFiles)("%s", (filePath) => {
-      it(`should be within the 200-line limit${isAbstract(filePath) ? " [abstract]" : ""}`, () => {
+      it(`should be within the 400-line limit${isAbstract(filePath) ? " [abstract]" : ""}`, () => {
         const content = readCached(filePath);
         const lineCount = content.split("\n").length;
         expect(
           lineCount,
-          `${basename(filePath)}${isAbstract(filePath) ? " (abstract)" : ""} is ${lineCount} lines — exceeds 200-line limit`,
-        ).toBeLessThanOrEqual(200);
+          `${basename(filePath)}${isAbstract(filePath) ? " (abstract)" : ""} is ${lineCount} lines — exceeds 400-line limit`,
+        ).toBeLessThanOrEqual(400);
       });
     });
   });

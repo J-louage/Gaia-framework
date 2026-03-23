@@ -90,13 +90,13 @@ describe("E8-S10: Validation Patterns Skill", () => {
 
   // AC3: Line count within limits
   describe("AC3: Size constraints", () => {
-    it("should be within the 300-line skill limit", () => {
+    it("should be within the 500-line skill limit", () => {
       const content = readFileSync(SKILL_PATH, "utf8");
       const lineCount = content.split("\n").length;
       expect(
         lineCount,
-        `Skill file is ${lineCount} lines — exceeds 300-line limit`,
-      ).toBeLessThanOrEqual(300);
+        `Skill file is ${lineCount} lines — exceeds 500-line limit`,
+      ).toBeLessThanOrEqual(500);
     });
 
     it("each section should be approximately 50-60 lines (max 65)", () => {

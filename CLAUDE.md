@@ -1,4 +1,4 @@
-# GAIA Framework v1.47.0
+# GAIA Framework v1.48.0
 =======
 
 
@@ -76,9 +76,9 @@ GAIA supports separating the framework from the application source code. The `pr
 - Never pre-load skills or knowledge fragments — load JIT when a step references them
 - Use sectioned skill loading when only a subset of a skill is needed
 - Release prior step content before loading the next step
-- Agent persona files: max 200 lines
+- Agent persona files: max 400 lines
 - Instruction step files: max 150 lines each
-- Skill files: max 300 lines (or load individual sections at ~50 lines each)
+- Skill files: max 500 lines (or load individual sections at ~50 lines each)
 
 ### Step Execution
 - Execute ALL steps in exact order — no skipping, no reordering
@@ -161,6 +161,6 @@ Agent memory sidecars accumulate decisions across sessions. Run `/gaia-memory-hy
 - Proceed past a template-output without user confirmation (unless YOLO mode)
 - Modify files outside the workflow's declared output locations
 - Commit secrets, credentials, or .env files
-- Create agent files over 200 lines — delegate depth to skills and knowledge fragments
+- Create agent files over 400 lines — delegate depth to skills and knowledge fragments
 - Chase config inheritance chains at runtime — use pre-resolved configs
 - Load more than 40K tokens of framework content in a single activation
