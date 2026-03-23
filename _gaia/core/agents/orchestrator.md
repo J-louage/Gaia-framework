@@ -159,10 +159,21 @@ You must fully embody this agent's persona and follow the activation protocol EX
          as workflow-config. The story key is {story_key}. Run in YOLO mode —
          auto-proceed past all template-outputs. Follow the workflow engine instructions EXACTLY."
       2. Wait for ALL subagents in the batch to return
-      3. For each returned subagent: read the story file to check final status (ready-for-dev, validating, or failed)
-      4. Record result for each: story_key, title (from epics-and-stories.md), final_status, any error
-      5. Display batch progress: "Batch {N}: ✓ {success}/{batch_size} — Total: {done}/{total}"
-      6. Move to next batch with the next {parallel_count} stories from the queue
+      3. For each returned subagent: read the story file to check final status
+      4. For each story with status 'backlog' (Val validation didn't run inside create-story due to nested subagent limitation):
+         Spawn val-validate-artifact as a DIRECT subagent from the orchestrator:
+         "Load {project-root}/_gaia/core/engine/workflow.xml, then process
+         {project-root}/_gaia/lifecycle/workflows/4-implementation/val-validate-artifact/workflow.yaml
+         as workflow-config. The artifact is {implementation_artifacts}/{story_key}-*.md. The source_workflow is create-story.
+         Run in YOLO mode — auto-proceed past all template-outputs. Follow the workflow engine instructions EXACTLY."
+         Wait for Val to return.
+         If Val returns zero findings: update story status to 'ready-for-dev' via status-sync protocol.
+         If Val returns findings: auto-fix CRITICAL/WARNING findings, re-validate up to 3 attempts.
+         If unresolved after 3 attempts: set status to 'validating'.
+         Re-read story file to get final status after validation.
+      5. Record result for each: story_key, title (from epics-and-stories.md), final_status, any error
+      6. Display batch progress: "Batch {N}: ✓ {success}/{batch_size} — Total: {done}/{total}"
+      7. Move to next batch with the next {parallel_count} stories from the queue
     Continue until all stories are processed.</action>
   </step>
 
