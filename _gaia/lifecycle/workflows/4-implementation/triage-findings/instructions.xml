@@ -47,22 +47,37 @@
     2. Scan {planning_artifacts}/epics-and-stories.md AND {implementation_artifacts}/ for ALL existing stories in that epic
     3. Find the highest story number in that epic (e.g., if E1-S1 through E1-S7 exist, the highest is S7)
     4. Assign the next sequential key: E1-S8
-    5. NEVER reuse an existing key — always increment from the highest found across both sources</action>
-  <action>Generate a new story file using the story template:
-    - Filename: {story_key}-{story_title_slug}.md
-    - Set status to 'backlog' in YAML frontmatter (do NOT use status-sync — this is a new file, not an update)
-    - Set priority based on timing decision: NOW → P0, NEXT SPRINT → P0, BACKLOG → P1 (medium) or P2 (low)
-    - Link back to source story in Dependencies section
-    - Use the finding's suggested action as the basis for the story's user story and acceptance criteria
-    - Set risk level based on finding severity (CRITICAL→high, HIGH→high, MEDIUM→medium, LOW→low)
-    - Do NOT add this story to sprint-status.yaml — it will be assigned to a sprint later via /gaia-sprint-plan or /gaia-correct-course</action>
-  <action>Update {planning_artifacts}/epics-and-stories.md:
+    5. NEVER reuse an existing key — always increment from the highest found across both sources
+    6. Determine: title (from finding's suggested action), priority (NOW→P0, NEXT SPRINT→P0, BACKLOG→P1/P2), size estimate, risk level (CRITICAL/HIGH→high, MEDIUM→medium, LOW→low)</action>
+  <action>Update {planning_artifacts}/epics-and-stories.md BEFORE spawning create-story (create-story reads this file in its Step 1):
     1. Read the file and find the epic section for the new story's epic (e.g., ## Epic 1: ...)
     2. Append the new story entry at the END of that epic's story list — after the last existing story in that epic
     3. Include: story key, title, priority, size estimate, risk level, and a note "(from triage: {source_story_key})"
     4. Do NOT insert at the beginning or middle of the list — always append at the end
     5. If the epic section has a stories table: add a new row at the bottom
     6. If the epic section has a stories list: add a new item at the bottom</action>
+  <action>Spawn /gaia-create-story as a subagent for full story elaboration and Val validation.
+    Use the Agent tool to invoke the create-story workflow with the following prompt:
+
+    "Run /gaia-create-story {story_key} yolo
+
+    This story was created from a triage finding. Use this context for elaboration:
+    - **Source story:** {source_story_key} ({source_story_title})
+    - **Finding type:** {finding_type}
+    - **Finding severity:** {finding_severity}
+    - **Finding description:** {finding_description}
+    - **Suggested action:** {finding_suggested_action}
+    - **Priority:** {priority}
+    - **Risk level:** {risk_level}
+
+    The story entry has already been added to epics-and-stories.md. Proceed with story creation."
+
+    create-story will: load epics context, spawn Derek (PM) and Theo (Architect) for elaboration,
+    generate the full story file with all sections, run Val validation, and transition to ready-for-dev if validation passes.</action>
+  <action>After the create-story subagent returns:
+    - Verify the story file was created at {implementation_artifacts}/{story_key}-*.md
+    - If the subagent failed or the file does not exist: fall back to generating a minimal story file directly (same as the previous behavior) and warn "create-story subagent failed for {story_key} — created minimal story file. Run /gaia-create-story {story_key} manually to fully elaborate."
+    - Record the result (success with final status, or fallback) for the Step 6 summary</action>
 </step>
 <step n="5" title="Mark Findings as Triaged">
   <action>In each source story's Findings table, update the processed findings:</action>
