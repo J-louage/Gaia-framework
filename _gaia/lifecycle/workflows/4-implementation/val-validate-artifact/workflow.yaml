@@ -3,7 +3,7 @@ description: 'Validate artifact against codebase and ground truth — parse, ext
 module: lifecycle
 agent: validator
 model_override: opus
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/val-validate-artifact.yaml"
+config_resolved: "{installed_path}/.resolved/val-validate-artifact.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/4-implementation/val-validate-artifact"
 instructions: "{installed_path}/instructions.xml"

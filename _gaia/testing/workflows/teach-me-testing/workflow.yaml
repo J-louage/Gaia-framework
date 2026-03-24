@@ -2,7 +2,7 @@ name: teach-me-testing
 description: 'Teach testing progressively through structured sessions'
 module: testing
 agent: test-architect
-config_resolved: "{project-root}/_gaia/testing/.resolved/teach-me-testing.yaml"
+config_resolved: "{installed_path}/.resolved/teach-me-testing.yaml"
 config_source: "{project-root}/_gaia/testing/config.yaml"
 installed_path: "{project-root}/_gaia/testing/workflows/teach-me-testing"
 instructions: "{installed_path}/instructions.xml"

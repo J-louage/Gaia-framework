@@ -2,7 +2,7 @@ name: memory-hygiene
 description: 'Detect stale, contradicted, or superseded decisions in agent memory sidecars'
 module: lifecycle
 agent: orchestrator
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/memory-hygiene.yaml"
+config_resolved: "{installed_path}/.resolved/memory-hygiene.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/anytime/memory-hygiene"
 instructions: "{installed_path}/instructions.xml"

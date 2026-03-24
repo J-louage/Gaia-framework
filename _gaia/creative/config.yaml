@@ -2,7 +2,7 @@
 inherits: "{project-root}/_gaia/_config/global.yaml"
 
 module_name: "creative"
-module_version: "1.0.0"
+module_version: "1.0.1"
 
 creative_artifacts: "{project-root}/docs/creative-artifacts"
 data_path: "{project-root}/_gaia/creative/data"

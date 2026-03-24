@@ -2,7 +2,7 @@ name: nfr-assessment
 description: 'Assess NFRs like performance, security, and reliability'
 module: testing
 agent: test-architect
-config_resolved: "{project-root}/_gaia/testing/.resolved/nfr-assessment.yaml"
+config_resolved: "{installed_path}/.resolved/nfr-assessment.yaml"
 config_source: "{project-root}/_gaia/testing/config.yaml"
 installed_path: "{project-root}/_gaia/testing/workflows/nfr-assessment"
 instructions: "{installed_path}/instructions.xml"

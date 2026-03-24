@@ -3,7 +3,7 @@ description: 'Rescan filesystem and update verified facts in ground-truth.md'
 module: lifecycle
 agent: validator
 execution_mode: normal
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/val-refresh-ground-truth.yaml"
+config_resolved: "{installed_path}/.resolved/val-refresh-ground-truth.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/4-implementation/val-refresh-ground-truth"
 instructions: "{installed_path}/instructions.xml"

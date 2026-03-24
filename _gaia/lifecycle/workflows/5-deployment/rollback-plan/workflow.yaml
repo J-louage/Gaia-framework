@@ -2,7 +2,7 @@ name: rollback-plan
 description: 'Rollback trigger criteria and procedures'
 module: lifecycle
 agent: devops
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/rollback-plan.yaml"
+config_resolved: "{installed_path}/.resolved/rollback-plan.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/5-deployment/rollback-plan"
 instructions: "{installed_path}/instructions.xml"

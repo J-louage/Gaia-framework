@@ -2,7 +2,7 @@ name: sprint-status
 description: 'Show current sprint status and surface risks'
 module: lifecycle
 agent: sm
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/sprint-status.yaml"
+config_resolved: "{installed_path}/.resolved/sprint-status.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/4-implementation/sprint-status"
 instructions: "{installed_path}/instructions.xml"

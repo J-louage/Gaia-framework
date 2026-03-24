@@ -2,7 +2,7 @@ name: edit-architecture
 description: 'Edit an existing architecture document'
 module: lifecycle
 agent: architect
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/edit-architecture.yaml"
+config_resolved: "{installed_path}/.resolved/edit-architecture.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/3-solutioning/edit-architecture"
 instructions: "{installed_path}/instructions.xml"

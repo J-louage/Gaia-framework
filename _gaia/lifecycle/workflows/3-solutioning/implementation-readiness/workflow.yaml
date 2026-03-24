@@ -2,7 +2,7 @@ name: implementation-readiness
 description: 'Validate all artifacts are complete before implementation'
 module: lifecycle
 agent: architect
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/implementation-readiness.yaml"
+config_resolved: "{installed_path}/.resolved/implementation-readiness.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/3-solutioning/implementation-readiness"
 instructions: "{installed_path}/instructions.xml"

@@ -2,7 +2,7 @@ name: create-prd
 description: 'Create a Product Requirements Document from scratch'
 module: lifecycle
 agent: pm
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/create-prd.yaml"
+config_resolved: "{installed_path}/.resolved/create-prd.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/2-planning/create-prd"
 instructions: "{installed_path}/instructions.xml"

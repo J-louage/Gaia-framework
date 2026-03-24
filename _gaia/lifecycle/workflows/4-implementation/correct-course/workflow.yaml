@@ -2,7 +2,7 @@ name: correct-course
 description: 'Manage significant sprint scope changes'
 module: lifecycle
 agent: sm
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/correct-course.yaml"
+config_resolved: "{installed_path}/.resolved/correct-course.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/4-implementation/correct-course"
 instructions: "{installed_path}/instructions.xml"

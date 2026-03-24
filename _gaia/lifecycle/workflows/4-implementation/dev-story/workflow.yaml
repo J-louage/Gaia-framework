@@ -11,7 +11,7 @@ agent_auto_detect_strategy: |
   2. If absent: read {planning_artifacts}/architecture.md for primary language/framework
   3. If ambiguous: check file extensions in story subtasks (.ts/.tsx→typescript, .dart→flutter, .java→java, .py→python, .swift/.kt→mobile, .component.ts→angular, .go→go)
   4. Fallback: ask user which developer to use
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/dev-story.yaml"
+config_resolved: "{installed_path}/.resolved/dev-story.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/4-implementation/dev-story"
 instructions: "{installed_path}/instructions.xml"

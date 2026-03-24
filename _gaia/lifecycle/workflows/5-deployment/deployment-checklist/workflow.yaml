@@ -2,7 +2,7 @@ name: deployment-checklist
 description: 'Pre-deployment verification checklist'
 module: lifecycle
 agent: devops
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/deployment-checklist.yaml"
+config_resolved: "{installed_path}/.resolved/deployment-checklist.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/5-deployment/deployment-checklist"
 instructions: "{installed_path}/instructions.xml"

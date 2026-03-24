@@ -2,7 +2,7 @@ name: pitch-deck
 description: 'Create an investor/partner pitch deck with standard structure'
 module: creative
 agent: presentation-designer
-config_resolved: "{project-root}/_gaia/creative/.resolved/pitch-deck.yaml"
+config_resolved: "{installed_path}/.resolved/pitch-deck.yaml"
 config_source: "{project-root}/_gaia/creative/config.yaml"
 installed_path: "{project-root}/_gaia/creative/workflows/pitch-deck"
 instructions: "{installed_path}/instructions.xml"

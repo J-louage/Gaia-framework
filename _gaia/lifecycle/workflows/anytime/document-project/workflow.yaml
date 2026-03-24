@@ -2,7 +2,7 @@ name: document-project
 description: 'Document an existing project for AI context'
 module: lifecycle
 agent: analyst
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/document-project.yaml"
+config_resolved: "{installed_path}/.resolved/document-project.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/anytime/document-project"
 instructions: "{installed_path}/instructions.xml"

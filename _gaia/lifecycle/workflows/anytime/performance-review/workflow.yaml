@@ -2,7 +2,7 @@ name: performance-review
 description: 'Analyze performance bottlenecks and recommend optimizations'
 module: lifecycle
 agent: performance
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/performance-review.yaml"
+config_resolved: "{installed_path}/.resolved/performance-review.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/anytime/performance-review"
 instructions: "{installed_path}/instructions.xml"

@@ -2,7 +2,7 @@ name: infrastructure-design
 description: 'Design deployment topology, IaC structure, and observability plan'
 module: lifecycle
 agent: devops
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/infrastructure-design.yaml"
+config_resolved: "{installed_path}/.resolved/infrastructure-design.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/3-solutioning/infrastructure-design"
 instructions: "{installed_path}/instructions.xml"

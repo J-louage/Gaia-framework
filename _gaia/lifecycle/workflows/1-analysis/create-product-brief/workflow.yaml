@@ -2,7 +2,7 @@ name: create-product-brief
 description: 'Create product brief through collaborative discovery'
 module: lifecycle
 agent: analyst
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/create-product-brief.yaml"
+config_resolved: "{installed_path}/.resolved/create-product-brief.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/1-analysis/create-product-brief"
 instructions: "{installed_path}/instructions.xml"

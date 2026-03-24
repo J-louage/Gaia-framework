@@ -2,7 +2,7 @@ name: test-framework
 description: 'Initialize test framework with appropriate tooling'
 module: testing
 agent: test-architect
-config_resolved: "{project-root}/_gaia/testing/.resolved/test-framework.yaml"
+config_resolved: "{installed_path}/.resolved/test-framework.yaml"
 config_source: "{project-root}/_gaia/testing/config.yaml"
 installed_path: "{project-root}/_gaia/testing/workflows/test-framework"
 instructions: "{installed_path}/instructions.xml"
