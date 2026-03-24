@@ -35,9 +35,9 @@ function findBash() {
 
   // 1. Try Git for Windows FIRST (preferred — simpler path mapping)
   const gitBashPaths = [
-    join(process.env.ProgramFiles || "C:\\Program Files", "Git", "bin", "bash.exe"),
-    join(process.env["ProgramFiles(x86)"] || "C:\\Program Files (x86)", "Git", "bin", "bash.exe"),
-    join(process.env.LOCALAPPDATA || "", "Programs", "Git", "bin", "bash.exe"),
+    path.join(process.env.ProgramFiles || "C:\\Program Files", "Git", "bin", "bash.exe"),
+    path.join(process.env["ProgramFiles(x86)"] || "C:\\Program Files (x86)", "Git", "bin", "bash.exe"),
+    path.join(process.env.LOCALAPPDATA || "", "Programs", "Git", "bin", "bash.exe"),
   ];
 
   for (const p of gitBashPaths) {
@@ -83,9 +83,9 @@ function info(message) {
 }
 
 function cleanup() {
-  if (tempDir && existsSync(tempDir)) {
+  if (tempDir && fs.existsSync(tempDir)) {
     try {
-      rmSync(tempDir, { recursive: true, force: true });
+      fs.rmSync(tempDir, { recursive: true, force: true });
     } catch {
       // Best-effort cleanup
     }
@@ -94,7 +94,7 @@ function cleanup() {
 
 function ensureGit() {
   try {
-    execSync("git --version", { stdio: "ignore" });
+    childProcess.execSync("git --version", { stdio: "ignore" });
   } catch {
     fail(
       "git is required but was not found.\n" +
@@ -104,8 +104,7 @@ function ensureGit() {
 }
 
 function readPackageVersion(pkgPath) {
-  const { readFileSync } = require("fs");
-  const raw = readFileSync(pkgPath, "utf8");
+  const raw = fs.readFileSync(pkgPath, "utf8");
   const pkg = JSON.parse(raw);
   if (!pkg.version) {
     throw new Error(`No version field found in ${pkgPath}`);
@@ -143,7 +142,15 @@ Examples:
 
 // ─── Main ───────────────────────────────────────────────────────────────────
 
-function main() {
+function main(deps) {
+  // Dependency injection for testability — defaults to real modules
+  const _exec = deps && deps.execSync || childProcess.execSync;
+  const _execFile = deps && deps.execFileSync || childProcess.execFileSync;
+  const _mkdtemp = deps && deps.mkdtempSync || fs.mkdtempSync;
+  const _exists = deps && deps.existsSync || fs.existsSync;
+  const _join = deps && deps.join || path.join;
+  const _tmpdir = deps && deps.tmpdir || os.tmpdir;
+
   const args = process.argv.slice(2);
 
   // Handle help / no args
@@ -190,7 +197,7 @@ function main() {
   info("Cloning GAIA framework from GitHub...");
 
   try {
-    execSync(`git clone --depth 1 ${REPO_URL} "${tempDir}"`, {
+    _exec(`git clone --depth 1 ${REPO_URL} "${tempDir}"`, {
       stdio: ["ignore", "ignore", "pipe"],
     });
   } catch (err) {
@@ -201,8 +208,8 @@ function main() {
   }
 
   // Locate the installer script
-  const scriptPath = join(tempDir, SCRIPT_NAME);
-  if (!existsSync(scriptPath)) {
+  const scriptPath = _join(tempDir, SCRIPT_NAME);
+  if (!_exists(scriptPath)) {
     fail(`Installer script not found in cloned repo: ${SCRIPT_NAME}`);
   }
 
@@ -246,4 +253,8 @@ function main() {
   }
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = { findBash, ensureGit, showUsage, fail, info, cleanup, readPackageVersion, main };
