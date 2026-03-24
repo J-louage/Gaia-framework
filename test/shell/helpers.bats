@@ -345,6 +345,94 @@ NEW content"
   [[ "$output" == *"Invalid GAIA source"* ]] || [[ "$output" == *"manifest"* ]]
 }
 
+# ─── E6-S4: normalize_path() tests ───────────────────────────────────────────
+
+@test "E6-S4: normalize_path converts backslashes to forward slashes (AC1)" {
+  # Verify function exists in the script, then extract and test it
+  grep -q "normalize_path()" "$SCRIPT"
+  run bash -c 'eval "$(sed -n "/^normalize_path()/,/^}/p" "'"$SCRIPT"'")"; normalize_path "C:\Users\foo\project"'
+  [ "$status" -eq 0 ]
+  [ "$output" = "C:/Users/foo/project" ]
+}
+
+@test "E6-S4: normalize_path preserves forward slashes (AC1)" {
+  grep -q "normalize_path()" "$SCRIPT"
+  run bash -c 'eval "$(sed -n "/^normalize_path()/,/^}/p" "'"$SCRIPT"'")"; normalize_path "/home/user/project"'
+  [ "$status" -eq 0 ]
+  [ "$output" = "/home/user/project" ]
+}
+
+@test "E6-S4: normalize_path handles mixed slashes (AC1)" {
+  grep -q "normalize_path()" "$SCRIPT"
+  run bash -c 'eval "$(sed -n "/^normalize_path()/,/^}/p" "'"$SCRIPT"'")"; normalize_path "C:\Users/foo\project"'
+  [ "$status" -eq 0 ]
+  [ "$output" = "C:/Users/foo/project" ]
+}
+
+@test "E6-S4: normalize_path handles paths with spaces (AC5)" {
+  grep -q "normalize_path()" "$SCRIPT"
+  run bash -c 'eval "$(sed -n "/^normalize_path()/,/^}/p" "'"$SCRIPT"'")"; normalize_path "C:\Users\John Doe\project"'
+  [ "$status" -eq 0 ]
+  [ "$output" = "C:/Users/John Doe/project" ]
+}
+
+@test "E6-S4: normalize_path handles empty string" {
+  grep -q "normalize_path()" "$SCRIPT"
+  run bash -c 'eval "$(sed -n "/^normalize_path()/,/^}/p" "'"$SCRIPT"'")"; normalize_path ""'
+  [ "$status" -eq 0 ]
+  [ "$output" = "" ]
+}
+
+# ─── E6-S4: realpath guard tests ────────────────────────────────────────────
+
+@test "E6-S4: resolve_source has realpath guard with command -v (AC4)" {
+  # The script must guard realpath with command -v, not call it bare
+  run grep -n 'realpath' "$SCRIPT"
+  [ "$status" -eq 0 ]
+  # Every use of realpath should be guarded — no bare realpath call
+  # Check that "command -v realpath" appears before any realpath usage
+  run bash -c '
+    # Count bare realpath calls (not guarded by command -v)
+    # A bare call is: realpath "$0" NOT preceded by "command -v realpath" on same or prior line
+    in_guard=false
+    bare_count=0
+    while IFS= read -r line; do
+      if [[ "$line" == *"command -v realpath"* ]]; then
+        in_guard=true
+        continue
+      fi
+      if $in_guard && [[ "$line" == *"realpath"* ]]; then
+        # This is a guarded use — OK
+        in_guard=false
+        continue
+      fi
+      if [[ "$line" == *"realpath"* ]] && [[ "$line" != *"#"*"realpath"* ]]; then
+        bare_count=$((bare_count + 1))
+      fi
+      in_guard=false
+    done < "'"$SCRIPT"'"
+    echo "$bare_count"
+  '
+  [ "$output" = "0" ]
+}
+
+@test "E6-S4: resolve_source has cd+pwd fallback path in source code (AC4)" {
+  # Verify the resolve_source function contains a cd+pwd fallback for when realpath is unavailable
+  run bash -c 'sed -n "/^resolve_source()/,/^}/p" "'"$SCRIPT"'" | grep -q "cd.*pwd"'
+  [ "$status" -eq 0 ]
+}
+
+# ─── E6-S4: uname branching documentation (AC2) ─────────────────────────────
+
+@test "E6-S4: sed -i branching has Git Bash MINGW documentation (AC2)" {
+  # The uname check for sed -i should have a comment explaining Git Bash / MINGW behavior
+  # Check that MINGW or Git Bash or Git for Windows is mentioned near a sed -i uname branch
+  run bash -c '
+    grep -B5 -A5 "uname.*Darwin" "'"$SCRIPT"'" | grep -qi "MINGW\|Git Bash\|Git for Windows"
+  '
+  [ "$status" -eq 0 ]
+}
+
 # ─── Platform detection for test:shell (AC6) ────────────────────────────────
 
 @test "setup-bats.sh exists and is executable" {

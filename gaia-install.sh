@@ -6,7 +6,7 @@ set -euo pipefail
 # Installs, updates, validates, and reports on GAIA installations.
 # ─────────────────────────────────────────────────────────────────────────────
 
-readonly VERSION="1.49.0"
+readonly VERSION="1.49.1"
 readonly GITHUB_REPO="https://github.com/jlouage/Gaia-framework.git"
 readonly MANIFEST_REL="_gaia/_config/manifest.yaml"
 
@@ -105,6 +105,11 @@ clone_from_github() {
   echo "$TEMP_CLONE_DIR"
 }
 
+normalize_path() {
+  local p="${1//\\//}"
+  echo "$p"
+}
+
 resolve_source() {
   local resolved=""
 
@@ -116,10 +121,14 @@ resolve_source() {
   elif [[ -n "${GAIA_SOURCE:-}" ]]; then
     resolved="$GAIA_SOURCE"
     [[ "$OPT_VERBOSE" == true ]] && detail "Source from \$GAIA_SOURCE: $resolved" >&2
-  # 3. Self-detect: script's own directory
-  elif [[ -d "$(dirname "$(realpath "$0")")/_gaia" ]]; then
+  # 3. Self-detect: script's own directory (guard realpath for Git Bash compatibility)
+  elif command -v realpath &>/dev/null && [[ -d "$(dirname "$(realpath "$0")")/_gaia" ]]; then
     resolved="$(dirname "$(realpath "$0")")"
     [[ "$OPT_VERBOSE" == true ]] && detail "Source from script location: $resolved" >&2
+  # 3b. Fallback when realpath is unavailable (e.g., Git Bash without MSYS2 extras)
+  elif [[ -d "$(cd "$(dirname "$0")" && pwd)/_gaia" ]]; then
+    resolved="$(cd "$(dirname "$0")" && pwd)"
+    [[ "$OPT_VERBOSE" == true ]] && detail "Source from script location (cd fallback): $resolved" >&2
   # 4. GitHub clone
   else
     resolved="$(clone_from_github)"
@@ -351,7 +360,10 @@ cmd_init() {
   else
     local global_file="$TARGET/_gaia/_config/global.yaml"
     if [[ -f "$global_file" ]]; then
-      # Use portable sed for both macOS and Linux
+      # Use portable sed for both macOS and Linux.
+      # macOS (Darwin) requires sed -i '' (empty extension). Linux/GNU sed uses sed -i (no arg).
+      # Git Bash on Windows: uname returns "MINGW64_NT-*", which falls into the else branch
+      # (GNU sed), which is correct — Git for Windows ships GNU sed.
       if [[ "$(uname)" == "Darwin" ]]; then
         sed -i '' "s|^project_name:.*|project_name: \"$project_name\"|" "$global_file"
         sed -i '' "s|^user_name:.*|user_name: \"$user_name\"|" "$global_file"
@@ -830,7 +842,7 @@ parse_args() {
           error "--source requires a path argument"
           exit 1
         fi
-        SOURCE_FLAG="$2"
+        SOURCE_FLAG="$(normalize_path "$2")"
         shift 2
         ;;
       --yes|-y)
@@ -858,7 +870,7 @@ parse_args() {
           error "Unexpected argument: $1"
           exit 1
         fi
-        TARGET="$1"
+        TARGET="$(normalize_path "$1")"
         shift
         ;;
     esac
