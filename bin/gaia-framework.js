@@ -18,6 +18,12 @@ let tempDir = null;
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
+function toPosixPath(p) {
+  if (!IS_WINDOWS) return p;
+  // Convert C:\foo\bar to /c/foo/bar for Git Bash
+  return p.replace(/\\/g, "/").replace(/^([A-Za-z]):/, (_, letter) => "/" + letter.toLowerCase());
+}
+
 function findBash() {
   if (!IS_WINDOWS) return "bash";
 
@@ -166,8 +172,8 @@ function main() {
   // Build the shell command: inject --source pointing to the temp clone
   // so the shell script doesn't need to clone again
   const passthrough = args.slice(0);
-  // Insert --source right after the command
-  passthrough.splice(1, 0, "--source", tempDir);
+  // Insert --source right after the command (convert to POSIX for bash on Windows)
+  passthrough.splice(1, 0, "--source", toPosixPath(tempDir));
 
   // Locate bash (critical for Windows support)
   const bashPath = findBash();
@@ -182,9 +188,11 @@ function main() {
   info("Running installer...\n");
 
   try {
-    execFileSync(bashPath, [scriptPath, ...passthrough], {
+    // Convert all passthrough args that look like paths (contain backslash or drive letter)
+    const posixArgs = passthrough.map(a => IS_WINDOWS && /[\\:]/.test(a) && !a.startsWith("--") ? toPosixPath(a) : a);
+    execFileSync(bashPath, [toPosixPath(scriptPath), ...posixArgs], {
       stdio: "inherit",
-      env: { ...process.env, GAIA_SOURCE: tempDir },
+      env: { ...process.env, GAIA_SOURCE: toPosixPath(tempDir) },
     });
   } catch (err) {
     process.exit(err.status || 1);
