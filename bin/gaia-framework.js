@@ -145,8 +145,15 @@ function main() {
   // Clone the repo to a temp directory
   tempDir = mkdtempSync(join(tmpdir(), "gaia-framework-"));
   // Resolve 8.3 short names to long paths on Windows (e.g., ELIASN~1 → Elias Nasser)
+  // Node's realpathSync doesn't expand 8.3 names, so use PowerShell
   if (IS_WINDOWS) {
-    try { tempDir = realpathSync(tempDir); } catch {}
+    try {
+      const longPath = execSync(
+        `powershell -NoProfile -Command "(Get-Item -LiteralPath '${tempDir}').FullName"`,
+        { encoding: "utf8", stdio: ["pipe", "pipe", "ignore"] }
+      ).trim();
+      if (longPath && existsSync(longPath)) tempDir = longPath;
+    } catch {}
   }
 
   // Register cleanup for all exit scenarios
