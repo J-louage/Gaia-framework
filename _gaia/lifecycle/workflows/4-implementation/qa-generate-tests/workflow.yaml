@@ -2,7 +2,7 @@ name: qa-generate-tests
 description: 'Generate automated E2E and API tests'
 module: lifecycle
 agent: qa
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/qa-generate-tests.yaml"
+config_resolved: "{installed_path}/.resolved/qa-generate-tests.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/4-implementation/qa-generate-tests"
 instructions: "{installed_path}/instructions.xml"

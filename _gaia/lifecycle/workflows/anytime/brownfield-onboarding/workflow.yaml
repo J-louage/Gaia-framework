@@ -2,7 +2,7 @@ name: brownfield-onboarding
 description: 'Apply GAIA framework to an existing project with comprehensive developer knowledge base'
 module: lifecycle
 agent: orchestrator
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/brownfield-onboarding.yaml"
+config_resolved: "{installed_path}/.resolved/brownfield-onboarding.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/anytime/brownfield-onboarding"
 instructions: "{installed_path}/instructions.xml"

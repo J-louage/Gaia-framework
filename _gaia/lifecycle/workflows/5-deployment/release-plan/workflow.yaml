@@ -2,7 +2,7 @@ name: release-plan
 description: 'Staged rollout and release strategy'
 module: lifecycle
 agent: devops
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/release-plan.yaml"
+config_resolved: "{installed_path}/.resolved/release-plan.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/5-deployment/release-plan"
 instructions: "{installed_path}/instructions.xml"

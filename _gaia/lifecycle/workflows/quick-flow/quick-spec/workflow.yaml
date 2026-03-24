@@ -2,7 +2,7 @@ name: quick-spec
 description: 'Create a quick implementation spec for small changes'
 module: lifecycle
 agent: dev-*
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/quick-spec.yaml"
+config_resolved: "{installed_path}/.resolved/quick-spec.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/quick-flow/quick-spec"
 instructions: "{installed_path}/instructions.xml"

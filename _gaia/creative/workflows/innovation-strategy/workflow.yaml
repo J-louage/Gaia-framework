@@ -2,7 +2,7 @@ name: innovation-strategy
 description: 'Identify disruption opportunities and architect business model innovation'
 module: creative
 agent: innovation-strategist
-config_resolved: "{project-root}/_gaia/creative/.resolved/innovation-strategy.yaml"
+config_resolved: "{installed_path}/.resolved/innovation-strategy.yaml"
 config_source: "{project-root}/_gaia/creative/config.yaml"
 installed_path: "{project-root}/_gaia/creative/workflows/innovation-strategy"
 instructions: "{installed_path}/instructions.xml"

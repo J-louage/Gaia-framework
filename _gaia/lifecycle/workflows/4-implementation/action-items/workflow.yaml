@@ -3,7 +3,7 @@ description: 'Process and resolve action items from retro, triage, tech-debt, an
 module: lifecycle
 agent: orchestrator
 template_output_prompt: "auto"
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/action-items.yaml"
+config_resolved: "{installed_path}/.resolved/action-items.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/4-implementation/action-items"
 instructions: "{installed_path}/instructions.xml"

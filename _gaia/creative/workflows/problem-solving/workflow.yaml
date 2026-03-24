@@ -2,7 +2,7 @@ name: problem-solving
 description: 'Apply systematic problem-solving methodologies to complex challenges'
 module: creative
 agent: problem-solver
-config_resolved: "{project-root}/_gaia/creative/.resolved/problem-solving.yaml"
+config_resolved: "{installed_path}/.resolved/problem-solving.yaml"
 config_source: "{project-root}/_gaia/creative/config.yaml"
 installed_path: "{project-root}/_gaia/creative/workflows/problem-solving"
 instructions: "{installed_path}/instructions.xml"

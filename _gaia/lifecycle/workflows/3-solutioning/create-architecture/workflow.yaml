@@ -2,7 +2,7 @@ name: create-architecture
 description: 'Create architecture and solution design'
 module: lifecycle
 agent: architect
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/create-architecture.yaml"
+config_resolved: "{installed_path}/.resolved/create-architecture.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/3-solutioning/create-architecture"
 instructions: "{installed_path}/instructions.xml"

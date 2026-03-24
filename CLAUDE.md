@@ -1,5 +1,5 @@
 
-# GAIA Framework v1.54.3
+# GAIA Framework v1.54.4
 
 This project uses the **GAIA** (Generative Agile Intelligence Architecture) framework — an AI agent framework for Claude Code that orchestrates software product development through 26 specialized agents, 65 workflows, and 8 shared skills.
 
@@ -19,7 +19,7 @@ The primary entry point is `/gaia` — this activates the orchestrator (Gaia) wh
 When any `/gaia-*` command is invoked:
 1. Load `{project-root}/_gaia/core/engine/workflow.xml` — this is the execution engine
 2. The command file specifies a workflow.yaml or agent.md to process
-3. If a workflow: load the pre-resolved config from `_gaia/{module}/.resolved/` first; fall back to runtime resolution
+3. If a workflow: load the pre-resolved config from `{installed_path}/.resolved/` first; fall back to runtime resolution
 4. Follow the engine instructions EXACTLY — execute steps in order, save outputs at checkpoints
 5. Write a checkpoint to `_memory/checkpoints/` after each significant step
 
@@ -65,7 +65,7 @@ GAIA supports separating the framework from the application source code. The `pr
 ## Global Rules (apply to ALL agents and workflows)
 
 ### Config Resolution
-1. Check for pre-resolved config in `_gaia/{module}/.resolved/{workflow}.yaml`
+1. Check for pre-resolved config in `{installed_path}/.resolved/{workflow}.yaml`
 2. If not found: load `workflow.yaml` → module `config.yaml` (which inherits `global.yaml`)
 3. Resolve `{project-root}`, `{project-path}`, `{installed_path}`, system-generated values
 4. After any config change, run `/gaia-build-configs` to regenerate resolved configs

@@ -2,7 +2,7 @@ name: code-review
 description: 'Perform code review on implemented story'
 module: lifecycle
 agent: dev-*
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/code-review.yaml"
+config_resolved: "{installed_path}/.resolved/code-review.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/4-implementation/code-review"
 instructions: "{installed_path}/instructions.xml"

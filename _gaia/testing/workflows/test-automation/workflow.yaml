@@ -2,7 +2,7 @@ name: test-automation
 description: 'Expand test automation coverage for codebase'
 module: testing
 agent: test-architect
-config_resolved: "{project-root}/_gaia/testing/.resolved/test-automation.yaml"
+config_resolved: "{installed_path}/.resolved/test-automation.yaml"
 config_source: "{project-root}/_gaia/testing/config.yaml"
 installed_path: "{project-root}/_gaia/testing/workflows/test-automation"
 instructions: "{installed_path}/instructions.xml"

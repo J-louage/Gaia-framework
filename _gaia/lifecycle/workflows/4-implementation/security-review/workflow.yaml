@@ -2,7 +2,7 @@ name: security-review
 description: 'Pre-merge security review: OWASP, secrets, auth patterns'
 module: lifecycle
 agent: security
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/security-review.yaml"
+config_resolved: "{installed_path}/.resolved/security-review.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/4-implementation/security-review"
 instructions: "{installed_path}/instructions.xml"

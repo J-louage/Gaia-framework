@@ -2,7 +2,7 @@ name: atdd
 description: 'Generate failing acceptance tests using TDD cycle'
 module: testing
 agent: test-architect
-config_resolved: "{project-root}/_gaia/testing/.resolved/atdd.yaml"
+config_resolved: "{installed_path}/.resolved/atdd.yaml"
 config_source: "{project-root}/_gaia/testing/config.yaml"
 installed_path: "{project-root}/_gaia/testing/workflows/atdd"
 instructions: "{installed_path}/instructions.xml"

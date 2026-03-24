@@ -2,7 +2,7 @@ name: edit-prd
 description: 'Edit an existing PRD'
 module: lifecycle
 agent: pm
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/edit-prd.yaml"
+config_resolved: "{installed_path}/.resolved/edit-prd.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/2-planning/edit-prd"
 instructions: "{installed_path}/instructions.xml"

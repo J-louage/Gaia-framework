@@ -2,7 +2,7 @@ name: traceability
 description: 'Generate traceability matrix and quality gate decision'
 module: testing
 agent: test-architect
-config_resolved: "{project-root}/_gaia/testing/.resolved/traceability.yaml"
+config_resolved: "{installed_path}/.resolved/traceability.yaml"
 config_source: "{project-root}/_gaia/testing/config.yaml"
 installed_path: "{project-root}/_gaia/testing/workflows/traceability"
 instructions: "{installed_path}/instructions.xml"

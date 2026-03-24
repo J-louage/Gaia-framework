@@ -2,7 +2,7 @@ name: fix-story
 description: 'Fix story issues flagged by validation'
 module: lifecycle
 agent: sm
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/fix-story.yaml"
+config_resolved: "{installed_path}/.resolved/fix-story.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/4-implementation/fix-story"
 instructions: "{installed_path}/instructions.xml"

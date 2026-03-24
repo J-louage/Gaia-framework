@@ -2,7 +2,7 @@ name: check-dod
 description: 'Check Definition of Done criteria for a story before review transition'
 module: lifecycle
 agent: sm
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/check-dod.yaml"
+config_resolved: "{installed_path}/.resolved/check-dod.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/4-implementation/check-dod"
 instructions: "{installed_path}/instructions.xml"

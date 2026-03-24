@@ -4,7 +4,7 @@ module: lifecycle
 agent: validator
 model_override: opus
 execution_mode: normal
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/val-validate-plan.yaml"
+config_resolved: "{installed_path}/.resolved/val-validate-plan.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/4-implementation/val-validate-plan"
 instructions: "{installed_path}/instructions.xml"

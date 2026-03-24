@@ -2,7 +2,7 @@ name: create-ux-design
 description: 'Plan UX patterns and design specifications'
 module: lifecycle
 agent: ux-designer
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/create-ux-design.yaml"
+config_resolved: "{installed_path}/.resolved/create-ux-design.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/2-planning/create-ux-design"
 instructions: "{installed_path}/instructions.xml"

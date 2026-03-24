@@ -2,7 +2,7 @@ name: generate-project-context
 description: 'Generate AI-optimized project context'
 module: lifecycle
 agent: analyst
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/generate-project-context.yaml"
+config_resolved: "{installed_path}/.resolved/generate-project-context.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/anytime/generate-project-context"
 instructions: "{installed_path}/instructions.xml"

@@ -2,7 +2,7 @@ name: mobile-testing
 description: 'Create mobile test plan covering device matrix, Appium, React Native, and responsive testing'
 module: testing
 agent: test-architect
-config_resolved: "{project-root}/_gaia/testing/.resolved/mobile-testing.yaml"
+config_resolved: "{installed_path}/.resolved/mobile-testing.yaml"
 config_source: "{project-root}/_gaia/testing/config.yaml"
 installed_path: "{project-root}/_gaia/testing/workflows/mobile-testing"
 instructions: "{installed_path}/instructions.xml"

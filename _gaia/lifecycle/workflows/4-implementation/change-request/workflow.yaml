@@ -2,7 +2,7 @@ name: change-request
 description: 'Impact-driven change request with analysis, approval gate, and cascade updates'
 module: lifecycle
 agent: pm
-config_resolved: "{project-root}/_gaia/lifecycle/.resolved/change-request.yaml"
+config_resolved: "{installed_path}/.resolved/change-request.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/4-implementation/change-request"
 instructions: "{installed_path}/instructions.xml"
