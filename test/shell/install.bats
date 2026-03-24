@@ -805,6 +805,38 @@ YAML
   [[ "$output" == *"checks passed"* ]]
 }
 
+# ─── E6-S4: Path normalization integration tests ─────────────────────────────
+
+@test "E6-S4: normalize_path function exists in installer (AC1)" {
+  run grep -c 'normalize_path()' "$SCRIPT"
+  [ "$status" -eq 0 ]
+  [ "$output" -ge 1 ]
+}
+
+@test "E6-S4: SOURCE_FLAG assignment uses normalize_path (AC1)" {
+  # The --source argument parsing should normalize the path
+  run grep 'SOURCE_FLAG=.*normalize_path' "$SCRIPT"
+  [ "$status" -eq 0 ]
+}
+
+@test "E6-S4: TARGET assignment uses normalize_path (AC1)" {
+  # The positional argument parsing for TARGET should normalize the path
+  run grep 'TARGET=.*normalize_path' "$SCRIPT"
+  [ "$status" -eq 0 ]
+}
+
+@test "E6-S4: resolve_source guards realpath with command -v (AC4)" {
+  # realpath must be guarded, not called bare
+  run grep 'command -v realpath' "$SCRIPT"
+  [ "$status" -eq 0 ]
+}
+
+@test "E6-S4: resolve_source has cd+pwd fallback (AC4)" {
+  # A fallback using cd && pwd must exist near resolve_source
+  run bash -c 'sed -n "/resolve_source()/,/^}/p" "'"$SCRIPT"'" | grep "cd.*pwd"'
+  [ "$status" -eq 0 ]
+}
+
 @test "update updates framework version in global.yaml" {
   local SRC_DIR="$(mktemp -d)"
   create_mock_source "$SRC_DIR"
