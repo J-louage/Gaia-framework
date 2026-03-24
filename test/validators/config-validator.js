@@ -1,5 +1,6 @@
 import { readFileSync, existsSync, statSync } from "fs";
-import { join, resolve } from "path";
+import { join, resolve, dirname, basename } from "path";
+import { execSync } from "child_process";
 import yaml from "js-yaml";
 
 // Project root: where _gaia/ lives
@@ -96,6 +97,8 @@ export function resolveVariables(config, projectRoot, options = {}) {
     "project-path": resolvedProjectPath,
     installed_path: options.installed_path || join(projectRoot, "_gaia"),
     date: new Date().toISOString().slice(0, 10),
+    // Spread any additional variables (e.g., artifact paths from global config)
+    ...(options.additionalVars || {}),
   };
 
   function resolveString(str) {
@@ -187,6 +190,178 @@ export function validateNoUnresolved(config) {
     valid: unresolvedVars.length === 0,
     unresolvedVars,
   };
+}
+
+/**
+ * Build-time artifact path keys from global.yaml.
+ * Used by resolveWorkflowConfig to pre-resolve artifact variables.
+ */
+const ARTIFACT_PATH_KEYS = [
+  "planning_artifacts", "implementation_artifacts",
+  "test_artifacts", "creative_artifacts",
+  "memory_path", "checkpoint_path",
+];
+
+/**
+ * Build pre-resolved artifact path variables from global config.
+ * Replaces {project-root} in each artifact path with the actual project root.
+ */
+function buildArtifactVars(globalConfig, projectRoot) {
+  const vars = {};
+  for (const key of ARTIFACT_PATH_KEYS) {
+    if (globalConfig[key]) {
+      vars[key] = globalConfig[key].replace(/\{project-root\}/g, projectRoot);
+    }
+  }
+  return vars;
+}
+
+/**
+ * Find files matching a pattern within a module directory.
+ * Shared helper to avoid duplicated find commands across functions.
+ * @param {string} modDir — module directory path
+ * @param {string} pattern — find -path or -name pattern
+ * @param {boolean} usePath — if true, use -path; if false, use -name
+ * @returns {string[]} — array of matching file paths
+ */
+function findModuleFiles(modDir, pattern, usePath = false) {
+  const flag = usePath ? "-path" : "-name";
+  const result = execSync(
+    `find -L "${modDir}" ${flag} "${pattern}" -not -path "*/_backups/*" -not -path "*/node_modules/*" 2>/dev/null || true`,
+    { encoding: "utf8" },
+  ).trim();
+  return result ? result.split("\n").filter(Boolean) : [];
+}
+
+/**
+ * Resolve a workflow config through the full inheritance chain.
+ * global.yaml -> module config.yaml -> workflow.yaml -> resolved output.
+ * Multi-pass resolution handles nested variable references.
+ */
+export function resolveWorkflowConfig(workflowPath, projectRoot, globalConfig) {
+  const workflowConfig = loadYaml(workflowPath);
+  if (!workflowConfig) return null;
+
+  const gaiaDir = join(projectRoot, "_gaia");
+  const moduleConfig = loadYaml(join(gaiaDir, workflowConfig.module, "config.yaml"));
+  const merged = resolveConfigChain(globalConfig, moduleConfig || {}, workflowConfig);
+
+  const installedPath = workflowConfig.installed_path || dirname(workflowPath);
+  const additionalVars = buildArtifactVars(globalConfig, projectRoot);
+
+  const resolveOpts = {
+    project_path: globalConfig.project_path,
+    installed_path: installedPath,
+    additionalVars,
+  };
+
+  // Two-pass resolution: first pass resolves direct references,
+  // second pass catches nested references (e.g., {installed_path} -> {project-root}/...)
+  let resolved = resolveVariables(merged, projectRoot, resolveOpts);
+  resolved = resolveVariables(resolved, projectRoot, {
+    ...resolveOpts,
+    installed_path: resolved.installed_path || installedPath,
+  });
+
+  return resolved;
+}
+
+/**
+ * Count .resolved/ files and workflow.yaml files per module.
+ * Returns { moduleName: { resolved, workflows, gap } }.
+ */
+export function countResolvedByModule(modules) {
+  const gaiaDir = join(PROJECT_ROOT, "_gaia");
+  const counts = {};
+
+  for (const mod of modules) {
+    const modDir = join(gaiaDir, mod);
+    if (!existsSync(modDir)) {
+      counts[mod] = { resolved: 0, workflows: 0, gap: 0 };
+      continue;
+    }
+
+    const resolvedCount = findModuleFiles(modDir, "*/.resolved/*.yaml", true).length;
+    const workflowFiles = findModuleFiles(modDir, "workflow.yaml").filter(
+      (f) => !f.includes("/.resolved/"),
+    );
+
+    const gap = workflowFiles.length - resolvedCount;
+    counts[mod] = { resolved: resolvedCount, workflows: workflowFiles.length, gap };
+  }
+
+  return counts;
+}
+
+/**
+ * Detect count drift — find workflow.yaml files without corresponding .resolved/ entries.
+ * Returns array of { module, missing, missingFiles[] }.
+ */
+export function detectCountDrift(modules) {
+  const gaiaDir = join(PROJECT_ROOT, "_gaia");
+  const results = [];
+
+  for (const mod of modules) {
+    const modDir = join(gaiaDir, mod);
+    if (!existsSync(modDir)) {
+      results.push({ module: mod, missing: 0, missingFiles: [] });
+      continue;
+    }
+
+    const workflowPaths = findModuleFiles(modDir, "workflow.yaml").filter(
+      (f) => !f.includes("/.resolved/"),
+    );
+    const resolvedNames = new Set(
+      findModuleFiles(modDir, "*/.resolved/*.yaml", true).map((f) => basename(f, ".yaml")),
+    );
+
+    const missingFiles = [];
+    for (const wfPath of workflowPaths) {
+      const wfConfig = loadYaml(wfPath);
+      const wfName = wfConfig?.name || basename(dirname(wfPath));
+      if (!resolvedNames.has(wfName)) {
+        missingFiles.push(wfName);
+      }
+    }
+
+    results.push({ module: mod, missing: missingFiles.length, missingFiles });
+  }
+
+  return results;
+}
+
+/**
+ * Validate resolution for a single module. Returns { success, error } or { success, resolvedConfigs }.
+ * On failure (e.g., missing config.yaml), returns error with no partial output.
+ */
+export function validateModuleResolution(moduleName, projectRoot) {
+  const gaiaDir = join(projectRoot, "_gaia");
+  const modDir = join(gaiaDir, moduleName);
+
+  if (!existsSync(modDir)) {
+    return {
+      success: false,
+      error: `Module directory does not exist: ${modDir}`,
+    };
+  }
+
+  const moduleConfigPath = join(modDir, "config.yaml");
+  if (!existsSync(moduleConfigPath)) {
+    return {
+      success: false,
+      error: `Module config.yaml not found: ${moduleConfigPath}`,
+    };
+  }
+
+  const globalConfig = loadYaml(join(gaiaDir, "_config", "global.yaml"));
+  if (!globalConfig) {
+    return {
+      success: false,
+      error: `global.yaml not found or invalid`,
+    };
+  }
+
+  return { success: true };
 }
 
 export { PROJECT_ROOT };
