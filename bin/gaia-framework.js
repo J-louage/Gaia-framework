@@ -5,10 +5,10 @@
 // Clones the GAIA repo, delegates to gaia-install.sh, and cleans up.
 // ─────────────────────────────────────────────────────────────────────────────
 
-const { execSync, execFileSync } = require("child_process");
-const { mkdtempSync, rmSync, existsSync } = require("fs");
-const { join } = require("path");
-const { tmpdir } = require("os");
+const childProcess = require("child_process");
+const fs = require("fs");
+const path = require("path");
+const os = require("os");
 
 const REPO_URL = "https://github.com/jlouage/Gaia-framework.git";
 const SCRIPT_NAME = "gaia-install.sh";
@@ -23,19 +23,19 @@ function findBash() {
 
   // Try bash in PATH first (WSL, Git Bash in PATH, etc.)
   try {
-    execSync("bash --version", { stdio: "ignore" });
+    childProcess.execSync("bash --version", { stdio: "ignore" });
     return "bash";
   } catch {}
 
   // Try Git for Windows default locations
   const gitBashPaths = [
-    join(process.env.ProgramFiles || "C:\\Program Files", "Git", "bin", "bash.exe"),
-    join(process.env["ProgramFiles(x86)"] || "C:\\Program Files (x86)", "Git", "bin", "bash.exe"),
-    join(process.env.LOCALAPPDATA || "", "Programs", "Git", "bin", "bash.exe"),
+    path.join(process.env.ProgramFiles || "C:\\Program Files", "Git", "bin", "bash.exe"),
+    path.join(process.env["ProgramFiles(x86)"] || "C:\\Program Files (x86)", "Git", "bin", "bash.exe"),
+    path.join(process.env.LOCALAPPDATA || "", "Programs", "Git", "bin", "bash.exe"),
   ];
 
   for (const p of gitBashPaths) {
-    if (existsSync(p)) return p;
+    if (fs.existsSync(p)) return p;
   }
 
   return null;
@@ -51,9 +51,9 @@ function info(message) {
 }
 
 function cleanup() {
-  if (tempDir && existsSync(tempDir)) {
+  if (tempDir && fs.existsSync(tempDir)) {
     try {
-      rmSync(tempDir, { recursive: true, force: true });
+      fs.rmSync(tempDir, { recursive: true, force: true });
     } catch {
       // Best-effort cleanup
     }
@@ -62,7 +62,7 @@ function cleanup() {
 
 function ensureGit() {
   try {
-    execSync("git --version", { stdio: "ignore" });
+    childProcess.execSync("git --version", { stdio: "ignore" });
   } catch {
     fail(
       "git is required but was not found.\n" +
@@ -72,8 +72,7 @@ function ensureGit() {
 }
 
 function readPackageVersion(pkgPath) {
-  const { readFileSync } = require("fs");
-  const raw = readFileSync(pkgPath, "utf8");
+  const raw = fs.readFileSync(pkgPath, "utf8");
   const pkg = JSON.parse(raw);
   if (!pkg.version) {
     throw new Error(`No version field found in ${pkgPath}`);
@@ -111,7 +110,15 @@ Examples:
 
 // ─── Main ───────────────────────────────────────────────────────────────────
 
-function main() {
+function main(deps) {
+  // Dependency injection for testability — defaults to real modules
+  const _exec = deps && deps.execSync || childProcess.execSync;
+  const _execFile = deps && deps.execFileSync || childProcess.execFileSync;
+  const _mkdtemp = deps && deps.mkdtempSync || fs.mkdtempSync;
+  const _exists = deps && deps.existsSync || fs.existsSync;
+  const _join = deps && deps.join || path.join;
+  const _tmpdir = deps && deps.tmpdir || os.tmpdir;
+
   const args = process.argv.slice(2);
 
   // Handle help / no args
@@ -137,7 +144,7 @@ function main() {
   ensureGit();
 
   // Clone the repo to a temp directory
-  tempDir = mkdtempSync(join(tmpdir(), "gaia-framework-"));
+  tempDir = _mkdtemp(_join(_tmpdir(), "gaia-framework-"));
 
   // Register cleanup for all exit scenarios
   process.on("exit", cleanup);
@@ -147,7 +154,7 @@ function main() {
   info("Cloning GAIA framework from GitHub...");
 
   try {
-    execSync(`git clone --depth 1 ${REPO_URL} "${tempDir}"`, {
+    _exec(`git clone --depth 1 ${REPO_URL} "${tempDir}"`, {
       stdio: ["ignore", "ignore", "pipe"],
     });
   } catch (err) {
@@ -158,8 +165,8 @@ function main() {
   }
 
   // Locate the installer script
-  const scriptPath = join(tempDir, SCRIPT_NAME);
-  if (!existsSync(scriptPath)) {
+  const scriptPath = _join(tempDir, SCRIPT_NAME);
+  if (!_exists(scriptPath)) {
     fail(`Installer script not found in cloned repo: ${SCRIPT_NAME}`);
   }
 
@@ -182,7 +189,7 @@ function main() {
   info("Running installer...\n");
 
   try {
-    execFileSync(bashPath, [scriptPath, ...passthrough], {
+    _execFile(bashPath, [scriptPath, ...passthrough], {
       stdio: "inherit",
       env: { ...process.env, GAIA_SOURCE: tempDir },
     });
@@ -191,4 +198,8 @@ function main() {
   }
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = { findBash, ensureGit, showUsage, fail, info, cleanup, readPackageVersion, main };
