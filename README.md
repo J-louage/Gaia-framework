@@ -43,7 +43,7 @@ GAIA is built on a few core beliefs about how AI-assisted development should wor
 ## Prerequisites
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (requires Anthropic account)
-- Node.js 18+
+- Node.js 20+
 - Git
 
 ---
@@ -460,7 +460,7 @@ The single source of truth is `_gaia/_config/global.yaml`:
 
 ```yaml
 framework_name: "GAIA"
-framework_version: "1.55.1"
+framework_version: "1.57.0"
 user_name: "your-name"
 project_name: "your-project"
 ```
