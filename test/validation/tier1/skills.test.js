@@ -4,8 +4,13 @@ import { join, resolve, basename } from "path";
 
 // Framework root is where _gaia/ lives (one level above Gaia-framework/)
 const FRAMEWORK_ROOT = resolve(import.meta.dirname, "../../../..");
-const SKILLS_DIR = join(FRAMEWORK_ROOT, "_gaia", "dev", "skills");
-const SKILL_INDEX_PATH = join(SKILLS_DIR, "_skill-index.yaml");
+const DEV_SKILLS_DIR = join(FRAMEWORK_ROOT, "_gaia", "dev", "skills");
+const LIFECYCLE_SKILLS_DIR = join(FRAMEWORK_ROOT, "_gaia", "lifecycle", "skills");
+const SKILLS_DIR = DEV_SKILLS_DIR; // backward-compat alias for index tests
+const SKILL_INDEX_PATH = join(DEV_SKILLS_DIR, "_skill-index.yaml");
+
+/** All skill directories to scan — E1-S8 extends coverage to lifecycle skills. */
+const ALL_SKILL_DIRS = [DEV_SKILLS_DIR, LIFECYCLE_SKILLS_DIR];
 
 /** Cache file contents to avoid repeated reads. */
 const fileContentCache = new Map();
@@ -32,13 +37,29 @@ function getProseLines(content) {
 }
 
 /**
- * Discover all skill .md files via filesystem scan (no hardcoded count).
+ * Discover all skill .md files across all skill directories (E1-S8: includes lifecycle skills).
  * Excludes _skill-index.yaml and any non-.md files.
  */
 function discoverSkillFiles() {
-  return readdirSync(SKILLS_DIR)
+  const files = [];
+  for (const dir of ALL_SKILL_DIRS) {
+    if (!existsSync(dir)) continue;
+    const found = readdirSync(dir)
+      .filter((f) => f.endsWith(".md") && !f.startsWith("_"))
+      .map((f) => join(dir, f));
+    files.push(...found);
+  }
+  return files;
+}
+
+/**
+ * Discover skill files in a single directory only.
+ * Used for index-specific validation that only applies to directories with _skill-index.yaml.
+ */
+function discoverSkillFilesInDir(dir) {
+  return readdirSync(dir)
     .filter((f) => f.endsWith(".md") && !f.startsWith("_"))
-    .map((f) => join(SKILLS_DIR, f));
+    .map((f) => join(dir, f));
 }
 
 /**
@@ -58,8 +79,10 @@ function discoverAllAgentDirs() {
 
 /**
  * Check if an agent ID exists in any agent directory.
+ * Recognizes "all" as a valid wildcard (used by lifecycle skills like memory-management).
  */
 function agentExists(agentId) {
+  if (agentId === "all") return true;
   for (const dir of discoverAllAgentDirs()) {
     if (existsSync(join(dir, `${agentId}.md`))) return true;
   }

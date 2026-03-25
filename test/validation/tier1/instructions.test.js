@@ -33,6 +33,32 @@ function findInstructionFiles() {
     .filter((f) => f.length > 0);
 }
 
+/**
+ * E1-S8: Discover all XML files in core engine, protocols, and tasks directories.
+ * These were previously not covered by the instruction validator.
+ */
+function findCoreXmlFiles() {
+  const coreDirs = [
+    join(GAIA_DIR, "core", "engine"),
+    join(GAIA_DIR, "core", "protocols"),
+    join(GAIA_DIR, "core", "tasks"),
+  ];
+  const files = [];
+  for (const dir of coreDirs) {
+    if (!existsSync(dir)) continue;
+    const result = execSync(
+      `find -L "${dir}" -maxdepth 1 -name "*.xml" -not -path "*/node_modules/*"`,
+      { encoding: "utf8" },
+    );
+    const found = result
+      .trim()
+      .split("\n")
+      .filter((f) => f.length > 0);
+    files.push(...found);
+  }
+  return files;
+}
+
 describe("Tier 1: Instruction XML Validation", () => {
   const instructionFiles = findInstructionFiles();
 
@@ -248,6 +274,31 @@ describe("Tier 1: Instruction XML Validation", () => {
     it("all check elements are valid", async () => {
       const { validateCheckElements } = await import(validatorPath);
       for (const file of instructionFiles) {
+        const result = validateCheckElements(file);
+        expect(result.errors, `Check element errors in ${file}`).toHaveLength(0);
+      }
+    });
+  });
+
+  // ── E1-S8: Core XML files (engine, protocols, tasks) ────────
+  describe("E1-S8: Core XML files pass well-formedness check", () => {
+    const coreXmlFiles = findCoreXmlFiles();
+
+    it("should discover core XML files", () => {
+      expect(coreXmlFiles.length).toBeGreaterThan(0);
+    });
+
+    it("all core XML files are well-formed", async () => {
+      const { validateWellFormedness } = await import(validatorPath);
+      for (const file of coreXmlFiles) {
+        const result = validateWellFormedness(file);
+        expect(result.errors, `XML errors in ${file}`).toHaveLength(0);
+      }
+    });
+
+    it("all core XML check elements are valid", async () => {
+      const { validateCheckElements } = await import(validatorPath);
+      for (const file of coreXmlFiles) {
         const result = validateCheckElements(file);
         expect(result.errors, `Check element errors in ${file}`).toHaveLength(0);
       }
