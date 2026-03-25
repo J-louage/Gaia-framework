@@ -82,7 +82,10 @@ function findBash() {
     execSync("bash --version", { stdio: "ignore" });
     // Detect WSL vs Git Bash by checking uname
     try {
-      const uname = execSync('bash -c "uname -r"', { encoding: "utf8", stdio: ["pipe", "pipe", "ignore"] }).trim();
+      const uname = execSync('bash -c "uname -r"', {
+        encoding: "utf8",
+        stdio: ["pipe", "pipe", "ignore"],
+      }).trim();
       if (/microsoft|wsl/i.test(uname)) {
         bashType = "wsl";
       } else {
@@ -91,7 +94,10 @@ function findBash() {
     } catch {
       // Can't detect — try MSYSTEM env which Git Bash sets
       try {
-        const msys = execSync('bash -c "echo $MSYSTEM"', { encoding: "utf8", stdio: ["pipe", "pipe", "ignore"] }).trim();
+        const msys = execSync('bash -c "echo $MSYSTEM"', {
+          encoding: "utf8",
+          stdio: ["pipe", "pipe", "ignore"],
+        }).trim();
         bashType = msys ? "gitbash" : "wsl";
       } catch {
         bashType = "wsl"; // Assume WSL if detection fails — safer path mapping
@@ -126,10 +132,7 @@ function ensureGit() {
   try {
     execSync("git --version", { stdio: "ignore" });
   } catch {
-    fail(
-      "git is required but was not found.\n" +
-        "   Install git: https://git-scm.com/downloads"
-    );
+    fail("git is required but was not found.\n" + "   Install git: https://git-scm.com/downloads");
   }
 }
 
@@ -174,9 +177,9 @@ Examples:
 
 function main(deps) {
   // Dependency injection for testability — defaults to real modules
-  const _exec = deps && deps.execSync || execSync;
-  const _exists = deps && deps.existsSync || existsSync;
-  const _join = deps && deps.join || join;
+  const _exec = (deps && deps.execSync) || execSync;
+  const _exists = (deps && deps.existsSync) || existsSync;
+  const _join = (deps && deps.join) || join;
 
   const args = process.argv.slice(2);
 
@@ -218,8 +221,14 @@ function main(deps) {
 
   // Register cleanup for all exit scenarios
   process.on("exit", cleanup);
-  process.on("SIGINT", () => { cleanup(); process.exit(130); });
-  process.on("SIGTERM", () => { cleanup(); process.exit(143); });
+  process.on("SIGINT", () => {
+    cleanup();
+    process.exit(130);
+  });
+  process.on("SIGTERM", () => {
+    cleanup();
+    process.exit(143);
+  });
 
   info("Cloning GAIA framework from GitHub...");
 
@@ -260,7 +269,9 @@ function main(deps) {
 
   try {
     // Convert all passthrough args that look like paths (contain backslash or drive letter)
-    const posixArgs = passthrough.map(a => IS_WINDOWS && /[\\:]/.test(a) && !a.startsWith("--") ? toPosixPath(a) : a);
+    const posixArgs = passthrough.map((a) =>
+      IS_WINDOWS && /[\\:]/.test(a) && !a.startsWith("--") ? toPosixPath(a) : a
+    );
     const posixScript = toPosixPath(scriptPath);
 
     // Debug: on Windows, log the resolved paths if --verbose is passed
