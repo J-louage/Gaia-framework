@@ -1,5 +1,5 @@
 import { execSync } from "child_process";
-import { resolve, join } from "path";
+import { join } from "path";
 
 /**
  * Discover all workflow.yaml files under _gaia/, excluding _backups/ and node_modules/.

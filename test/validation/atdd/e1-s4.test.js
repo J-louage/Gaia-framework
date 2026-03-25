@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { readFileSync, existsSync } from "fs";
+import { existsSync } from "fs";
 import { join, resolve } from "path";
 import { execSync } from "child_process";
 

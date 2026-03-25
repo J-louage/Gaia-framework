@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, existsSync, readdirSync } from "fs";
 import { join, resolve, basename } from "path";
-import { XMLParser } from "fast-xml-parser";
 
 // Framework root is where _gaia/ lives (one level above Gaia-framework/)
 const FRAMEWORK_ROOT = resolve(import.meta.dirname, "../../../..");

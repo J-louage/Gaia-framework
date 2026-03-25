@@ -66,7 +66,7 @@ const MEMORY_SKILL_PATH = join(
 // All tiered agents per config.yaml
 const TIER_1_AGENTS = ["validator", "architect", "pm", "sm"];
 const TIER_2_AGENTS = ["orchestrator", "security", "devops", "test-architect"];
-const DEV_AGENTS = [
+const _DEV_AGENTS = [
   "typescript-dev",
   "angular-dev",
   "flutter-dev",

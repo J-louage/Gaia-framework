@@ -1,17 +1,15 @@
 import { describe, it, expect } from "vitest";
-import { readFileSync, existsSync, readdirSync } from "fs";
-import { join, resolve, relative, basename } from "path";
-import { execSync } from "child_process";
+import { readFileSync } from "fs";
+import { resolve, relative, basename } from "path";
 
 // Framework root is where _gaia/ lives (one level above Gaia-framework/)
 const FRAMEWORK_ROOT = resolve(import.meta.dirname, "../../../..");
-const GAIA_DIR = join(FRAMEWORK_ROOT, "_gaia");
 
 // ─── File Content Cache ──────────────────────────────────────
 
 const fileContentCache = new Map();
 
-function readCached(filePath) {
+function _readCached(filePath) {
   if (!fileContentCache.has(filePath)) {
     fileContentCache.set(filePath, readFileSync(filePath, "utf8"));
   }
@@ -242,7 +240,7 @@ describe("AC6: used_by frontmatter bidirectional consistency", () => {
 
   it("should flag templates missing frontmatter entirely as warnings", () => {
     const results = checkUsedByFrontmatter(templates, references);
-    const missingFm = results.filter((r) => r.type === "missing-frontmatter");
+    const _missingFm = results.filter((r) => r.type === "missing-frontmatter");
     // Known: epic-status-template and tech-debt-dashboard-template lack frontmatter
     // But we auto-discover — just verify the check runs
     expect(results.length, "Should have at least some results from cross-check").toBeGreaterThanOrEqual(0);

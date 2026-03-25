@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync, existsSync } from "fs";
 import { resolve, join } from "path";
-import { execSync } from "child_process";
 
 const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
 
@@ -21,7 +20,7 @@ const TIER_2_AGENTS = ["orchestrator", "devops", "security", "test-architect"]; 
 
 const TIER_1_FILES = ["ground-truth.md", "decision-log.md", "conversation-context.md"];
 const TIER_2_FILES = ["decision-log.md", "conversation-context.md"];
-const TIER_3_FILES = ["decision-log.md"];
+const _TIER_3_FILES = ["decision-log.md"];
 
 // Map agent IDs to their file paths
 function findAllAgentFiles() {
@@ -72,7 +71,7 @@ describe("E8-S2: Agent Persona Sidecar Path Updates", () => {
   // AC2: All agents have sidecar declarations with correct pattern
   describe("AC2: Consistent sidecar pattern", () => {
     const agentFiles = findAllAgentFiles();
-    const sidecarPattern = /<memory\s+sidecar="(_memory\/[\w-]+-sidecar\/[\w-]+\.md)"\s*\/>/g;
+    const _sidecarPattern = /<memory\s+sidecar="(_memory\/[\w-]+-sidecar\/[\w-]+\.md)"\s*\/>/g;
 
     it("should have <memory sidecar> XML tags (not YAML frontmatter) in all agent files", () => {
       const yamlMemoryAgents = [];

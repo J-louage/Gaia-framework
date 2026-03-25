@@ -56,7 +56,7 @@ function discoverSkillFiles() {
  * Discover skill files in a single directory only.
  * Used for index-specific validation that only applies to directories with _skill-index.yaml.
  */
-function discoverSkillFilesInDir(dir) {
+function _discoverSkillFilesInDir(dir) {
   return readdirSync(dir)
     .filter((f) => f.endsWith(".md") && !f.startsWith("_"))
     .map((f) => join(dir, f));

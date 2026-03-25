@@ -7,7 +7,7 @@ import { XMLParser, XMLValidator } from "fast-xml-parser";
 // Project root: where _gaia/ lives (3 levels up: test/validators/ -> test/ -> Gaia-framework/ -> GAIA-Framework/)
 const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
 
-const GAIA_DIR = join(PROJECT_ROOT, "_gaia");
+const _GAIA_DIR = join(PROJECT_ROOT, "_gaia");
 
 // Canonical variable set per AC3 — maintained as a single constant for easy updates
 export const VALID_VARIABLES = new Set([
@@ -276,7 +276,7 @@ export function validateTemplateOutputVariables(filePath) {
 
 export function validateSkillKnowledgeReferences(filePath) {
   const errors = [];
-  const { parsed, error } = parseXml(filePath);
+  const { error } = parseXml(filePath);
   if (error) {
     errors.push(
       `${filePath}: Cannot check skill/knowledge references — XML parse error`,

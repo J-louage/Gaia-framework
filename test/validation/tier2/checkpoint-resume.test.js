@@ -9,20 +9,16 @@
  */
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
 import {
-  readFileSync,
   writeFileSync,
   unlinkSync,
-  existsSync,
   mkdirSync,
   rmSync,
 } from "fs";
 import { join, resolve } from "path";
 import { execSync } from "child_process";
-import yaml from "js-yaml";
 
 import {
   validateCheckpoint,
-  validateFilesTouched,
   compareChecksums,
   detectResumeMode,
   parseCheckpointFile,
@@ -233,7 +229,7 @@ describe("Tier 2 — E2-S4: Checkpoint/Resume Reliability", () => {
 
   // --- Scenario 10: Result file completeness ---
   describe("Scenario 10: Result file has all ADR-011 fields — AC4", () => {
-    const resultFilePath = join(
+    const _resultFilePath = join(
       TIER2_RESULTS_DIR,
       "checkpoint-resume-2026-03-24.yaml",
     );
