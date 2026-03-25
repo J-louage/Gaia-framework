@@ -1,13 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { readFileSync, existsSync } from "fs";
 import { join, resolve } from "path";
-import yaml from "js-yaml";
 import {
   loadYaml,
   resolveConfigChain,
   resolveVariables,
-  validateNoUnresolved,
-  FRAMEWORK_VARIABLES,
   PROJECT_ROOT,
 } from "../../validators/config-validator.js";
 

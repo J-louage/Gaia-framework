@@ -20,7 +20,7 @@ import { loadYaml, FRAMEWORK_VARIABLES } from "../../validators/config-validator
 const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
 
 // Variable pattern matching {var} in check values (not {{var}} double-brace templates)
-const VAR_PATTERN = /\{([a-z_-]+)\}/g;
+const _VAR_PATTERN = /\{([a-z_-]+)\}/g;
 
 /**
  * Extract all {variable} references from a string.

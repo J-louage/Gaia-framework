@@ -107,7 +107,7 @@ describe("ATDD E7-S1: Remove eval Usage", () => {
     it("should handle malicious path with backticks safely — no side effects", () => {
       const tmpDir = execSync("mktemp -d", { encoding: "utf8" }).trim();
       const markerFile = join(tmpDir, "backtick_marker");
-      const result = execSync(
+      execSync(
         `bash "${join(PROJECT_ROOT, "gaia-install.sh")}" validate '\`touch ${markerFile}\`' 2>&1 || true`,
         { encoding: "utf8" },
       );
@@ -118,7 +118,7 @@ describe("ATDD E7-S1: Remove eval Usage", () => {
     it("should handle malicious path with subshell syntax safely — no side effects", () => {
       const tmpDir = execSync("mktemp -d", { encoding: "utf8" }).trim();
       const markerFile = join(tmpDir, "subshell_marker");
-      const result = execSync(
+      execSync(
         `bash "${join(PROJECT_ROOT, "gaia-install.sh")}" validate '$(touch ${markerFile})' 2>&1 || true`,
         { encoding: "utf8" },
       );

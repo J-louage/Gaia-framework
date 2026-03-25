@@ -233,7 +233,7 @@ describe("E8-S14: Workflow Engine [v] at Template-Output", () => {
       const content = readFileSync(ENGINE_PATH, "utf-8").toLowerCase();
       // The empty check must appear before the invocation — verify both exist
       // and the empty check references "not been written" or "empty" in the [v] handler
-      const vHandlerIdx = content.indexOf("[v] handler");
+      const _vHandlerIdx = content.indexOf("[v] handler");
       const emptyCheckIdx = content.indexOf("not been written yet or is empty");
       const valInvokeIdx = content.indexOf(
         "invoke val-validate-artifact as a subagent",

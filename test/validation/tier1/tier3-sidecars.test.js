@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { readFileSync, existsSync, readdirSync } from "fs";
+import { readFileSync, existsSync } from "fs";
 import { resolve, join } from "path";
 
 const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");

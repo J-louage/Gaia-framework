@@ -1,8 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { readFileSync, existsSync, statSync } from "fs";
-import { join, resolve, relative } from "path";
+import { existsSync } from "fs";
+import { join, relative } from "path";
 import { execSync } from "child_process";
-import yaml from "js-yaml";
 import {
   loadYaml,
   resolveConfigChain,
@@ -233,10 +232,6 @@ describe("E2-S2: Build-Configs Regeneration Verification", () => {
         PROJECT_ROOT,
         globalConfig,
       );
-
-      // Find any string value containing project-path resolution
-      const resolvedStr = JSON.stringify(resolvedResult);
-      const projectPath = join(PROJECT_ROOT, "Gaia-framework");
 
       // The resolved config should contain the full project-path, not bare project-root
       // for fields that use {project-path}

@@ -6,7 +6,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 const { execSync, execFileSync } = require("child_process");
-const { mkdtempSync, rmSync, existsSync, readFileSync, realpathSync } = require("fs");
+const { mkdtempSync, rmSync, existsSync, readFileSync } = require("fs");
 const { join } = require("path");
 const { tmpdir } = require("os");
 
@@ -65,9 +65,9 @@ function findBash() {
 
   // 1. Try Git for Windows FIRST (preferred — simpler path mapping)
   const gitBashPaths = [
-    path.join(process.env.ProgramFiles || "C:\\Program Files", "Git", "bin", "bash.exe"),
-    path.join(process.env["ProgramFiles(x86)"] || "C:\\Program Files (x86)", "Git", "bin", "bash.exe"),
-    path.join(process.env.LOCALAPPDATA || "", "Programs", "Git", "bin", "bash.exe"),
+    join(process.env.ProgramFiles || "C:\\Program Files", "Git", "bin", "bash.exe"),
+    join(process.env["ProgramFiles(x86)"] || "C:\\Program Files (x86)", "Git", "bin", "bash.exe"),
+    join(process.env.LOCALAPPDATA || "", "Programs", "Git", "bin", "bash.exe"),
   ];
 
   for (const p of gitBashPaths) {
@@ -175,11 +175,8 @@ Examples:
 function main(deps) {
   // Dependency injection for testability — defaults to real modules
   const _exec = deps && deps.execSync || execSync;
-  const _execFile = deps && deps.execFileSync || execFileSync;
-  const _mkdtemp = deps && deps.mkdtempSync || mkdtempSync;
   const _exists = deps && deps.existsSync || existsSync;
   const _join = deps && deps.join || join;
-  const _tmpdir = deps && deps.tmpdir || tmpdir;
 
   const args = process.argv.slice(2);
 
