@@ -1,6 +1,6 @@
 {
   "name": "gaia-framework",
-  "version": "1.56.1",
+  "version": "1.57.0",
   "description": "GAIA — Generative Agile Intelligence Architecture installer",
   "bin": {
     "gaia-framework": "./bin/gaia-framework.js"
@@ -36,7 +36,12 @@
   },
   "files": [
     "bin/",
-    "gaia-install.sh"
+    "gaia-install.sh",
+    "_gaia/",
+    ".claude/",
+    "CLAUDE.md",
+    "README.md",
+    "LICENSE"
   ],
   "devDependencies": {
     "vitest": "^3.1.0",

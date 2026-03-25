@@ -172,22 +172,42 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Guard against .npmignore
+        run: |
+          if [ -f ".npmignore" ]; then
+            echo "::error::Remove .npmignore — use package.json files field as the canonical whitelist. .npmignore silently overrides the files field."
+            exit 1
+          fi
+          echo ".npmignore guard passed — no .npmignore file found"
+
       - name: Verify package contents
         run: |
           echo "=== npm pack dry run ==="
           PACK_OUTPUT=$(npm pack --dry-run 2>&1)
           echo "$PACK_OUTPUT"
 
-          # Check that test/ and .github/ are excluded
-          if echo "$PACK_OUTPUT" | grep -q "test/"; then
-            echo "::error::Package includes test/ directory — should be excluded"
+          VIOLATIONS=""
+
+          # Full exclusion matrix per architecture Section 10.6 and E4-S3 story
+          EXCLUDED_PATTERNS="test/ .github/ .eslintrc .prettierrc .editorconfig .husky/ docs/"
+
+          for PATTERN in $EXCLUDED_PATTERNS; do
+            if echo "$PACK_OUTPUT" | grep -q "$PATTERN"; then
+              echo "::error::Package includes $PATTERN — should be excluded by files whitelist"
+              VIOLATIONS="${VIOLATIONS}  - $PATTERN\n"
+            fi
+          done
+
+          if [ -n "$VIOLATIONS" ]; then
+            echo ""
+            echo "::error::Package content verification FAILED — unexpected files detected:"
+            echo -e "$VIOLATIONS"
+            echo "Fix: ensure package.json 'files' field only includes production files."
             exit 1
           fi
-          if echo "$PACK_OUTPUT" | grep -q ".github/"; then
-            echo "::error::Package includes .github/ directory — should be excluded"
-            exit 1
-          fi
-          echo "Package contents verified — test/ and .github/ excluded"
+
+          FILE_COUNT=$(echo "$PACK_OUTPUT" | grep -c "│" || true)
+          echo "Package contents verified — $FILE_COUNT files match whitelist, no excluded patterns found"
 
       - name: Check transitive dependency count
         run: |
