@@ -1,0 +1,4 @@
+{
+  "*.js": ["eslint --fix", "prettier --write"],
+  "*.sh": ["./scripts/shellcheck-wrapper.sh"]
+}
