@@ -19,7 +19,8 @@
     "lint": "eslint bin/**/*.js test/**/*.js",
     "lint:fix": "eslint --fix bin/**/*.js test/**/*.js",
     "format:check": "prettier --check \"bin/**/*.js\" \"test/**/*.js\"",
-    "format": "prettier --write \"bin/**/*.js\" \"test/**/*.js\""
+    "format": "prettier --write \"bin/**/*.js\" \"test/**/*.js\"",
+    "prepare": "echo \"Husky hooks disabled - activate in follow-up PR\""
   },
   "keywords": [
     "gaia",
@@ -55,7 +56,9 @@
     "eslint-config-prettier": "^10.1.8",
     "fast-xml-parser": "^5.2.0",
     "globals": "^17.4.0",
+    "husky": "^9.1.7",
     "js-yaml": "^4.1.0",
+    "lint-staged": "^15.5.2",
     "prettier": "^3.8.1",
     "vitest": "^3.1.0"
   }
