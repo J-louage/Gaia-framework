@@ -19,6 +19,7 @@
     - NOT SELECTABLE: stories with files but status ≠ 'ready-for-dev' → "Story {key} is in '{status}' status — must be 'ready-for-dev' to be selectable. Run /gaia-validate-story {key} first."
   </action>
   <action>Display the classification to the user: selectable stories table (Key | Title | Priority | Size | Risk | Status) and non-selectable stories with reasons.</action>
+  <action>Priority flag scan: scan all selectable story files for priority_flag: "next-sprint" in their YAML frontmatter. If any flagged stories are found, display them with a visual indicator: "FLAGGED FOR NEXT SPRINT: Story {key} — {title} (priority_flag: next-sprint). This story was flagged by the add-feature workflow for priority inclusion." List all flagged stories before story selection begins so the scrum master is aware.</action>
   <action>Load most recent retro-{sprint_id}.md from {implementation_artifacts}/ if available</action>
   <action>If retro found: extract open action items — carry forward as sprint constraints or tasks. Present to user: "Previous retro action items to carry forward:" with status of each.</action>
 </step>
@@ -48,12 +49,14 @@
   <action>Priority surfacing: after story selection, check for P0 stories that are 'ready-for-dev' but were NOT selected. If any found, display: "WARNING: The following P0/critical stories are ready but not selected for this sprint:" followed by the list with their sizes. Ask user to confirm they intentionally excluded these high-priority stories.</action>
   <action>If {test_artifacts}/test-plan.md exists: apply risk levels to story selection — buffer 20% for high-risk stories in velocity estimate</action>
   <action>ATDD check (high-risk ONLY): for each story with risk = high, check if {test_artifacts}/atdd-{story_key}.md exists. If missing, add a sprint risk note: "HIGH-RISK story {key} has no ATDD file — run /gaia-atdd {key} before development." Do NOT flag medium or low risk stories — ATDD is required only for high-risk stories.</action>
+  <action>Auto-include flagged stories: after initial story selection, check if any SELECTABLE stories have priority_flag: "next-sprint" in their frontmatter but were NOT yet selected. For each such story: check remaining sprint capacity (velocity_capacity minus currently selected points). If the flagged story fits within remaining capacity, auto-include it in the sprint selection and inform the scrum master: "AUTO-INCLUDED: Story {key} — {title} (priority_flag: next-sprint, {points} pts). Flagged story auto-included — capacity allows." If the flagged story does NOT fit within remaining capacity, alert the scrum master for manual decision: "CAPACITY ALERT: Flagged story {key} — {title} ({points} pts) cannot be auto-included — insufficient capacity ({remaining} pts remaining). Include anyway (will exceed velocity) or defer to next sprint?"</action>
 </step>
 <step n="5" title="Update Story Files">
   <action>For each selected story that has an individual file in {implementation_artifacts}/: update the sprint_id field to "sprint-{N}"</action>
   <action>For each selected story: invoke status-sync protocol to assign the sprint — keep status as 'ready-for-dev' (do NOT change to backlog). Stories remain ready-for-dev until /gaia-dev-story transitions them to in-progress.
     <invoke-protocol ref="status-sync" story_key="{story_key}" new_status="ready-for-dev" sprint_id="sprint-{N}" source_workflow="sprint-planning" />
     Note: sprint-status.yaml may not exist yet at this point (created in Step 8) — the protocol will skip the sprint-status.yaml update if the file doesn't exist.</action>
+  <action>Clear priority flag on sprint assignment: for each selected story that has priority_flag: "next-sprint" in its frontmatter, set priority_flag back to null. This prevents the flag from persisting after the story has been assigned to a sprint. The flag is a one-time scheduling hint — once the story is sprint-assigned, it is no longer needed.</action>
   <action>Include all modified story files in the checkpoint files_touched with sha256 checksums</action>
 </step>
 <step n="6" title="Optional: Mobile Testing">
