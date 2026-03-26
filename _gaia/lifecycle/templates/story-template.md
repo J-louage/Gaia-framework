@@ -11,6 +11,7 @@ size: "{S/M/L/XL}"
 points: "{story_points}"
 risk: "{high/medium/low}"
 sprint_id: null
+priority_flag: null
 depends_on: []
 blocks: []
 traces_to: []

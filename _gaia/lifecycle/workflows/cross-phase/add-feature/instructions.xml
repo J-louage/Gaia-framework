@@ -55,6 +55,7 @@
   <action>Spawn a subagent using the Agent tool: "Load {project-root}/_gaia/core/engine/workflow.xml, then process {project-root}/_gaia/lifecycle/workflows/4-implementation/add-stories/workflow.yaml as workflow-config. Run in YOLO mode. Follow the workflow engine instructions EXACTLY. Context: New feature: {feature_description}. New PRD requirements: {prd_diff}. Architecture changes: {arch_diff}. Create stories for this feature. Determine if a new epic is needed or if stories belong to an existing epic. CR ID: {cr_id}."</action>
   <action>When subagent returns: capture new story keys and epic assignments</action>
   <action>Store: new_stories = {list of new story keys created}</action>
+  <action>Priority flag integration: if the feature driver is high-urgency (P0 priority, business-critical, or regulatory driver), set priority_flag: "next-sprint" in each created story's frontmatter. This signals sprint planning to auto-include these stories in the next sprint cycle. For non-urgent features, priority_flag remains null (default).</action>
 </step>
 
 <step n="7" title="Update Traceability">
