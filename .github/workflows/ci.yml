@@ -173,6 +173,63 @@ jobs:
         continue-on-error: true
         run: bash scripts/check-dep-budget.sh
 
+  # E7-S5: Performance regression benchmarks — measures CLI P95 latencies
+  benchmark:
+    name: Performance Benchmarks
+    needs: [test]
+    runs-on: ubuntu-latest
+    # Soft gate — benchmark failures do not block merges (AC5)
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run performance benchmarks
+        id: bench
+        run: |
+          npm run bench -- --iterations 10 --output test-artifacts/performance-baseline.json
+          cat test-artifacts/performance-baseline.json
+
+      - name: Upload benchmark artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-baseline
+          path: test-artifacts/performance-baseline.json
+
+      # AC7: Add performance-degradation label when any threshold exceeded by >50%
+      - name: Check for severe performance degradation
+        if: github.event_name == 'pull_request'
+        run: |
+          node -e "
+            const fs = require('fs');
+            const results = JSON.parse(fs.readFileSync('test-artifacts/performance-baseline.json', 'utf8'));
+            let hasSevere = false;
+            for (const [cmd, data] of Object.entries(results.benchmarks)) {
+              if (data.p95 > data.threshold * 1.5) {
+                hasSevere = true;
+                console.log('SEVERE: ' + cmd + ' P95=' + data.p95 + 'ms exceeds ' + data.threshold + 'ms by >50%');
+              }
+            }
+            if (hasSevere) {
+              fs.writeFileSync('/tmp/perf-degradation', 'true');
+            }
+          "
+          if [ -f /tmp/perf-degradation ]; then
+            echo "::warning::Performance degradation detected — adding label to PR"
+            gh pr edit ${{ github.event.pull_request.number }} --add-label "performance-degradation" || echo "Could not add label (may not exist yet)"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   package:
     name: Package Validation
     needs: [test]
