@@ -8,7 +8,7 @@ name,displayName,description,module,phase,path,command,agent
 "technical-research","Technical Research","Research a technology","lifecycle","1-analysis","_gaia/lifecycle/workflows/1-analysis/technical-research/workflow.yaml","gaia-tech-research","analyst"
 "create-product-brief","Create Product Brief","Create a product brief","lifecycle","1-analysis","_gaia/lifecycle/workflows/1-analysis/create-product-brief/workflow.yaml","gaia-product-brief","analyst"
 "create-prd","Create PRD","Create a Product Requirements Document","lifecycle","2-planning","_gaia/lifecycle/workflows/2-planning/create-prd/workflow.yaml","gaia-create-prd","pm"
-"validate-prd","Validate PRD","Validate PRD against standards","lifecycle","2-planning","_gaia/lifecycle/workflows/2-planning/validate-prd/workflow.yaml","gaia-validate-prd","pm"
+"validate-prd","Validate PRD (deprecated)","DEPRECATED — Use /gaia-val-validate instead","lifecycle","2-planning","_gaia/lifecycle/workflows/2-planning/validate-prd/workflow.yaml","gaia-validate-prd","pm"
 "edit-prd","Edit PRD","Edit an existing PRD","lifecycle","2-planning","_gaia/lifecycle/workflows/2-planning/edit-prd/workflow.yaml","gaia-edit-prd","pm"
 "create-ux-design","Create UX Design","Plan UX patterns and design specs","lifecycle","2-planning","_gaia/lifecycle/workflows/2-planning/create-ux-design/workflow.yaml","gaia-create-ux","ux-designer"
 "edit-ux-design","Edit UX Design","Edit an existing UX design","lifecycle","2-planning","_gaia/lifecycle/workflows/2-planning/edit-ux-design/workflow.yaml","gaia-edit-ux","ux-designer"

@@ -11,7 +11,7 @@ module,phase,name,code,command,required,agent-name,description,output-location
 "lifecycle","1-analysis","technical-research","tech-research","gaia-tech-research","false","analyst","Research a technology","docs/planning-artifacts"
 "lifecycle","1-analysis","create-product-brief","product-brief","gaia-product-brief","false","analyst","Create a product brief","docs/planning-artifacts"
 "lifecycle","2-planning","create-prd","create-prd","gaia-create-prd","true","pm","Create a Product Requirements Document","docs/planning-artifacts"
-"lifecycle","2-planning","validate-prd","validate-prd","gaia-validate-prd","false","pm","Validate PRD against standards","docs/planning-artifacts"
+"lifecycle","2-planning","validate-prd","validate-prd","gaia-validate-prd","false","pm","DEPRECATED — Replaced by unified artifact validation","docs/planning-artifacts"
 "lifecycle","2-planning","edit-prd","edit-prd","gaia-edit-prd","false","pm","Edit an existing PRD","docs/planning-artifacts"
 "lifecycle","2-planning","create-ux-design","create-ux","gaia-create-ux","false","ux-designer","Create UX design specifications","docs/planning-artifacts"
 "lifecycle","2-planning","edit-ux-design","edit-ux","gaia-edit-ux","false","ux-designer","Edit an existing UX design","docs/planning-artifacts"
