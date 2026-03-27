@@ -15,11 +15,9 @@
 
 import { describe, it, expect, beforeAll } from "vitest";
 import { readFileSync, existsSync, readdirSync } from "fs";
-import { join, resolve } from "path";
+import { join } from "path";
 import yaml from "js-yaml";
-
-// ─── Path constants ──────────────────────────────────────────────
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 const GAIA_ROOT = join(PROJECT_ROOT, "_gaia");
 const ENGINE_PATH = join(GAIA_ROOT, "core", "engine", "workflow.xml");
 const GLOBAL_CONFIG = join(GAIA_ROOT, "_config", "global.yaml");

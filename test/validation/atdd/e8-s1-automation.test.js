@@ -1,10 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, existsSync, readdirSync } from "fs";
-import { join, resolve } from "path";
+import { join } from "path";
 import yaml from "js-yaml";
-
-// Project root is where _gaia/ lives (3 levels up from test/validation/atdd/)
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 const NEW_MEMORY = join(PROJECT_ROOT, "_memory");
 const GLOBAL_YAML = join(PROJECT_ROOT, "_gaia", "_config", "global.yaml");
 const GITIGNORE = join(PROJECT_ROOT, ".gitignore");
@@ -129,12 +127,8 @@ describe("E8-S1: Test Automation — Extended Coverage", () => {
   describe("AC1 Extended: Empty sidecars have no unexpected content", () => {
     // validator-sidecar excluded — populated by E8-S13 (ground-truth.md, decision-log.md, conversation-context.md)
     // architect-sidecar, pm-sidecar, sm-sidecar excluded — populated by E9-S2 (Tier 1 memory)
-    const emptySidecars = [
-      "orchestrator-sidecar",
-      "test-architect-sidecar",
-      "storyteller-sidecar",
-      "tech-writer-sidecar",
-    ];
+    // storyteller-sidecar, tech-writer-sidecar excluded — populated by E9-S5 (Tier 3 decision-log.md)
+    const emptySidecars = ["orchestrator-sidecar", "test-architect-sidecar"];
 
     it.each(emptySidecars)(
       "%s/ contains only .gitkeep or is empty (no content files yet)",

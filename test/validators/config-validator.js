@@ -1,10 +1,8 @@
 import { readFileSync, existsSync, statSync } from "fs";
-import { join, resolve, dirname, basename } from "path";
+import { join, dirname, basename } from "path";
 import { execSync } from "child_process";
 import yaml from "js-yaml";
-
-// Project root: where _gaia/ lives
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
+import { PROJECT_ROOT } from "../helpers/project-root.js";
 
 // Regex matching {var} and {{var} patterns in config values
 const VAR_PATTERN = /\{?\{([^}]+)\}/g;

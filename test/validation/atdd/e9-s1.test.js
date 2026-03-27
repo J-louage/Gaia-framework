@@ -1,9 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, existsSync } from "fs";
-import { resolve, join } from "path";
-
-// Project root is where _gaia/ lives (3 levels up from test/validation/atdd/)
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
+import { join } from "path";
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 const VALIDATOR_MD = join(PROJECT_ROOT, "_gaia/lifecycle/agents/validator.md");
 
 function loadValidator() {

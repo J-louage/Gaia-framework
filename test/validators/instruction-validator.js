@@ -1,11 +1,9 @@
 import { readFileSync, existsSync } from "fs";
 import { join, resolve, dirname } from "path";
 import { XMLParser, XMLValidator } from "fast-xml-parser";
+import { PROJECT_ROOT } from "../helpers/project-root.js";
 
 // ─── Constants ──────────────────────────────────────────────
-
-// Project root: where _gaia/ lives (3 levels up: test/validators/ -> test/ -> Gaia-framework/ -> GAIA-Framework/)
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
 
 const _GAIA_DIR = join(PROJECT_ROOT, "_gaia");
 

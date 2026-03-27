@@ -12,10 +12,10 @@ HELPER_DIR="$SCRIPT_DIR/test_helper"
 
 # SHA-pinned commits for reproducibility
 BATS_SUPPORT_REPO="https://github.com/bats-core/bats-support.git"
-BATS_SUPPORT_SHA="e363b640d8017cf787e488308ceb7489e76b8b0c"  # v0.3.0
+BATS_SUPPORT_SHA="24a72e14349690bcbf7c151b9d2d1cdd32d36eb1"  # v0.3.0
 
 BATS_ASSERT_REPO="https://github.com/bats-core/bats-assert.git"
-BATS_ASSERT_SHA="e2d855bc06f43193d5ce5b85e07da3a2e89eab09"  # v2.1.0
+BATS_ASSERT_SHA="78fa631d1370562d2cd4a1390989e706158e7bf0"  # v2.1.0
 
 install_lib() {
   local name="$1" repo="$2" sha="$3"

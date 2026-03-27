@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, existsSync } from "fs";
 import { resolve } from "path";
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
 const CODEOWNERS_PATH = resolve(PROJECT_ROOT, ".github/CODEOWNERS");
 const CONTRIBUTING_PATH = resolve(PROJECT_ROOT, "CONTRIBUTING.md");
 

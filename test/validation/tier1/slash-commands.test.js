@@ -1,10 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, existsSync } from "fs";
-import { join, resolve } from "path";
+import { join } from "path";
 import { execSync } from "child_process";
-
-// Project root is where _gaia/ lives (Gaia-framework/)
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 
 // ─── File Content Cache ──────────────────────────────────────
 

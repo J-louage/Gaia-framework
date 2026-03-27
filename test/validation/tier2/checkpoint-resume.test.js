@@ -9,7 +9,7 @@
  */
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
 import { writeFileSync, unlinkSync, mkdirSync, rmSync } from "fs";
-import { join, resolve } from "path";
+import { join } from "path";
 import { execSync } from "child_process";
 
 import {
@@ -18,8 +18,7 @@ import {
   detectResumeMode,
   parseCheckpointFile,
 } from "../../../lib/checkpoint-validator.js";
-
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 const FIXTURES_DIR = join(PROJECT_ROOT, "test", "fixtures", "checkpoints");
 const TMP_CHECKPOINT_DIR = join(PROJECT_ROOT, "test", "fixtures", "tmp", "checkpoints");
 const TIER2_RESULTS_DIR = join(PROJECT_ROOT, "_gaia", "_memory", "tier2-results");

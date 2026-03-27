@@ -11,6 +11,7 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { existsSync, mkdirSync, writeFileSync, readFileSync, readdirSync } from "fs";
 import { join } from "path";
+import { execSync } from "child_process";
 import {
   MOCK_FRAMEWORK,
   createTempDir,
@@ -19,9 +20,18 @@ import {
   initFirst,
 } from "./helpers.js";
 
+// Skip integration tests if rsync is not available (e.g., Ubuntu CI runners)
+let hasRsync = false;
+try {
+  execSync("which rsync", { stdio: "pipe" });
+  hasRsync = true;
+} catch {
+  hasRsync = false;
+}
+
 let tempDir;
 
-describe("Update flow integration tests", () => {
+describe.skipIf(!hasRsync)("Update flow integration tests", () => {
   beforeEach(() => {
     tempDir = createTempDir();
   });

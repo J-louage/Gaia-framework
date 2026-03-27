@@ -1,8 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, existsSync } from "fs";
-import { join, resolve } from "path";
+import { join } from "path";
 import { execSync } from "child_process";
 import yaml from "js-yaml";
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 
 /**
  * ATDD — E1-S1: Workflow Definition Validation
@@ -18,7 +19,6 @@ import yaml from "js-yaml";
  * AC6: Test file location (meta — validates this file exists at correct path)
  */
 
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
 const GAIA_ROOT = join(PROJECT_ROOT, "_gaia");
 
 // Known valid variable patterns used in workflow.yaml output paths

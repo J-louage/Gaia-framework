@@ -6,11 +6,12 @@
  */
 
 import { existsSync, mkdtempSync, rmSync } from "fs";
-import { join, resolve } from "path";
+import { join } from "path";
 import { tmpdir } from "os";
 import { execFileSync } from "child_process";
+import { PROJECT_ROOT } from "../helpers/project-root.js";
 
-export const PROJECT_ROOT = resolve(import.meta.dirname, "../..");
+export { PROJECT_ROOT };
 export const SCRIPT_PATH = join(PROJECT_ROOT, "gaia-install.sh");
 export const MOCK_FRAMEWORK = join(PROJECT_ROOT, "test", "fixtures", "mock-framework");
 
