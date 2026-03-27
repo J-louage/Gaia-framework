@@ -12,17 +12,8 @@ import path from "node:path";
 import os from "node:os";
 
 const PROJECT_ROOT = path.resolve(import.meta.dirname, "../../..");
-const PUBLISH_WORKFLOW = path.join(
-  PROJECT_ROOT,
-  ".github",
-  "workflows",
-  "publish.yml"
-);
-const VERSION_BUMP_SCRIPT = path.join(
-  PROJECT_ROOT,
-  "scripts",
-  "version-bump.js"
-);
+const PUBLISH_WORKFLOW = path.join(PROJECT_ROOT, ".github", "workflows", "publish.yml");
+const VERSION_BUMP_SCRIPT = path.join(PROJECT_ROOT, "scripts", "version-bump.js");
 
 // ── Fixture helper (reuses convention from version-bump.test.js) ─────────
 
@@ -97,9 +88,7 @@ describe("E4-S7: CI-Driven Version Sync in Publish Workflow", () => {
 
       // Must have a dedicated step that strips 'v' prefix and stores the version
       // Current workflow only does this in verification — E4-S7 requires a sync step
-      expect(content).toMatch(
-        /name:.*(?:Extract|Derive|Sync).*version.*(?:from|tag)/i
-      );
+      expect(content).toMatch(/name:.*(?:Extract|Derive|Sync).*version.*(?:from|tag)/i);
 
       // The extracted version must be exported/stored for downstream steps
       expect(content).toMatch(/TAG_VERSION.*\$\{.*tag_name.*\}/);
@@ -116,9 +105,7 @@ describe("E4-S7: CI-Driven Version Sync in Publish Workflow", () => {
       const content = fs.readFileSync(PUBLISH_WORKFLOW, "utf-8");
 
       // Must invoke version-bump.js (or npm run version:bump) with an explicit version
-      expect(content).toMatch(
-        /version-bump(?:\.js)?\s+\$|npm run version:bump.*\$/i
-      );
+      expect(content).toMatch(/version-bump(?:\.js)?\s+\$|npm run version:bump.*\$/i);
 
       // The version argument must come from the tag extraction step, not be patch/minor/major
       // This confirms AC5 integration — explicit version, not bump type
@@ -136,9 +123,7 @@ describe("E4-S7: CI-Driven Version Sync in Publish Workflow", () => {
 
       // Must have a dedicated verification step (separate from existing "Verify version matches release tag")
       // that checks all 6 files, not just package.json
-      expect(content).toMatch(
-        /name:.*(?:Verify|Check).*(?:all|6|six).*(?:file|version|sync)/i
-      );
+      expect(content).toMatch(/name:.*(?:Verify|Check).*(?:all|6|six).*(?:file|version|sync)/i);
 
       // Must reference the 6 target files
       const fileRefs = [
@@ -203,21 +188,13 @@ describe("E4-S7: CI-Driven Version Sync in Publish Workflow", () => {
       expect(result.exitCode).toBe(0);
 
       // All 6 files must be updated to 1.2.3
-      const pkg = JSON.parse(
-        fs.readFileSync(path.join(dir, "package.json"), "utf8")
-      );
+      const pkg = JSON.parse(fs.readFileSync(path.join(dir, "package.json"), "utf8"));
       expect(pkg.version).toBe("1.2.3");
 
-      const installer = fs.readFileSync(
-        path.join(dir, "gaia-install.sh"),
-        "utf8"
-      );
+      const installer = fs.readFileSync(path.join(dir, "gaia-install.sh"), "utf8");
       expect(installer).toContain('readonly VERSION="1.2.3"');
 
-      const global = fs.readFileSync(
-        path.join(dir, "_gaia", "_config", "global.yaml"),
-        "utf8"
-      );
+      const global = fs.readFileSync(path.join(dir, "_gaia", "_config", "global.yaml"), "utf8");
       expect(global).toContain('framework_version: "1.2.3"');
 
       const claude = fs.readFileSync(path.join(dir, "CLAUDE.md"), "utf8");
@@ -238,13 +215,7 @@ describe("E4-S7: CI-Driven Version Sync in Publish Workflow", () => {
 
   describe("AC6: Unit test coverage for explicit version", () => {
     it("test_ac6_explicit_version_unit_tests — version-bump.test.js contains explicit version test cases", () => {
-      const testFile = path.join(
-        PROJECT_ROOT,
-        "test",
-        "unit",
-        "scripts",
-        "version-bump.test.js"
-      );
+      const testFile = path.join(PROJECT_ROOT, "test", "unit", "scripts", "version-bump.test.js");
       const content = fs.readFileSync(testFile, "utf-8");
 
       // Must have test cases for explicit version (not just patch/minor/major)
