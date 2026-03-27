@@ -3,7 +3,7 @@ title: 'Story Creation Validation'
 validation-target: 'Story file'
 ---
 ## Structure
-- [ ] YAML frontmatter present with all 14 required fields: key, title, epic, status, priority, size, points, risk, sprint_id, depends_on, blocks, traces_to, date, author
+- [ ] YAML frontmatter present with all 15 required fields: key, title, epic, status, priority, size, points, risk, sprint_id, depends_on, blocks, traces_to, date, author, priority_flag
 - [ ] Acceptance criteria section complete
 - [ ] Technical notes included
 - [ ] Subtasks defined

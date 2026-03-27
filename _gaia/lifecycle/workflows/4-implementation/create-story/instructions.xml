@@ -1,6 +1,6 @@
 <workflow name="create-story">
 <critical>
-  <mandate>Story files must include complete YAML frontmatter with ALL required fields: key, title, epic, status, priority, size, points, risk, sprint_id, depends_on, blocks, traces_to, date, author</mandate>
+  <mandate>Story files must include complete YAML frontmatter with ALL required fields: key, title, epic, status, priority, size, points, risk, sprint_id, depends_on, blocks, traces_to, date, author, priority_flag. The priority_flag field accepts only null (default) or "next-sprint" as valid values.</mandate>
   <mandate>All acceptance criteria MUST use Given/When/Then format: "Given {context}, when {action}, then {expected result}"</mandate>
   <mandate>Check web access availability if story references external APIs</mandate>
 </critical>
@@ -109,9 +109,10 @@
     - traces_to: requirement IDs this story traces to (from epics)
     - date: current date
     - author: agent name (e.g., "Nate (Scrum Master)")
+    - priority_flag: null (default — set to "next-sprint" by add-feature for high-urgency stories)
   </action>
   <template-output file="{implementation_artifacts}/{story_key}-{story_title_slug}.md">
-    Generate the story file following the story-template.md structure. The filename must use the story key and slugified title (e.g., E1-S1-user-login.md). Include complete YAML frontmatter with ALL 14 fields populated. Fill all template sections: User Story, Acceptance Criteria, Tasks/Subtasks (linked to AC numbers), Dev Notes, Technical Notes, Dependencies, Test Scenarios, Project Structure Notes, References, Dev Agent Record, and Estimate. IMPORTANT: The body "**Status:**" line MUST match the frontmatter status field exactly. Both must say the same status value.
+    Generate the story file following the story-template.md structure. The filename must use the story key and slugified title (e.g., E1-S1-user-login.md). Include complete YAML frontmatter with ALL 15 fields populated. Fill all template sections: User Story, Acceptance Criteria, Tasks/Subtasks (linked to AC numbers), Dev Notes, Technical Notes, Dependencies, Test Scenarios, Project Structure Notes, References, Dev Agent Record, and Estimate. IMPORTANT: The body "**Status:**" line MUST match the frontmatter status field exactly. Both must say the same status value.
   </template-output>
   <action>Add the new story to {implementation_artifacts}/story-index.yaml:
     1. Read story-index.yaml (create with header if doesn't exist)
@@ -122,7 +123,7 @@
 <step n="7" title="Val Full Validation">
   <action>Invoke Val as a subagent to perform full validation on the saved story file. Val validates:
 
-  (a) Completeness — all 14 YAML frontmatter fields present and valid, all template sections present
+  (a) Completeness — all 15 YAML frontmatter fields present and valid, all template sections present
   (b) Clarity — all ACs in Given/When/Then format, subtasks linked to AC numbers, DoD items measurable
   (c) Semantic quality — duplicate detection across epic, ADR cross-references against architecture.md
   (d) Dependencies — all declared dependencies exist and resolve
