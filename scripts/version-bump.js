@@ -5,7 +5,7 @@
  * version-bump.js — Automate version sync across GAIA framework files.
  *
  * Usage:
- *   node scripts/version-bump.js <patch|minor|major> [--modules mod1,mod2] [--dry-run]
+ *   node scripts/version-bump.js <patch|minor|major|X.Y.Z> [--modules mod1,mod2] [--dry-run]
  *
  * Updates 6 global files atomically. Optionally updates module config.yaml
  * and manifest.yaml entries when --modules is provided.
@@ -202,6 +202,7 @@ function applyModuleUpdates(root, modules, newVer, dryRun) {
 
 function parseArgs(argv) {
   let bumpType = null;
+  let explicitVersion = null;
   let modules = null;
   let dryRun = false;
 
@@ -213,18 +214,20 @@ function parseArgs(argv) {
       modules = argv[i].split(",").map((s) => s.trim());
     } else if (BUMP_TYPES.includes(argv[i])) {
       bumpType = argv[i];
+    } else if (parseSemver(argv[i])) {
+      explicitVersion = argv[i];
     } else {
       console.error(`Unknown argument: ${argv[i]}`);
       process.exit(1);
     }
   }
 
-  if (!bumpType) {
-    console.error("Usage: node scripts/version-bump.js <patch|minor|major> [--modules mod1,mod2] [--dry-run]");
+  if (!bumpType && !explicitVersion) {
+    console.error("Usage: node scripts/version-bump.js <patch|minor|major|X.Y.Z> [--modules mod1,mod2] [--dry-run]");
     process.exit(1);
   }
 
-  return { bumpType, modules, dryRun };
+  return { bumpType, explicitVersion, modules, dryRun };
 }
 
 function resolveModules(modules) {
@@ -242,7 +245,7 @@ function resolveModules(modules) {
 // ── Main ────────────────────────────────────────────────────────────────────
 
 function main() {
-  const { bumpType, modules: rawModules, dryRun } = parseArgs(process.argv.slice(2));
+  const { bumpType, explicitVersion, modules: rawModules, dryRun } = parseArgs(process.argv.slice(2));
   const modules = resolveModules(rawModules);
   const root = resolveRoot();
   const patterns = globalFilePatterns(root);
@@ -257,7 +260,15 @@ function main() {
 
   // Detect version drift
   const drift = detectDrift(patterns, fileContents);
-  if (drift) { console.error(drift); process.exit(1); }
+  if (drift) {
+    if (explicitVersion) {
+      // Explicit version mode: log drift as warning but proceed
+      console.log("Warning: " + drift.replace("Resolve the divergence before bumping.", "Proceeding with explicit version sync."));
+    } else {
+      console.error(drift);
+      process.exit(1);
+    }
+  }
 
   // Current → new version
   const currentVersion = patterns[0].read(fileContents.get(patterns[0].file));
@@ -265,7 +276,7 @@ function main() {
     console.error(`Cannot parse version: ${currentVersion}`);
     process.exit(1);
   }
-  const newVersion = incrementSemver(currentVersion, bumpType);
+  const newVersion = explicitVersion || incrementSemver(currentVersion, bumpType);
 
   // Dry-run: print and exit
   if (dryRun) {
