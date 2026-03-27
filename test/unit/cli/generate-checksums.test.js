@@ -39,7 +39,7 @@ function parseChecksums(content) {
     .filter((line) => line.length > 0)
     .map((line) => {
       // BSD format: <hash>  <filename> (two spaces)
-      const match = line.match(/^([a-f0-9]{64})  (.+)$/);
+      const match = line.match(/^([a-f0-9]{64}) {2}(.+)$/);
       if (!match) throw new Error(`Invalid checksum line: ${line}`);
       return { hash: match[1], file: match[2] };
     });
@@ -79,7 +79,7 @@ describe("generate-checksums.js", () => {
       const lines = content.trim().split("\n").filter(Boolean);
       for (const line of lines) {
         // Exactly 64 hex chars, two spaces, then a relative path
-        expect(line).toMatch(/^[a-f0-9]{64}  .+$/);
+        expect(line).toMatch(/^[a-f0-9]{64} {2}.+$/);
       }
     });
 

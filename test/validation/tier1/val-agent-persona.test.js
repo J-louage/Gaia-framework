@@ -1,8 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, existsSync } from "fs";
-import { resolve } from "path";
-
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 const VALIDATOR_PATH = `${PROJECT_ROOT}/_gaia/lifecycle/agents/validator.md`;
 const MANIFEST_PATH = `${PROJECT_ROOT}/_gaia/_config/agent-manifest.csv`;
 const HELP_PATH = `${PROJECT_ROOT}/_gaia/_config/gaia-help.csv`;

@@ -1,10 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, existsSync, readdirSync } from "fs";
-import { join, resolve } from "path";
+import { join } from "path";
 import yaml from "js-yaml";
-
-// Project root is where _gaia/ lives (3 levels up from test/validation/atdd/)
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 const NEW_MEMORY = join(PROJECT_ROOT, "_memory");
 const GLOBAL_YAML = join(PROJECT_ROOT, "_gaia", "_config", "global.yaml");
 const GITIGNORE = join(PROJECT_ROOT, ".gitignore");

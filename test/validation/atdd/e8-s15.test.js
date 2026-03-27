@@ -1,9 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, existsSync } from "fs";
-import { join, resolve } from "path";
-
-// Project root is where _gaia/ lives (4 levels up: test/validation/atdd/ -> Gaia-framework/ -> GAIA-Framework/)
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../../..");
+import { join } from "path";
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 const WORKFLOW_XML = join(PROJECT_ROOT, "_gaia", "core", "engine", "workflow.xml");
 
 describe("E8-S15: Workflow Engine [v] at Planning Gate", () => {

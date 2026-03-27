@@ -2,8 +2,8 @@ import { describe, it, expect, beforeAll } from "vitest";
 import { readFileSync, existsSync } from "fs";
 import { resolve } from "path";
 import yaml from "js-yaml";
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
 const CI_WORKFLOW_PATH = resolve(PROJECT_ROOT, ".github/workflows/ci.yml");
 const AUDIT_ALLOWLIST_PATH = resolve(PROJECT_ROOT, "audit-allowlist.json");
 const WINDOWS_VALIDATE_PATH = resolve(PROJECT_ROOT, "test/shell/windows-validate.sh");

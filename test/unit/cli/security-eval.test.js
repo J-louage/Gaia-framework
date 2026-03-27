@@ -3,10 +3,9 @@
 
 import { describe, it, expect } from "vitest";
 import { readFileSync, existsSync } from "fs";
-import { join, resolve } from "path";
+import { join } from "path";
 import { execSync } from "child_process";
-
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 
 describe("ATDD E7-S1: Remove eval Usage", () => {
   // AC1: No eval in cmd_validate

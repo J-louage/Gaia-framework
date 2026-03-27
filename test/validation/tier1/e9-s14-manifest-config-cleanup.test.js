@@ -1,8 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "fs";
-import { join, resolve } from "path";
-
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
+import { join } from "path";
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 const CONFIG_PATH = join(PROJECT_ROOT, "_gaia", "_config");
 
 /**

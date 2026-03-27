@@ -1,27 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { existsSync } from "fs";
-import { join, resolve } from "path";
+import { join } from "path";
 import { execSync } from "child_process";
-
-// Project root is where _gaia/ lives (4 levels up: test/validation/atdd/ -> Gaia-framework/ -> GAIA-Framework/)
-// Project root is where _gaia/ lives (4 levels up: test/validation/atdd/ -> test/validation/ -> test/ -> Gaia-framework/ -> GAIA-Framework/)
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../../..");
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 const GAIA_DIR = join(PROJECT_ROOT, "_gaia");
-const VALIDATOR_PATH = join(
-  PROJECT_ROOT,
-  "Gaia-framework",
-  "test",
-  "validators",
-  "instruction-validator.js"
-);
-const IMPL_TEST_PATH = join(
-  PROJECT_ROOT,
-  "Gaia-framework",
-  "test",
-  "validation",
-  "tier1",
-  "instructions.test.js"
-);
+const VALIDATOR_PATH = join(PROJECT_ROOT, "test", "validators", "instruction-validator.js");
+const IMPL_TEST_PATH = join(PROJECT_ROOT, "test", "validation", "tier1", "instructions.test.js");
 
 // Canonical variable set per AC3 — maintained as constant
 const VALID_VARIABLES = new Set([

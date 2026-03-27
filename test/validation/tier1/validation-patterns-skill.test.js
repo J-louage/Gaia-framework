@@ -1,8 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, existsSync } from "fs";
-import { resolve } from "path";
-
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 
 const SKILL_PATH = `${PROJECT_ROOT}/_gaia/lifecycle/skills/validation-patterns.md`;
 const MANIFEST_PATH = `${PROJECT_ROOT}/_gaia/_config/skill-manifest.csv`;

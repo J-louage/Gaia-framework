@@ -11,10 +11,9 @@
 
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "fs";
-import { resolve, join } from "path";
+import { join } from "path";
 import yaml from "js-yaml";
-
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 const WORKFLOW_DIR = join(
   PROJECT_ROOT,
   "_gaia/lifecycle/workflows/4-implementation/val-refresh-ground-truth"

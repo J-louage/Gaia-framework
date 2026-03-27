@@ -1,15 +1,13 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, existsSync } from "fs";
-import { join, resolve } from "path";
+import { join } from "path";
 import yaml from "js-yaml";
 import {
   getWorkflowPaths,
   VALID_VARIABLE_REFS,
   resolveVariable,
 } from "../helpers/workflow-paths.js";
-
-// Project root is where _gaia/ lives
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 
 describe("Workflow Definition Validation (FR-30)", () => {
   const workflowFiles = getWorkflowPaths(PROJECT_ROOT);

@@ -1,8 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, existsSync } from "fs";
 import { resolve, join } from "path";
-
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 
 // Tier 3 agents per ADR-014
 const TIER_3_DEV_AGENTS = [

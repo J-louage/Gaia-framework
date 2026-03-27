@@ -1,20 +1,13 @@
 import { describe, it, expect } from "vitest";
 import { existsSync } from "fs";
-import { join, resolve } from "path";
+import { join } from "path";
 import { execSync } from "child_process";
-
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../../..");
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 const GAIA_DIR = join(PROJECT_ROOT, "_gaia");
-const FIXTURES_DIR = join(PROJECT_ROOT, "Gaia-framework", "test", "fixtures", "instructions");
+const FIXTURES_DIR = join(PROJECT_ROOT, "test", "fixtures", "instructions");
 
 // Dynamic import of the validator module
-const validatorPath = join(
-  PROJECT_ROOT,
-  "Gaia-framework",
-  "test",
-  "validators",
-  "instruction-validator.js"
-);
+const validatorPath = join(PROJECT_ROOT, "test", "validators", "instruction-validator.js");
 
 function findInstructionFiles() {
   const result = execSync(

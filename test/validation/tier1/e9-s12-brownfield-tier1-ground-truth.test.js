@@ -11,9 +11,8 @@
 
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "fs";
-import { resolve, join } from "path";
-
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
+import { join } from "path";
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 const INSTRUCTIONS_XML = join(
   PROJECT_ROOT,
   "_gaia/lifecycle/workflows/anytime/brownfield-onboarding/instructions.xml"

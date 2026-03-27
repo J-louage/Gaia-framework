@@ -8,8 +8,8 @@
 import { describe, it, expect } from "vitest";
 import { execFileSync } from "child_process";
 import { resolve } from "path";
+import { PROJECT_ROOT } from "../helpers/project-root.js";
 
-const PROJECT_ROOT = resolve(import.meta.dirname, "../..");
 const SYNC_CHECK_PATH = resolve(import.meta.dirname, "sync-check.js");
 
 describe("Fixture sync check", () => {

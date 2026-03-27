@@ -1,10 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, existsSync } from "fs";
-import { join, resolve, relative, dirname } from "path";
+import { join, relative, dirname } from "path";
 import { execSync } from "child_process";
-
-// Project root is where _gaia/ lives
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 const CONFIG_PATH = join(PROJECT_ROOT, "_gaia", "_config");
 
 /**

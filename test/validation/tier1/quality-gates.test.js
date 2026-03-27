@@ -12,12 +12,9 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { resolve } from "path";
 import { getWorkflowPaths } from "../helpers/workflow-paths.js";
 import { loadYaml, FRAMEWORK_VARIABLES } from "../../validators/config-validator.js";
-
-// Project root: where _gaia/ lives
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 
 // Variable pattern matching {var} in check values (not {{var}} double-brace templates)
 const _VAR_PATTERN = /\{([a-z_-]+)\}/g;

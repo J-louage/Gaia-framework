@@ -10,8 +10,8 @@ import { describe, it, expect, beforeAll } from "vitest";
 import { readFileSync, existsSync } from "fs";
 import { resolve } from "path";
 import yaml from "js-yaml";
+import { PROJECT_ROOT } from "../../helpers/project-root.js";
 
-const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
 const PUBLISH_WORKFLOW_PATH = resolve(PROJECT_ROOT, ".github/workflows/publish.yml");
 
 describe("Publish Workflow Validation (E4-S2)", () => {
