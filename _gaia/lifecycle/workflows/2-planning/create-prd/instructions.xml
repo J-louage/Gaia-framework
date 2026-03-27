@@ -77,6 +77,6 @@
   </template-output>
 </step>
 <next-step source="lifecycle-sequence.yaml">
-  <primary command="/gaia-validate-prd">Validate the PRD against quality standards before proceeding</primary>
+  <primary command="/gaia-create-ux">Create UX design specifications for the validated PRD</primary>
 </next-step>
 </workflow>

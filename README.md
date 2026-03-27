@@ -245,7 +245,7 @@ Workflows are structured multi-step processes. Each has a `workflow.yaml` config
 | Command | Workflow | Agent | Model | Output |
 |---------|----------|-------|-------|--------|
 | `/gaia-create-prd` | Create PRD | Derek | Opus | `docs/planning-artifacts/` |
-| `/gaia-validate-prd` | Validate PRD | Derek | Sonnet | `docs/planning-artifacts/` |
+| `/gaia-validate-prd` | ~~Validate PRD~~ (deprecated -- use `/gaia-val-validate`) | Derek | Sonnet | `docs/planning-artifacts/` |
 | `/gaia-edit-prd` | Edit PRD | Derek | Opus | `docs/planning-artifacts/` |
 | `/gaia-create-ux` | Create UX Design | Christy | Opus | `docs/planning-artifacts/` |
 

@@ -6,7 +6,7 @@ name,code,command,description,agent
 "advanced-elicitation","advanced-elicitation","gaia-advanced-elicitation","Deep requirements elicitation","orchestrator"
 "create-product-brief","product-brief","gaia-product-brief","Create a product brief","analyst"
 "create-prd","create-prd","gaia-create-prd","Create a PRD","pm"
-"validate-prd","validate-prd","gaia-validate-prd","Validate PRD against standards","pm"
+"validate-prd","validate-prd","gaia-validate-prd","DEPRECATED — Use /gaia-val-validate instead","pm"
 "edit-prd","edit-prd","gaia-edit-prd","Edit an existing PRD","pm"
 "create-ux-design","create-ux","gaia-create-ux","Create UX design specifications","ux-designer"
 "create-architecture","create-arch","gaia-create-arch","Design system architecture","architect"
