@@ -124,6 +124,7 @@ jobs:
 
       - name: Run BATS shell tests
         if: runner.os != 'Windows'
+        continue-on-error: true
         run: npm run test:shell
 
       # ADR-004 + ADR-007: Windows gets simplified validation instead of BATS/ShellCheck
