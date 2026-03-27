@@ -200,7 +200,7 @@ Detect and merge duplicate decision entries within a decision log.
 <!-- SECTION: budget-monitoring -->
 ## Budget Monitoring
 
-Calculate and report token budget usage per agent sidecar. Reusable by any workflow that needs budget status.
+Calculate and report token budget usage per agent sidecar. Reusable by any workflow that needs budget status. All thresholds are config-driven — read from `_memory/config.yaml` archival block at runtime.
 
 **Input:**
 - Agent sidecar file sizes (bytes) from filesystem scan
@@ -211,16 +211,17 @@ Calculate and report token budget usage per agent sidecar. Reusable by any workf
 - Approximate tokens = file size in bytes / 4 (chars-per-token convention)
 - Sum across all sidecar files per agent (decision-log.md + conversation-context.md + ground-truth.md)
 
-**Threshold classification:**
-- **OK:** below 80% of budget
-- **warning:** at or above 80%, below 90%
-- **critical:** at or above 90%, below 100%
-- **over-budget:** at or above 100% — triggers archival recommendation
+**Threshold classification (config-driven from `_memory/config.yaml`):**
+- `budget_warn_at` — **warning:** at or above this fraction of budget (default: 0.8 = 80%)
+- `budget_alert_at` — **critical:** at or above this fraction (default: 0.9 = 90%)
+- `budget_archive_at` — **over-budget:** at or above this fraction (default: 1.0 = 100%) — triggers archival
+
+When usage reaches `budget_archive_at`, archival is triggered: oldest entries are moved to `{sidecar_path}/archive/` to free budget.
 
 **Tier handling:**
 - Tier 1: report session budget usage and ground truth budget usage separately
 - Tier 2: report session budget usage only (no ground truth file)
-- Tier 3 / untiered: report actual token count with "no budget enforced"
+- Tier 3 / untiered: skip all budget enforcement — no threshold checks, no archival trigger. Return no-op status with no error. Untiered agents proceed without any budget constraint.
 
 **Output format (Token Budget Table):**
 

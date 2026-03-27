@@ -42,9 +42,9 @@ describe("CI Workflow Validation (E4-S1)", () => {
       expect(ciConfig.permissions.checks).toBe("write");
     });
 
-    it("should have exactly 4 jobs: lint, test, security, package", () => {
+    it("should have exactly 5 jobs: benchmark, lint, test, security, package", () => {
       const jobNames = Object.keys(ciConfig.jobs).sort();
-      expect(jobNames).toEqual(["lint", "package", "security", "test"]);
+      expect(jobNames).toEqual(["benchmark", "lint", "package", "security", "test"]);
     });
   });
 
