@@ -28,8 +28,7 @@ describe("E10-S1: Engine-Level val_validate_output Flag", () => {
       );
 
       const hasNormalModeValValidateOutput =
-        workflowXml.includes("val_validate_output") &&
-        workflowXml.includes("normal");
+        workflowXml.includes("val_validate_output") && workflowXml.includes("normal");
 
       expect(
         hasNormalModeValValidateOutput,
@@ -44,8 +43,7 @@ describe("E10-S1: Engine-Level val_validate_output Flag", () => {
       );
 
       const hasYoloModeValValidateOutput =
-        workflowXml.includes("val_validate_output") &&
-        workflowXml.includes("yolo");
+        workflowXml.includes("val_validate_output") && workflowXml.includes("yolo");
 
       expect(
         hasYoloModeValValidateOutput,
@@ -60,8 +58,7 @@ describe("E10-S1: Engine-Level val_validate_output Flag", () => {
       );
 
       const hasPlanningModeValValidateOutput =
-        workflowXml.includes("val_validate_output") &&
-        workflowXml.includes("planning");
+        workflowXml.includes("val_validate_output") && workflowXml.includes("planning");
 
       expect(
         hasPlanningModeValValidateOutput,
@@ -95,16 +92,10 @@ describe("E10-S1: Engine-Level val_validate_output Flag", () => {
   // ── AC4: Global toggle in global.yaml ──
   describe("AC4: Global emergency disable toggle", () => {
     it("global toggle disables val_validate_output", () => {
-      const globalYaml = readFileSync(
-        resolve(PROJECT_ROOT, "_gaia/_config/global.yaml"),
-        "utf8"
-      );
+      const globalYaml = readFileSync(resolve(PROJECT_ROOT, "_gaia/_config/global.yaml"), "utf8");
       const config = yaml.load(globalYaml);
 
-      expect(
-        config.val_integration,
-        "global.yaml must have val_integration section"
-      ).toBeDefined();
+      expect(config.val_integration, "global.yaml must have val_integration section").toBeDefined();
 
       expect(
         config.val_integration.val_validate_output,
@@ -124,10 +115,7 @@ describe("E10-S1: Engine-Level val_validate_output Flag", () => {
     it("smoke test passes for 3+ representative workflows", () => {
       for (const workflowPath of representativeWorkflows) {
         const fullPath = resolve(PROJECT_ROOT, "_gaia", workflowPath);
-        expect(
-          existsSync(fullPath),
-          `Workflow must exist: ${workflowPath}`
-        ).toBe(true);
+        expect(existsSync(fullPath), `Workflow must exist: ${workflowPath}`).toBe(true);
 
         const content = readFileSync(fullPath, "utf8");
         const config = yaml.load(content);
