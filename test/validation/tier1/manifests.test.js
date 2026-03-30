@@ -227,7 +227,8 @@ describe("Manifest-Filesystem Sync Validation (E1-S5)", () => {
       it.each(diskWorkflows.map((w) => [w]))(
         "workflow at %s should have a manifest entry",
         (dirPath) => {
-          const yamlPath = join(dirPath, "workflow.yaml");
+          // Use forward-slash concatenation to match CSV paths (join() uses OS separators)
+          const yamlPath = `${dirPath}/workflow.yaml`;
           expect(
             workflowPaths.has(yamlPath),
             `Workflow directory '${dirPath}' exists on disk but has no entry in workflow-manifest.csv (expected path: ${yamlPath})`
