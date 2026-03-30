@@ -346,7 +346,7 @@ export function checkUsedByFrontmatter(templates, references) {
     }
     // Extract workflow name from the workflow path
     // e.g., "lifecycle/workflows/4-implementation/create-story/workflow.yaml" → "create-story"
-    const parts = ref.workflow.split("/");
+    const parts = ref.workflow.split(/[\\/]/);
     const workflowName = parts[parts.length - 2]; // directory name before workflow.yaml or instructions.xml
     refsByTemplate.get(ref.normalizedPath).add(workflowName);
   }
