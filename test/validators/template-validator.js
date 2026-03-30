@@ -313,7 +313,7 @@ export function validateVariables(templatePaths, registry) {
 
   for (const filePath of templatePaths) {
     const content = readCached(filePath);
-    const bodyContent = content.replace(/^---\n[\s\S]*?\n---\n?/, "");
+    const bodyContent = content.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "");
 
     const classified = classifyPlaceholders(bodyContent, registry);
     const unknowns = classified.system.filter((v) => !registry.has(v));
@@ -355,7 +355,7 @@ export function checkUsedByFrontmatter(templates, references) {
     const content = readCached(templatePath);
 
     // Parse frontmatter
-    const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);
+    const fmMatch = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
     if (!fmMatch) {
       findings.push({ type: "missing-frontmatter", file: templatePath });
       continue;
