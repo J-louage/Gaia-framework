@@ -335,7 +335,7 @@ describe("Manifest-Filesystem Sync Validation (E1-S5)", () => {
     it("should have zero missing workflow entries (disk → manifest)", () => {
       const workflowPaths = new Set(workflowManifest.map((w) => w.path));
       const missing = findWorkflowDirsOnDisk().filter(
-        (d) => !workflowPaths.has(join(d, "workflow.yaml"))
+        (d) => !workflowPaths.has(`${d}/workflow.yaml`)
       );
       expect(missing, `Missing workflow manifest entries for: ${missing.join(", ")}`).toHaveLength(
         0
