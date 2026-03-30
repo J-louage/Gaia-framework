@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { mkdirSync, writeFileSync, symlinkSync, rmSync, existsSync } from "fs";
-import { join } from "path";
+import { join, isAbsolute } from "path";
 import { walkFiles } from "../validation/helpers/fs-walk.js";
 
 // ─── Temporary fixture directory ────────────────────────────
@@ -85,7 +85,8 @@ afterAll(() => {
 describe("walkFiles — basic behavior", () => {
   it("should find all workflow.yaml files recursively (AC1)", () => {
     const results = walkFiles(FIXTURE_ROOT, { namePattern: "workflow.yaml" });
-    const names = results.map((p) => p.replace(FIXTURE_ROOT, ""));
+    // Normalize to forward slashes for cross-platform comparison
+    const names = results.map((p) => p.replace(FIXTURE_ROOT, "").replace(/\\/g, "/"));
     // Should find: a/workflow.yaml, a/nested/workflow.yaml, b/workflow.yaml,
     // node_modules/pkg/workflow.yaml, _backups/workflow.yaml, symlinked-target/workflow.yaml,
     // and possibly linked/workflow.yaml
@@ -98,7 +99,7 @@ describe("walkFiles — basic behavior", () => {
   it("should return absolute paths (AC5)", () => {
     const results = walkFiles(FIXTURE_ROOT, { namePattern: "workflow.yaml" });
     for (const p of results) {
-      expect(p.startsWith("/"), `Path should be absolute: ${p}`).toBe(true);
+      expect(isAbsolute(p), `Path should be absolute: ${p}`).toBe(true);
     }
   });
 
