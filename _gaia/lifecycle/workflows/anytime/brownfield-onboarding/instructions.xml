@@ -17,9 +17,23 @@
   <action>Frontend Detection: scan for React, Angular, Vue, Flutter, SwiftUI, UI frameworks, CSS/styling. Set {has_frontend} flag (true/false)</action>
   <action>Testing infrastructure: identify test framework, coverage config, test count, test patterns</action>
   <action>CI/CD: identify GitHub Actions, Jenkins, Docker, Terraform, or other pipeline files</action>
-  <action>Generate brownfield assessment: read {installed_path}/../../templates/brownfield-assessment-template.md — capture component inventory, technical debt, migration constraints, coexistence strategy, and adoption path. Output to {planning_artifacts}/brownfield-assessment.md</action>
+  <action>Project Type Detection (ADR-022 Template Discriminator Pattern): scan {project-path} for infrastructure file patterns across 6 marker categories to determine {project_type}. Each category is independently detected:
+    — Terraform: *.tf, *.tfvars
+    — Docker: Dockerfile, docker-compose.yml
+    — Helm: helm/, Chart.yaml, values.yaml
+    — Kubernetes: k8s/, kustomization.yaml
+    — Pulumi: Pulumi.yaml
+    — CloudFormation: cloudformation*.yaml
+  If ANY infrastructure marker is detected, set {has_infra} = true.</action>
+  <action>Application code detection: scan for framework imports (Express, Spring Boot, Django, FastAPI, Angular, React, Next.js, NestJS, Flask, Gin, Fiber) in source files (*.ts, *.js, *.java, *.py, *.go, *.dart). If framework imports found, set {has_app_code} = true.</action>
+  <action>Classification decision tree — set {project_type}:
+    — If {has_infra} = true AND {has_app_code} = true → {project_type} = platform (infrastructure and application code both present)
+    — If {has_infra} = true AND {has_app_code} = false → {project_type} = infrastructure
+    — If {has_infra} = false → {project_type} = application (default — standard software project)
+  The {project_type} variable is set here in Step 1 so it is available before E11 scanners execute in Step 2.5.</action>
+  <action>Generate brownfield assessment: read {installed_path}/../../templates/brownfield-assessment-template.md — capture component inventory, technical debt, migration constraints, coexistence strategy, and adoption path. Include {project_type} in the assessment output. Output to {planning_artifacts}/brownfield-assessment.md</action>
   <template-output file="{planning_artifacts}/project-documentation.md">
-    Generate enhanced project documentation following the project documentation conventions. Include all standard sections plus: detected capability flags (has_apis, has_events, has_external_deps, has_frontend), testing infrastructure summary, and CI/CD pipeline summary.
+    Generate enhanced project documentation following the project documentation conventions. Include all standard sections plus: detected capability flags (has_apis, has_events, has_external_deps, has_frontend), {project_type}, testing infrastructure summary, and CI/CD pipeline summary.
   </template-output>
 </step>
 
