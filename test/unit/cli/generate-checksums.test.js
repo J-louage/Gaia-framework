@@ -137,7 +137,8 @@ describe("generate-checksums.js", () => {
       runGenerator();
       const content = fs.readFileSync(CHECKSUMS_FILE, "utf8");
       const entries = parseChecksums(content);
-      const files = entries.map((e) => e.file);
+      // Normalize to forward slashes for cross-platform comparison
+      const files = entries.map((e) => e.file.replace(/\\/g, "/"));
 
       // At minimum, gaia-install.sh and bin/gaia-framework.js must be present
       expect(files).toContain("gaia-install.sh");
@@ -205,9 +206,7 @@ describe("generate-checksums.js", () => {
   });
 
   describe("verification compatibility (AC3, AC5)", () => {
-    // ADR-004: Windows best-effort — shasum CLI is not available on Windows.
-    // This test verifies output format interoperability with the shasum tool,
-    // which is a macOS/Linux-only concern. Skipped on Windows per ADR-004.
+    // shasum is not available on Windows; verification uses sha256sum or certUtil there
     it.skipIf(process.platform === "win32")("should be verifiable with shasum -a 256 -c", () => {
       runGenerator();
       // Run shasum -a 256 -c checksums.txt from project root
