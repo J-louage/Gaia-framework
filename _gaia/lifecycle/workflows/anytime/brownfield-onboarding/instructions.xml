@@ -197,7 +197,7 @@
   — If infrastructure: use IR-### for infrastructure requirements, OR-### for operational requirements, and SR-### for security requirements exclusively. Do NOT use FR/NFR prefixes.
   — If platform: use BOTH ID scheme families — FR-###/NFR-### for application-layer requirements and IR-###/OR-###/SR-### for infrastructure-layer requirements. All requirement IDs are globally unique within the project — the prefix disambiguates (e.g., FR-001 and IR-001 are distinct, no collision).</action>
   <action>Read upstream artifacts to inform gap analysis:</action>
-  <action>— consolidated-gaps.md → primary input: deduplicated, ranked gap list from Step 3.5</action>
+  <action>— consolidated-gaps.md → primary input: deduplicated, ranked, and code-verified gap list from Steps 3.5 and 5.5. If a '## Verification Corrections for PRD' section exists, use it to correct factual errors from contradicted claims.</action>
   <action>— nfr-assessment.md → NFR section gets real "Current Baseline" and "Target" columns</action>
   <action>— api-documentation.md (if exists) → extract API gaps (undocumented endpoints, missing validation)</action>
   <action>— event-catalog.md (if exists) → extract messaging gaps (missing DLQ, missing schemas)</action>
@@ -224,6 +224,92 @@
   <action>Add a "## Review Findings Incorporated" section to the PRD listing each finding, its severity, and how it was addressed</action>
   <template-output file="{planning_artifacts}/prd.md">
     Update the PRD with adversarial review findings incorporated. Critical/high findings become new requirements or refine existing ones. Add "Review Findings Incorporated" section.
+  </template-output>
+</step>
+
+<step n="5.5" title="Code-Verified Review">
+  <action>Spawn a subagent using the Agent tool with this prompt:
+
+  "You are the Code-Verified Review subagent. Your task is to verify every factual claim in the consolidated gap entries against the actual codebase, classify each gap, and update the consolidated output.
+
+  **Context:**
+  - Consolidated gaps file: {planning_artifacts}/consolidated-gaps.md
+  - Codebase root: {project-path}
+  - Tech stack: {tech_stack}
+  - Gap schema reference: {installed_path}/../../templates/gap-entry-schema.md
+
+  **Step 1 — Load and parse consolidated-gaps.md:**
+  Read {planning_artifacts}/consolidated-gaps.md. Parse all YAML gap entries matching the standardized gap schema. If the file is empty or contains zero parseable gap entries, output a summary stating '0 gaps to verify' and exit gracefully without error, producing an empty verification report.
+
+  Handle malformed gap entries: if a gap entry is missing required fields (id, category, severity, title, description, evidence_file, recommendation), log a warning noting which field is missing and which entry, skip the entry, and include it in the summary as a skipped entry.
+
+  **Step 2 — Extract verifiable claims from each gap entry:**
+  For each valid gap entry, extract all machine-verifiable claims:
+  a. File existence: extract the `evidence_file` field — this is a relative path from {project-path} that should exist in the codebase.
+  b. Line range validity: extract the `evidence_line` field — this line number must be within the file's total line count.
+  c. Pattern/string presence: extract patterns, strings, or code snippets from the `description` and `recommendation` fields that claim specific code patterns exist in the referenced file.
+  d. Configuration key existence: for gaps in the `configuration` category, extract config key paths claimed to exist in YAML/JSON config files.
+
+  For gap entries with no verifiable claims (purely subjective descriptions with no file/line/pattern references), classify as `unverifiable` with reason 'No machine-verifiable claims'.
+
+  **Step 3 — Verify each claim against the codebase at {project-path}:**
+  Use grep, glob, and read tools for all verification (not shell commands). For each claim:
+
+  a. File existence check: Use glob/read to check if {project-path}/{evidence_file} exists.
+     - If the file does not exist: classify the gap as `contradicted` with reason 'Referenced file not found: {evidence_file}'. Preserve the original gap with downgraded confidence.
+     - If the file is a binary file (detected by extension: .png, .jpg, .gif, .woff, .ttf, .ico, .pdf, .zip, .tar, .gz, .exe, .dll, .so, .dylib): classify as `unverifiable` with reason 'Binary file — cannot verify textual claims'.
+
+  b. Line range validation: Read the file and count total lines. Compare against `evidence_line`.
+     - If evidence_line exceeds the file's total line count: classify as `contradicted` with reason 'Line {evidence_line} exceeds file length ({actual_lines} lines)'. Flag the entry for correction.
+
+  c. Pattern search: Use grep to search for stated patterns in the referenced file. Handle regex special characters safely by escaping them.
+     - If the pattern is found: this claim is confirmed.
+     - If the pattern is not found: this contributes to a `contradicted` classification.
+
+  d. Config key verification: For configuration-category gaps, parse YAML/JSON config files and check for key existence at the stated paths.
+     - If the key exists: claim confirmed.
+     - If the key does not exist: contributes to `contradicted` classification.
+
+  **Step 4 — Apply tristate classification to each gap:**
+  Based on the verification results from Step 3:
+  - **verified**: All verifiable claims in the gap entry are confirmed by evidence in the codebase. Set `verification_status: verified`.
+  - **unverifiable**: Claims cannot be confirmed or denied from code alone (e.g., runtime behavior, subjective assessments, binary files, no verifiable claims). Set `verification_status: unverifiable`.
+  - **contradicted**: Evidence in the codebase directly contradicts one or more claims. Set `verification_status: contradicted`.
+
+  For contradicted gaps:
+  - Downgrade the confidence of the original gap entry.
+  - Attach a `reason` string explaining exactly what was contradicted and what was found instead.
+  - Generate a new gap entry using the standardized gap schema with:
+    - `id`: GAP-VERIFIED-{seq}
+    - `category`: preserved from original gap
+    - `severity`: inherited from original gap
+    - `verified_by: "code-verified"`
+    - `description`: details of the contradiction and the actual state found in codebase
+
+  **Step 5 — Update consolidated-gaps.md:**
+  Write back to {planning_artifacts}/consolidated-gaps.md with the following additions to each gap entry:
+  - `verification_status`: verified | unverifiable | contradicted
+  - `verified_by: "code-verified"`
+  Preserve all existing fields on each entry — do not remove or overwrite original data.
+  Append new gap entries generated from contradicted claims at the end of the file.
+
+  **Step 6 — Generate verification summary:**
+  Output a summary report including:
+  - Total gaps processed
+  - Verified count
+  - Unverifiable count
+  - Contradicted count
+  - New gap entries generated from contradicted claims
+  - Skipped entries (malformed) count
+
+  **Step 7 — Feed contradicted claims back to Step 4:**
+  Contradicted claims must be fed back to Step 4 (PRD generation) for correction. Write the list of contradicted entries and their reasons to a section at the top of consolidated-gaps.md marked '## Verification Corrections for PRD'. This section will be read by Step 4 when the PRD is regenerated to correct factual errors.
+
+  Output to {planning_artifacts}/consolidated-gaps.md"
+  </action>
+  <action>When subagent returns: verify {planning_artifacts}/consolidated-gaps.md has been updated with verification_status fields. If the subagent failed, log error and halt.</action>
+  <template-output file="{planning_artifacts}/consolidated-gaps.md">
+    Code-verified consolidated gaps with verification_status and verified_by fields on each entry. Includes verification summary and corrections section for PRD feedback.
   </template-output>
 </step>
 
