@@ -24,6 +24,12 @@ validation-target: 'Brownfield onboarding output'
 - [ ] Stack-aware patterns applied based on {tech_stack}
 - [ ] Gap entries conform to standardized schema (gap-entry-schema.md)
 - [ ] Budget control enforced — max ~70 gap entries per scanner
+## Step 2.75: Test Execution During Discovery
+- [ ] Test execution subagent completed — {planning_artifacts}/brownfield-scan-test-execution.md exists (or warning logged if no test suite)
+- [ ] Test runner auto-detection ran for supported runners (npm, pytest, Maven, Gradle, Go, Flutter)
+- [ ] Test failures converted to gap entries conforming to E11-S1 schema
+- [ ] Infrastructure errors distinguished from test failures
+- [ ] Test execution non-blocking — failures did not halt workflow
 ## Step 3: NFR Assessment & Performance Test Plan
 - [ ] NFR assessment subagent completed — {test_artifacts}/nfr-assessment.md exists
 - [ ] NFR baseline summary table has real measured values (not placeholders)
