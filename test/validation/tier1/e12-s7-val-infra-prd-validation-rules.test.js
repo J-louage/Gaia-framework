@@ -15,7 +15,7 @@ describe("E12-S7: Val Infra PRD Validation Rules", () => {
 
     it("should list all 13 required infra PRD sections", () => {
       const sectionMatch = content.match(
-        /<!-- SECTION: infra-prd-rules -->([\s\S]*?)<!-- END SECTION -->/,
+        /<!-- SECTION: infra-prd-rules -->([\s\S]*?)<!-- END SECTION -->/
       );
       expect(sectionMatch, "infra-prd-rules section not found").toBeTruthy();
       const ruleContent = sectionMatch[1];
@@ -37,16 +37,13 @@ describe("E12-S7: Val Infra PRD Validation Rules", () => {
       ];
 
       for (const section of requiredSections) {
-        expect(
-          ruleContent,
-          `Missing required section: ${section}`,
-        ).toContain(section);
+        expect(ruleContent, `Missing required section: ${section}`).toContain(section);
       }
     });
 
     it("should flag missing sections as CRITICAL", () => {
       const sectionMatch = content.match(
-        /<!-- SECTION: infra-prd-rules -->([\s\S]*?)<!-- END SECTION -->/,
+        /<!-- SECTION: infra-prd-rules -->([\s\S]*?)<!-- END SECTION -->/
       );
       const ruleContent = sectionMatch[1];
       expect(ruleContent).toMatch(/CRITICAL/i);
@@ -57,7 +54,7 @@ describe("E12-S7: Val Infra PRD Validation Rules", () => {
   describe("AC2: IR/OR/SR ID uniqueness within each prefix family", () => {
     it("should define ID uniqueness validation for IR/OR/SR prefixes", () => {
       const sectionMatch = content.match(
-        /<!-- SECTION: infra-prd-rules -->([\s\S]*?)<!-- END SECTION -->/,
+        /<!-- SECTION: infra-prd-rules -->([\s\S]*?)<!-- END SECTION -->/
       );
       const ruleContent = sectionMatch[1];
       expect(ruleContent).toMatch(/IR/);
@@ -71,7 +68,7 @@ describe("E12-S7: Val Infra PRD Validation Rules", () => {
   describe("AC3: Security Posture mandatory non-empty", () => {
     it("should have a rule that Security Posture must be non-empty", () => {
       const sectionMatch = content.match(
-        /<!-- SECTION: infra-prd-rules -->([\s\S]*?)<!-- END SECTION -->/,
+        /<!-- SECTION: infra-prd-rules -->([\s\S]*?)<!-- END SECTION -->/
       );
       const ruleContent = sectionMatch[1];
       expect(ruleContent).toMatch(/Security Posture/);
@@ -83,7 +80,7 @@ describe("E12-S7: Val Infra PRD Validation Rules", () => {
   describe("AC4: Cost Model per-environment cost estimates", () => {
     it("should require per-environment cost estimates in Cost Model", () => {
       const sectionMatch = content.match(
-        /<!-- SECTION: infra-prd-rules -->([\s\S]*?)<!-- END SECTION -->/,
+        /<!-- SECTION: infra-prd-rules -->([\s\S]*?)<!-- END SECTION -->/
       );
       const ruleContent = sectionMatch[1];
       expect(ruleContent).toMatch(/Cost Model/);
@@ -95,7 +92,7 @@ describe("E12-S7: Val Infra PRD Validation Rules", () => {
   describe("AC5: Verification Strategy references policy-as-code tool", () => {
     it("should require at least one policy-as-code tool reference", () => {
       const sectionMatch = content.match(
-        /<!-- SECTION: infra-prd-rules -->([\s\S]*?)<!-- END SECTION -->/,
+        /<!-- SECTION: infra-prd-rules -->([\s\S]*?)<!-- END SECTION -->/
       );
       const ruleContent = sectionMatch[1];
       expect(ruleContent).toMatch(/Verification Strategy/);
@@ -104,7 +101,7 @@ describe("E12-S7: Val Infra PRD Validation Rules", () => {
 
     it("should list recognized policy-as-code tools", () => {
       const sectionMatch = content.match(
-        /<!-- SECTION: infra-prd-rules -->([\s\S]*?)<!-- END SECTION -->/,
+        /<!-- SECTION: infra-prd-rules -->([\s\S]*?)<!-- END SECTION -->/
       );
       const ruleContent = sectionMatch[1];
       expect(ruleContent).toMatch(/OPA|Rego/);
@@ -116,7 +113,7 @@ describe("E12-S7: Val Infra PRD Validation Rules", () => {
   describe('AC6: Platform Capabilities "Enable {team} to {capability} with {SLO}" format', () => {
     it("should define Platform Capabilities format validation", () => {
       const sectionMatch = content.match(
-        /<!-- SECTION: infra-prd-rules -->([\s\S]*?)<!-- END SECTION -->/,
+        /<!-- SECTION: infra-prd-rules -->([\s\S]*?)<!-- END SECTION -->/
       );
       const ruleContent = sectionMatch[1];
       expect(ruleContent).toMatch(/Platform Capabilities/);
@@ -128,7 +125,7 @@ describe("E12-S7: Val Infra PRD Validation Rules", () => {
   describe("AC7: Auto-detect artifact type from frontmatter", () => {
     it("should have frontmatter-based detection in type-detection section", () => {
       const typeMatch = content.match(
-        /<!-- SECTION: type-detection -->([\s\S]*?)<!-- END SECTION -->/,
+        /<!-- SECTION: type-detection -->([\s\S]*?)<!-- END SECTION -->/
       );
       expect(typeMatch, "type-detection section not found").toBeTruthy();
       const typeContent = typeMatch[1];
@@ -138,7 +135,7 @@ describe("E12-S7: Val Infra PRD Validation Rules", () => {
 
     it("should map template: 'prd' to prd-rules", () => {
       const typeMatch = content.match(
-        /<!-- SECTION: type-detection -->([\s\S]*?)<!-- END SECTION -->/,
+        /<!-- SECTION: type-detection -->([\s\S]*?)<!-- END SECTION -->/
       );
       const typeContent = typeMatch[1];
       expect(typeContent).toMatch(/['"`]prd['"`].*prd-rules/i);
@@ -146,7 +143,7 @@ describe("E12-S7: Val Infra PRD Validation Rules", () => {
 
     it("should map template: 'infra-prd' to infra-prd-rules", () => {
       const typeMatch = content.match(
-        /<!-- SECTION: type-detection -->([\s\S]*?)<!-- END SECTION -->/,
+        /<!-- SECTION: type-detection -->([\s\S]*?)<!-- END SECTION -->/
       );
       const typeContent = typeMatch[1];
       expect(typeContent).toMatch(/['"`]infra-prd['"`].*infra-prd-rules/i);
@@ -154,7 +151,7 @@ describe("E12-S7: Val Infra PRD Validation Rules", () => {
 
     it("should map template: 'platform-prd' to both prd-rules and infra-prd-rules", () => {
       const typeMatch = content.match(
-        /<!-- SECTION: type-detection -->([\s\S]*?)<!-- END SECTION -->/,
+        /<!-- SECTION: type-detection -->([\s\S]*?)<!-- END SECTION -->/
       );
       const typeContent = typeMatch[1];
       expect(typeContent).toMatch(/['"`]platform-prd['"`]/i);
@@ -163,11 +160,11 @@ describe("E12-S7: Val Infra PRD Validation Rules", () => {
 
     it("should give frontmatter detection higher priority than filename detection", () => {
       const typeMatch = content.match(
-        /<!-- SECTION: type-detection -->([\s\S]*?)<!-- END SECTION -->/,
+        /<!-- SECTION: type-detection -->([\s\S]*?)<!-- END SECTION -->/
       );
       const typeContent = typeMatch[1];
       expect(typeContent).toMatch(
-        /frontmatter.*prior|frontmatter.*first|check frontmatter.*before|frontmatter.*higher/i,
+        /frontmatter.*prior|frontmatter.*first|check frontmatter.*before|frontmatter.*higher/i
       );
     });
   });
@@ -180,12 +177,9 @@ describe("E12-S7: Val Infra PRD Validation Rules", () => {
 
     it("should require both prd-rules and infra-prd-rules for platform PRDs", () => {
       const platformMatch = content.match(
-        /<!-- SECTION: platform-prd-rules -->([\s\S]*?)<!-- END SECTION -->/,
+        /<!-- SECTION: platform-prd-rules -->([\s\S]*?)<!-- END SECTION -->/
       );
-      expect(
-        platformMatch,
-        "platform-prd-rules section not found",
-      ).toBeTruthy();
+      expect(platformMatch, "platform-prd-rules section not found").toBeTruthy();
       const platformContent = platformMatch[1];
       expect(platformContent).toMatch(/prd-rules/);
       expect(platformContent).toMatch(/infra-prd-rules/);
@@ -193,7 +187,7 @@ describe("E12-S7: Val Infra PRD Validation Rules", () => {
 
     it("should validate both FR/NFR and IR/OR/SR ID schemes for platform PRDs", () => {
       const platformMatch = content.match(
-        /<!-- SECTION: platform-prd-rules -->([\s\S]*?)<!-- END SECTION -->/,
+        /<!-- SECTION: platform-prd-rules -->([\s\S]*?)<!-- END SECTION -->/
       );
       const platformContent = platformMatch[1];
       expect(platformContent).toMatch(/FR.*NFR/);
