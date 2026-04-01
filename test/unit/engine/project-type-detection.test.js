@@ -69,9 +69,7 @@ describe("E12-S1: Project Type Detection in Brownfield Step 1", () => {
     it("references framework imports for app code detection", () => {
       instructions = readFileSync(BROWNFIELD_INSTRUCTIONS_PATH, "utf8");
       // Must mention framework imports as a way to detect app code
-      expect(instructions).toMatch(
-        /Express|Spring Boot|Django|FastAPI|Angular|React/
-      );
+      expect(instructions).toMatch(/Express|Spring Boot|Django|FastAPI|Angular|React/);
     });
   });
 
@@ -85,9 +83,7 @@ describe("E12-S1: Project Type Detection in Brownfield Step 1", () => {
     it("sets project_type to platform when both markers present", () => {
       instructions = readFileSync(BROWNFIELD_INSTRUCTIONS_PATH, "utf8");
       // Must describe the logic: infra + app = platform
-      expect(instructions).toMatch(
-        /infra.*app.*platform|infrastructure.*application.*platform/is
-      );
+      expect(instructions).toMatch(/infra.*app.*platform|infrastructure.*application.*platform/is);
     });
   });
 
@@ -102,9 +98,7 @@ describe("E12-S1: Project Type Detection in Brownfield Step 1", () => {
     it("project_type is set before E11 scanners", () => {
       instructions = readFileSync(BROWNFIELD_INSTRUCTIONS_PATH, "utf8");
       // project_type must appear in Step 1, which is before any E11 reference
-      const step1Match = instructions.match(
-        /<step\s+n="1"[^>]*>[\s\S]*?<\/step>/
-      );
+      const step1Match = instructions.match(/<step\s+n="1"[^>]*>[\s\S]*?<\/step>/);
       expect(step1Match, "Step 1 must exist").not.toBeNull();
       expect(step1Match[0]).toMatch(/project_type/);
     });
@@ -114,9 +108,7 @@ describe("E12-S1: Project Type Detection in Brownfield Step 1", () => {
   describe("AC5: Default to application when no markers detected", () => {
     it("defaults project_type to application", () => {
       instructions = readFileSync(BROWNFIELD_INSTRUCTIONS_PATH, "utf8");
-      expect(instructions).toMatch(
-        /default.*application|application.*default/is
-      );
+      expect(instructions).toMatch(/default.*application|application.*default/is);
     });
   });
 
@@ -124,19 +116,11 @@ describe("E12-S1: Project Type Detection in Brownfield Step 1", () => {
   describe("AC6: Six infrastructure marker categories independently detected", () => {
     it("lists all 6 marker categories", () => {
       instructions = readFileSync(BROWNFIELD_INSTRUCTIONS_PATH, "utf8");
-      const categories = [
-        "Terraform",
-        "Docker",
-        "Helm",
-        "Kubernetes",
-        "Pulumi",
-        "CloudFormation",
-      ];
+      const categories = ["Terraform", "Docker", "Helm", "Kubernetes", "Pulumi", "CloudFormation"];
       for (const category of categories) {
-        expect(
-          instructions,
-          `Missing infrastructure category: ${category}`
-        ).toMatch(new RegExp(category, "i"));
+        expect(instructions, `Missing infrastructure category: ${category}`).toMatch(
+          new RegExp(category, "i")
+        );
       }
     });
   });
@@ -172,9 +156,7 @@ describe("E12-S1: Project Type Detection in Brownfield Step 1", () => {
 
     it("classification logic is in Step 1", () => {
       instructions = readFileSync(BROWNFIELD_INSTRUCTIONS_PATH, "utf8");
-      const step1Match = instructions.match(
-        /<step\s+n="1"[^>]*>[\s\S]*?<\/step>/
-      );
+      const step1Match = instructions.match(/<step\s+n="1"[^>]*>[\s\S]*?<\/step>/);
       expect(step1Match, "Step 1 must exist").not.toBeNull();
       const step1Content = step1Match[0];
       // Step 1 must contain the classification decision tree
