@@ -183,6 +183,8 @@ function main(deps) {
   const _join = (deps && deps.join) || join;
   const _mkdtemp = (deps && deps.mkdtempSync) || mkdtempSync;
   const _tmpdir = (deps && deps.tmpdir) || tmpdir;
+  const _isWindows = deps && typeof deps.isWindows === "boolean" ? deps.isWindows : IS_WINDOWS;
+  const _findBash = (deps && deps.findBash) || findBash;
 
   const args = process.argv.slice(2);
 
@@ -212,13 +214,13 @@ function main(deps) {
   tempDir = _mkdtemp(_join(_tmpdir(), "gaia-framework-"));
   // Resolve 8.3 short names to long paths on Windows (e.g., ELIASN~1 → Elias Nasser)
   // Node's realpathSync doesn't expand 8.3 names, so use PowerShell
-  if (IS_WINDOWS) {
+  if (_isWindows) {
     try {
-      const longPath = execSync(
+      const longPath = _exec(
         `powershell -NoProfile -Command "(Get-Item -LiteralPath '${tempDir}').FullName"`,
         { encoding: "utf8", stdio: ["pipe", "pipe", "ignore"] }
       ).trim();
-      if (longPath && existsSync(longPath)) tempDir = longPath;
+      if (longPath && _exists(longPath)) tempDir = longPath;
     } catch {}
   }
 
@@ -259,7 +261,7 @@ function main(deps) {
   passthrough.splice(1, 0, "--source", toPosixPath(tempDir));
 
   // Locate bash (critical for Windows support)
-  const bashPath = findBash();
+  const bashPath = _findBash();
   if (!bashPath) {
     fail(
       "bash is required but was not found.\n" +
@@ -273,12 +275,12 @@ function main(deps) {
   try {
     // Convert all passthrough args that look like paths (contain backslash or drive letter)
     const posixArgs = passthrough.map((a) =>
-      IS_WINDOWS && /[\\:]/.test(a) && !a.startsWith("--") ? toPosixPath(a) : a
+      _isWindows && /[\\:]/.test(a) && !a.startsWith("--") ? toPosixPath(a) : a
     );
     const posixScript = toPosixPath(scriptPath);
 
     // Debug: on Windows, log the resolved paths if --verbose is passed
-    if (IS_WINDOWS && args.includes("--verbose")) {
+    if (_isWindows && args.includes("--verbose")) {
       info(`Bash: ${bashPath} (${bashType})`);
       info(`Script (Windows): ${scriptPath}`);
       info(`Script (POSIX): ${posixScript}`);

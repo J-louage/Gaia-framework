@@ -61,56 +61,49 @@ describe("E4-S3: Package Content Verification", () => {
     });
   });
 
-  // --- Task 1: npm pack --dry-run verification (AC1, AC2, AC3, AC4) ---
+  // --- Task 1: npm pack --json verification (AC1, AC2, AC3, AC4) ---
+  // Uses structured JSON output instead of text parsing to avoid
+  // continuation-line confusion from long paths (E5-S8 AC3)
 
-  describe("npm pack --dry-run output (AC1, AC2, AC3, AC4)", () => {
-    let packOutput;
+  describe("npm pack --json output (AC1, AC2, AC3, AC4)", () => {
+    let packEntries;
+    let packFiles;
 
     beforeAll(() => {
-      packOutput = execSync("npm pack --dry-run 2>&1", {
+      const rawOutput = execSync("npm pack --json", {
         cwd: PROJECT_ROOT,
         encoding: "utf8",
+        stdio: ["pipe", "pipe", "pipe"],
+        env: { ...process.env, HUSKY: "0" },
+        timeout: 60000,
       });
-    });
+      // npm pack --json may include non-JSON lines (e.g., Husky messages) before the array
+      const jsonStart = rawOutput.indexOf("[");
+      const jsonOutput = jsonStart >= 0 ? rawOutput.slice(jsonStart) : rawOutput;
+      packEntries = JSON.parse(jsonOutput);
+      // npm pack --json returns an array; extract the files list from the first entry
+      packFiles = packEntries[0].files.map((f) => f.path);
+    }, 60000);
 
-    it("AC1: should run npm pack --dry-run and produce output", () => {
-      expect(packOutput).toBeTruthy();
-      expect(packOutput.length).toBeGreaterThan(0);
+    it("AC1: should run npm pack --json and produce structured output", () => {
+      expect(packEntries).toBeTruthy();
+      expect(Array.isArray(packEntries)).toBe(true);
+      expect(packEntries.length).toBeGreaterThan(0);
+      expect(packEntries[0].files).toBeDefined();
+      expect(packFiles.length).toBeGreaterThan(0);
     });
 
     it("AC2: should only contain files matching the whitelist", () => {
-      const lines = packOutput.split("\n");
-      const fileLines = lines.filter(
-        (line) =>
-          line.includes("/") &&
-          !line.startsWith("npm") &&
-          !line.startsWith("=") &&
-          !line.includes("Tarball")
-      );
       const allowedPrefixes = [...TARGET_WHITELIST, "package.json"];
-      for (const fileLine of fileLines) {
-        const trimmed = fileLine.trim();
-        if (!trimmed) continue;
-        // Skip continuation lines from npm pack wrapping long paths
-        if (
-          !trimmed.startsWith("_gaia") &&
-          !trimmed.startsWith("bin") &&
-          !trimmed.startsWith(".") &&
-          !trimmed.startsWith("gaia") &&
-          !trimmed.startsWith("CLAUDE") &&
-          !trimmed.startsWith("README") &&
-          !trimmed.startsWith("LICENSE") &&
-          !trimmed.startsWith("package")
-        )
-          continue;
-        const matchesWhitelist = allowedPrefixes.some((prefix) => trimmed.includes(prefix));
-        expect(matchesWhitelist).toBe(true);
+      for (const filePath of packFiles) {
+        const matchesWhitelist = allowedPrefixes.some((prefix) => filePath.startsWith(prefix));
+        expect(matchesWhitelist, `Unexpected file in pack output: ${filePath}`).toBe(true);
       }
     });
 
     for (const { pattern, description } of EXCLUDED_PATTERNS) {
       it(`AC3: should NOT contain ${description} (${pattern})`, () => {
-        const violations = packOutput.split("\n").filter((line) => line.trim().includes(pattern));
+        const violations = packFiles.filter((f) => f.includes(pattern));
         expect(violations).toEqual([]);
       });
     }

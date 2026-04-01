@@ -163,16 +163,33 @@ describe("CI Workflow Validation (E4-S1)", () => {
       expect(needs).toBeUndefined();
     });
 
-    it("security job should include hard gate npm audit step (production deps)", () => {
+    // CI has two production audit hard gates (ci.yml lines 172-178):
+    // 1. --audit-level=high — blocks on high/critical vulnerabilities
+    // 2. --audit-level=moderate — blocks on moderate+ vulnerabilities
+    // supply-chain.test.js validates the high-level gate; this file validates both.
+    it("security job should include high-severity production audit hard gate", () => {
       const steps = ciConfig.jobs.security.steps;
-      const hardAudit = steps.find(
+      const highAudit = steps.find(
+        (s) =>
+          s.run &&
+          s.run.includes("npm audit") &&
+          s.run.includes("--omit=dev") &&
+          s.run.includes("--audit-level=high") &&
+          !s.run.includes("|| true")
+      );
+      expect(highAudit).toBeDefined();
+    });
+
+    it("security job should include moderate-severity production audit hard gate", () => {
+      const steps = ciConfig.jobs.security.steps;
+      const moderateAudit = steps.find(
         (s) =>
           s.run &&
           s.run.includes("npm audit") &&
           s.run.includes("--omit=dev") &&
           s.run.includes("--audit-level=moderate")
       );
-      expect(hardAudit).toBeDefined();
+      expect(moderateAudit).toBeDefined();
     });
 
     it("security job should include dev audit step", () => {

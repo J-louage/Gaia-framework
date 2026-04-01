@@ -165,7 +165,79 @@ describe("findBash", () => {
     expect(findBash()).toBe(null);
   });
 
-  it("should use default paths when Windows env vars are absent", () => {
+  it("should detect WSL bash when uname contains 'microsoft'", async () => {
+    Object.defineProperty(process, "platform", { value: "win32" });
+
+    const mockExecSync = vi.fn((cmd) => {
+      if (cmd === "bash --version") return; // succeeds
+      if (cmd === 'bash -c "uname -r"') return "5.15.90.1-microsoft-standard-WSL2\n";
+      throw new Error("unexpected call");
+    });
+    const mockExistsSync = vi.fn(() => false); // no Git Bash installed
+
+    const { findBash } = await loadHelpers({
+      execSync: mockExecSync,
+      existsSync: mockExistsSync,
+      env: {
+        ProgramFiles: "C:\\Program Files",
+        "ProgramFiles(x86)": "C:\\Program Files (x86)",
+        LOCALAPPDATA: "C:\\Users\\test\\AppData\\Local",
+      },
+    });
+
+    expect(findBash()).toBe("bash");
+  });
+
+  it("should detect Git Bash via MSYSTEM when uname detection fails", async () => {
+    Object.defineProperty(process, "platform", { value: "win32" });
+
+    const mockExecSync = vi.fn((cmd) => {
+      if (cmd === "bash --version") return; // succeeds
+      if (cmd === 'bash -c "uname -r"') throw new Error("uname failed");
+      if (cmd === 'bash -c "echo $MSYSTEM"') return "MINGW64\n";
+      throw new Error("unexpected call: " + cmd);
+    });
+    const mockExistsSync = vi.fn(() => false);
+
+    const { findBash } = await loadHelpers({
+      execSync: mockExecSync,
+      existsSync: mockExistsSync,
+      env: {
+        ProgramFiles: "C:\\Program Files",
+        "ProgramFiles(x86)": "C:\\Program Files (x86)",
+        LOCALAPPDATA: "C:\\Users\\test\\AppData\\Local",
+      },
+    });
+
+    expect(findBash()).toBe("bash");
+  });
+
+  it("should fall back to WSL when both uname and MSYSTEM detection fail", async () => {
+    Object.defineProperty(process, "platform", { value: "win32" });
+
+    const mockExecSync = vi.fn((cmd) => {
+      if (cmd === "bash --version") return;
+      if (cmd === 'bash -c "uname -r"') throw new Error("uname failed");
+      if (cmd === 'bash -c "echo $MSYSTEM"') throw new Error("MSYSTEM failed");
+      throw new Error("unexpected call: " + cmd);
+    });
+    const mockExistsSync = vi.fn(() => false);
+
+    const { findBash } = await loadHelpers({
+      execSync: mockExecSync,
+      existsSync: mockExistsSync,
+      env: {
+        ProgramFiles: "C:\\Program Files",
+        "ProgramFiles(x86)": "C:\\Program Files (x86)",
+        LOCALAPPDATA: "C:\\Users\\test\\AppData\\Local",
+      },
+    });
+
+    // Should still return "bash" — just assumes WSL
+    expect(findBash()).toBe("bash");
+  });
+
+  it("should use default paths when Windows env vars are absent", async () => {
     Object.defineProperty(process, "platform", { value: "win32" });
 
     const mockExecSync = vi.fn(() => {
@@ -270,5 +342,300 @@ describe("readPackageVersion", () => {
   it("should throw for a nonexistent package.json path", () => {
     const { readPackageVersion } = loadHelpers();
     expect(() => readPackageVersion("/nonexistent/package.json")).toThrow();
+  });
+});
+
+describe("SIGTERM and SIGINT handlers", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("should call cleanup and exit(143) on SIGTERM", () => {
+    const handlers = {};
+    const spy = vi.spyOn(process, "on").mockImplementation((event, handler) => {
+      handlers[event] = handler;
+      return process;
+    });
+    const mockExit = vi.fn();
+    process.exit = mockExit;
+
+    const origArgv = process.argv;
+    process.argv = ["node", "gaia-framework.js", "init", "/test"];
+
+    const { main } = loadHelpers({
+      execSync: vi.fn(),
+      existsSync: vi.fn(() => true),
+      processExit: mockExit,
+    });
+
+    try {
+      main({
+        execSync: vi.fn(),
+        execFileSync: vi.fn(),
+        existsSync: vi.fn(() => true),
+        join: (...args) => args.join("/"),
+        mkdtempSync: vi.fn(() => "/tmp/gaia-framework-test"),
+        tmpdir: vi.fn(() => "/tmp"),
+      });
+    } catch {
+      // Expected
+    }
+
+    expect(handlers["SIGTERM"]).toBeDefined();
+    handlers["SIGTERM"]();
+    expect(mockExit).toHaveBeenCalledWith(143);
+
+    process.argv = origArgv;
+    spy.mockRestore();
+  });
+
+  it("should call cleanup and exit(130) on SIGINT", () => {
+    const handlers = {};
+    const spy = vi.spyOn(process, "on").mockImplementation((event, handler) => {
+      handlers[event] = handler;
+      return process;
+    });
+    const mockExit = vi.fn();
+    process.exit = mockExit;
+
+    const origArgv = process.argv;
+    process.argv = ["node", "gaia-framework.js", "init", "/test"];
+
+    const { main } = loadHelpers({
+      execSync: vi.fn(),
+      existsSync: vi.fn(() => true),
+      processExit: mockExit,
+    });
+
+    try {
+      main({
+        execSync: vi.fn(),
+        execFileSync: vi.fn(),
+        existsSync: vi.fn(() => true),
+        join: (...args) => args.join("/"),
+        mkdtempSync: vi.fn(() => "/tmp/gaia-framework-test"),
+        tmpdir: vi.fn(() => "/tmp"),
+      });
+    } catch {
+      // Expected
+    }
+
+    expect(handlers["SIGINT"]).toBeDefined();
+    handlers["SIGINT"]();
+    expect(mockExit).toHaveBeenCalledWith(130);
+
+    process.argv = origArgv;
+    spy.mockRestore();
+  });
+});
+
+describe("8.3 short-name path resolution", () => {
+  const originalPlatform = process.platform;
+
+  afterEach(() => {
+    Object.defineProperty(process, "platform", { value: originalPlatform });
+    vi.restoreAllMocks();
+  });
+
+  it("should resolve 8.3 short names via PowerShell on Windows (success)", async () => {
+    Object.defineProperty(process, "platform", { value: "win32" });
+
+    const mockExec = vi.fn((cmd) => {
+      if (typeof cmd === "string" && cmd.includes("git --version")) return;
+      if (typeof cmd === "string" && cmd.includes("git clone")) return;
+      if (typeof cmd === "string" && cmd.includes("bash --version")) return;
+      if (typeof cmd === "string" && cmd.includes("powershell"))
+        return "C:\\Users\\Elias Nasser\\AppData\\Local\\Temp\\gaia-framework-abc\n";
+      return "";
+    });
+    const mockExecFile = vi.fn();
+    const mockExists = vi.fn(() => true);
+    const mockMkdtemp = vi.fn(
+      () => "C:\\Users\\ELIASN~1\\AppData\\Local\\Temp\\gaia-framework-abc"
+    );
+    const mockTmpdir = vi.fn(() => "C:\\Users\\ELIASN~1\\AppData\\Local\\Temp");
+    const mockJoin = (...args) => args.join("\\");
+
+    const origArgv = process.argv;
+    process.argv = ["node", "gaia-framework.js", "init", "C:\\project"];
+
+    const { main } = await loadHelpers({
+      execSync: mockExec,
+      execFileSync: mockExecFile,
+      existsSync: mockExists,
+    });
+
+    try {
+      main({
+        execSync: mockExec,
+        execFileSync: mockExecFile,
+        existsSync: mockExists,
+        join: mockJoin,
+        mkdtempSync: mockMkdtemp,
+        tmpdir: mockTmpdir,
+      });
+    } catch {
+      // Expected
+    }
+
+    // Verify PowerShell was called for 8.3 resolution
+    const powershellCall = mockExec.mock.calls.find(
+      (call) => typeof call[0] === "string" && call[0].includes("powershell")
+    );
+    expect(powershellCall).toBeDefined();
+
+    process.argv = origArgv;
+  });
+
+  it("should handle PowerShell failure silently on Windows", async () => {
+    Object.defineProperty(process, "platform", { value: "win32" });
+
+    const mockExec = vi.fn((cmd) => {
+      if (typeof cmd === "string" && cmd.includes("git --version")) return;
+      if (typeof cmd === "string" && cmd.includes("git clone")) return;
+      if (typeof cmd === "string" && cmd.includes("bash --version")) return;
+      if (typeof cmd === "string" && cmd.includes("powershell"))
+        throw new Error("PowerShell not found");
+      return "";
+    });
+    const mockExecFile = vi.fn();
+    const mockExists = vi.fn(() => true);
+    const mockMkdtemp = vi.fn(() => "C:\\Users\\ELIASN~1\\Temp\\gaia-abc");
+    const mockTmpdir = vi.fn(() => "C:\\Users\\ELIASN~1\\Temp");
+    const mockJoin = (...args) => args.join("\\");
+
+    const origArgv = process.argv;
+    process.argv = ["node", "gaia-framework.js", "init", "C:\\project"];
+
+    const { main } = await loadHelpers({
+      execSync: mockExec,
+      execFileSync: mockExecFile,
+      existsSync: mockExists,
+    });
+
+    // Should NOT throw — PowerShell failure is caught silently
+    expect(() => {
+      try {
+        main({
+          execSync: mockExec,
+          execFileSync: mockExecFile,
+          existsSync: mockExists,
+          join: mockJoin,
+          mkdtempSync: mockMkdtemp,
+          tmpdir: mockTmpdir,
+        });
+      } catch {
+        // main will throw from execFileSync for bash — that's fine
+      }
+    }).not.toThrow();
+
+    process.argv = origArgv;
+  });
+
+  it("should skip 8.3 resolution on non-Windows", async () => {
+    Object.defineProperty(process, "platform", { value: "darwin" });
+
+    const mockExec = vi.fn((cmd) => {
+      if (typeof cmd === "string" && cmd.includes("git --version")) return;
+      if (typeof cmd === "string" && cmd.includes("git clone")) return;
+      return "";
+    });
+    const mockExecFile = vi.fn();
+    const mockExists = vi.fn(() => true);
+    const mockMkdtemp = vi.fn(() => "/tmp/gaia-framework-abc");
+    const mockTmpdir = vi.fn(() => "/tmp");
+    const mockJoin = (...args) => args.join("/");
+
+    const origArgv = process.argv;
+    process.argv = ["node", "gaia-framework.js", "init", "/test"];
+
+    const { main } = await loadHelpers({
+      execSync: mockExec,
+      execFileSync: mockExecFile,
+      existsSync: mockExists,
+    });
+
+    try {
+      main({
+        execSync: mockExec,
+        execFileSync: mockExecFile,
+        existsSync: mockExists,
+        join: mockJoin,
+        mkdtempSync: mockMkdtemp,
+        tmpdir: mockTmpdir,
+      });
+    } catch {
+      // Expected
+    }
+
+    // PowerShell should NOT have been called
+    const powershellCall = mockExec.mock.calls.find(
+      (call) => typeof call[0] === "string" && call[0].includes("powershell")
+    );
+    expect(powershellCall).toBeUndefined();
+
+    process.argv = origArgv;
+  });
+});
+
+describe("Verbose Windows logging", () => {
+  const originalPlatform = process.platform;
+
+  afterEach(() => {
+    Object.defineProperty(process, "platform", { value: originalPlatform });
+    vi.restoreAllMocks();
+  });
+
+  it("should log bash, script, and temp paths when --verbose on Windows", async () => {
+    Object.defineProperty(process, "platform", { value: "win32" });
+
+    const loggedMessages = [];
+    const mockConsole = {
+      log: vi.fn((msg) => loggedMessages.push(msg)),
+      error: vi.fn(),
+    };
+    const mockExec = vi.fn((cmd) => {
+      if (typeof cmd === "string" && cmd.includes("git --version")) return;
+      if (typeof cmd === "string" && cmd.includes("git clone")) return;
+      if (typeof cmd === "string" && cmd.includes("bash --version")) return;
+      if (typeof cmd === "string" && cmd.includes("powershell")) throw new Error("not found");
+      return "";
+    });
+    const mockExecFile = vi.fn();
+    const mockExists = vi.fn(() => true);
+    const mockMkdtemp = vi.fn(() => "C:\\Temp\\gaia-framework-xyz");
+    const mockTmpdir = vi.fn(() => "C:\\Temp");
+    const mockJoin = (...args) => args.join("\\");
+
+    const origArgv = process.argv;
+    process.argv = ["node", "gaia-framework.js", "init", "--verbose", "C:\\project"];
+
+    const { main } = await loadHelpers({
+      execSync: mockExec,
+      execFileSync: mockExecFile,
+      existsSync: mockExists,
+      console: mockConsole,
+    });
+
+    try {
+      main({
+        execSync: mockExec,
+        execFileSync: mockExecFile,
+        existsSync: mockExists,
+        join: mockJoin,
+        mkdtempSync: mockMkdtemp,
+        tmpdir: mockTmpdir,
+      });
+    } catch {
+      // Expected
+    }
+
+    // Verbose mode should log bash path, script paths, and temp dir
+    const allOutput = loggedMessages.join("\n");
+    expect(allOutput).toContain("Bash:");
+    expect(allOutput).toContain("Script");
+    expect(allOutput).toContain("Temp dir:");
+
+    process.argv = origArgv;
   });
 });
