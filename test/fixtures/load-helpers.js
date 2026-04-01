@@ -1,87 +1,126 @@
 import { vi } from "vitest";
-import { readFileSync } from "fs";
+import { createRequire } from "node:module";
 import { join } from "path";
+
+const require = createRequire(import.meta.url);
 
 /**
  * Load main() and helper functions from gaia-framework.js with full mock injection.
  *
- * The CLI (bin/gaia-framework.js) is CJS and calls main() as a side-effect.
- * It cannot be require()'d directly. This function reads the source as text,
- * strips the shebang and main() call, wraps in new Function(...) to extract
- * named functions, and injects mocked require/process/console.
+ * Uses require() with cache-busting instead of new Function() eval, so that V8
+ * coverage can accurately instrument the source code (E3-S8).
+ *
+ * The CLI (bin/gaia-framework.js) checks `require.main === module` before calling
+ * main(). Since require.main !== module when loaded from tests, main() is NOT
+ * auto-executed.
+ *
+ * Strategy:
+ * - main(deps) already accepts DI for execSync, execFileSync, existsSync, join,
+ *   mkdtempSync, tmpdir — we pass mocks through deps.
+ * - process.platform must be set before require() so IS_WINDOWS is correct.
+ * - process.exit, process.argv, process.on, console.log/error are used dynamically
+ *   by the source — we wrap main() to patch these around the call.
  *
  * @param {string} binDir - Absolute path to the bin/ directory
  * @param {object} mocks - Optional mock overrides
  * @returns {object} Exported functions + mocks object
  */
 export function loadMain(binDir, mocks = {}) {
-  const source = readFileSync(join(binDir, "gaia-framework.js"), "utf8");
+  const modulePath = join(binDir, "gaia-framework.js");
 
-  // Strip shebang but keep main() — we call it explicitly
-  const wrappedSource = source.replace("#!/usr/bin/env node", "");
-  // Remove the auto-invocation of main() at the bottom
-  const cleanedSource = wrappedSource.replace(/^main\(\);?\s*$/m, "");
+  // Clear the module cache so IS_WINDOWS is re-evaluated
+  delete require.cache[modulePath];
+
+  // Set platform before require so IS_WINDOWS is computed correctly
+  const originalPlatform = process.platform;
+  Object.defineProperty(process, "platform", {
+    value: mocks.platform || "darwin",
+    configurable: true,
+  });
+
+  // Patch child_process.execSync before require so that ensureGit() (called inside
+  // main() without DI) and the git-version check in findBash() use the mock
+  const realChildProcess = require("child_process");
+  const origExecSync = realChildProcess.execSync;
+  const realFs = require("fs");
+  const origExistsSync = realFs.existsSync;
 
   const mockExecSync = mocks.execSync || vi.fn();
+  const mockExistsSync = mocks.existsSync || vi.fn(() => true);
+
+  realChildProcess.execSync = mockExecSync;
+  realFs.existsSync = mockExistsSync;
+
+  let exported;
+  try {
+    exported = require(modulePath);
+  } finally {
+    // Restore platform and module patches — they've been captured by the module
+    Object.defineProperty(process, "platform", {
+      value: originalPlatform,
+      configurable: true,
+    });
+    realChildProcess.execSync = origExecSync;
+    realFs.existsSync = origExistsSync;
+  }
+
+  // Create mocks for dynamic globals
   const mockExecFileSync = mocks.execFileSync || vi.fn();
   const mockMkdtempSync = mocks.mkdtempSync || vi.fn(() => "/tmp/gaia-framework-abc123");
   const mockRmSync = mocks.rmSync || vi.fn();
-  const mockExistsSync = mocks.existsSync || vi.fn(() => true);
   const mockTmpdir = mocks.tmpdir || vi.fn(() => "/tmp");
   const mockJoin = mocks.join || join;
-
-  const mockRequire = (mod) => {
-    if (mod === "child_process") return { execSync: mockExecSync, execFileSync: mockExecFileSync };
-    if (mod === "fs")
-      return { mkdtempSync: mockMkdtempSync, rmSync: mockRmSync, existsSync: mockExistsSync };
-    if (mod === "os") return { tmpdir: mockTmpdir };
-    if (mod === "path") return { join: mockJoin };
-    if (mod === "../package.json") return { version: "1.0.0-test" };
-    throw new Error(`Unexpected require: ${mod}`);
-  };
-
   const mockExit = mocks.exit || vi.fn();
   const mockOn = mocks.on || vi.fn();
   const mockConsoleLog = mocks.consoleLog || vi.fn();
   const mockConsoleError = mocks.consoleError || vi.fn();
 
-  const mockProcess = {
-    argv: mocks.argv || ["node", "gaia-framework"],
-    platform: mocks.platform || "darwin",
-    exit: mockExit,
-    on: mockOn,
-    env: mocks.env || {},
+  // Wrap main() to patch dynamic globals around each call
+  const wrappedMain = () => {
+    const savedArgv = process.argv;
+    const savedExit = process.exit;
+    const savedOn = process.on;
+    const savedEnv = process.env;
+    const savedLog = console.log;
+    const savedError = console.error;
+
+    process.argv = mocks.argv || ["node", "gaia-framework"];
+    process.exit = mockExit;
+    process.on = mockOn;
+    if (mocks.env) {
+      process.env = { ...savedEnv, ...mocks.env };
+    }
+    console.log = mockConsoleLog;
+    console.error = mockConsoleError;
+
+    try {
+      // Use DI pattern: main(deps) accepts overrides for captured module references
+      exported.main({
+        execSync: mockExecSync,
+        execFileSync: mockExecFileSync,
+        existsSync: mockExistsSync,
+        join: mockJoin,
+        mkdtempSync: mockMkdtempSync,
+        tmpdir: mockTmpdir,
+      });
+    } finally {
+      process.argv = savedArgv;
+      process.exit = savedExit;
+      process.on = savedOn;
+      process.env = savedEnv;
+      console.log = savedLog;
+      console.error = savedError;
+    }
   };
-
-  const mockConsole = {
-    log: mockConsoleLog,
-    error: mockConsoleError,
-  };
-
-  const fn = new Function(
-    "require",
-    "process",
-    "console",
-    "__dirname",
-    "__filename",
-    `
-    const module = { exports: {} };
-    const exports = module.exports;
-    ${cleanedSource}
-    return { main, findBash, ensureGit, showUsage, fail, info, cleanup };
-    `
-  );
-
-  const exported = fn(
-    mockRequire,
-    mockProcess,
-    mockConsole,
-    binDir,
-    join(binDir, "gaia-framework.js")
-  );
 
   return {
-    ...exported,
+    main: wrappedMain,
+    findBash: exported.findBash,
+    ensureGit: exported.ensureGit,
+    showUsage: exported.showUsage,
+    fail: exported.fail,
+    info: exported.info,
+    cleanup: exported.cleanup,
     mocks: {
       execSync: mockExecSync,
       execFileSync: mockExecFileSync,
@@ -92,7 +131,13 @@ export function loadMain(binDir, mocks = {}) {
       on: mockOn,
       consoleLog: mockConsoleLog,
       consoleError: mockConsoleError,
-      process: mockProcess,
+      process: {
+        argv: mocks.argv || ["node", "gaia-framework"],
+        platform: mocks.platform || "darwin",
+        exit: mockExit,
+        on: mockOn,
+        env: mocks.env || {},
+      },
     },
   };
 }
