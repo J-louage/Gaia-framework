@@ -30,4 +30,5 @@ output:
     - "{planning_artifacts}/prd.md"
     - "{planning_artifacts}/architecture.md"
     - "{planning_artifacts}/epics-and-stories.md"
+    - "{planning_artifacts}/brownfield-scan-test-execution.md"
     - "{planning_artifacts}/brownfield-onboarding.md"
