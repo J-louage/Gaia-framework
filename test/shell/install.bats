@@ -67,9 +67,11 @@ YAML
   # Create slash commands dir
   mkdir -p "$src/.claude/commands"
   echo "placeholder" > "$src/.claude/commands/gaia-help.md"
-  # Create custom skills
+  # Create custom skills and templates
   mkdir -p "$src/custom/skills"
   echo "README" > "$src/custom/skills/README.md"
+  mkdir -p "$src/custom/templates"
+  echo "README" > "$src/custom/templates/README.md"
 }
 
 # Expected Tier 1+2 sidecar directories (subset check)
@@ -303,6 +305,9 @@ YAML
   for dir in "${all_sidecars[@]}"; do
     mkdir -p "$TEST_DIR/_memory/$dir"
   done
+  # Custom directories (ADR-020)
+  mkdir -p "$TEST_DIR/custom/skills"
+  mkdir -p "$TEST_DIR/custom/templates"
 
   run bash "$SCRIPT" validate "$TEST_DIR"
   [ "$status" -eq 0 ]
@@ -737,6 +742,9 @@ YAML
   for dir in "${all_sidecars[@]}"; do
     mkdir -p "$space_dir/_memory/$dir"
   done
+  # Custom directories (ADR-020)
+  mkdir -p "$space_dir/custom/skills"
+  mkdir -p "$space_dir/custom/templates"
 
   # Validate should work with spaces in path
   run bash "$SCRIPT" validate "$space_dir"
@@ -798,6 +806,9 @@ YAML
   for dir in "${all_sidecars[@]}"; do
     mkdir -p "$TEST_DIR/_memory/$dir"
   done
+  # Custom directories (ADR-020)
+  mkdir -p "$TEST_DIR/custom/skills"
+  mkdir -p "$TEST_DIR/custom/templates"
 
   run bash "$SCRIPT" validate "$TEST_DIR"
   [ "$status" -eq 0 ]
@@ -1218,4 +1229,145 @@ YAML
   echo "$banner_line" | grep -vq "99.0.0"
 
   rm -rf "$SRC_DIR" "$TMP"
+}
+
+# ─── E10-S13: Custom Directory Bootstrap Tests ──────────────────────────────
+
+@test "init creates custom/skills and custom/templates directories" {
+  local SRC_DIR="$(mktemp -d)"
+  create_mock_source "$SRC_DIR"
+
+  run bash "$SCRIPT" init --source "$SRC_DIR" --yes "$TEST_DIR"
+  [ "$status" -eq 0 ]
+
+  [ -d "$TEST_DIR/custom/skills" ]
+  [ -d "$TEST_DIR/custom/templates" ]
+
+  rm -rf "$SRC_DIR"
+}
+
+@test "update creates missing custom/templates without overwriting existing files" {
+  local SRC_DIR="$(mktemp -d)"
+  create_mock_source "$SRC_DIR"
+
+  # Set up a pre-existing installation (no custom/templates/)
+  bash "$SCRIPT" init --source "$SRC_DIR" --yes "$TEST_DIR"
+
+  # Add a user file in custom/skills/ to verify preservation
+  echo "user-content" > "$TEST_DIR/custom/skills/my-skill.md"
+
+  # Remove custom/templates/ to simulate pre-custom installation
+  rm -rf "$TEST_DIR/custom/templates"
+  [ ! -d "$TEST_DIR/custom/templates" ]
+
+  run bash "$SCRIPT" update --source "$SRC_DIR" --yes "$TEST_DIR"
+  [ "$status" -eq 0 ]
+
+  # custom/templates/ should be created
+  [ -d "$TEST_DIR/custom/templates" ]
+  # User files in custom/skills/ must be preserved
+  [ -f "$TEST_DIR/custom/skills/my-skill.md" ]
+  [ "$(cat "$TEST_DIR/custom/skills/my-skill.md")" = "user-content" ]
+
+  rm -rf "$SRC_DIR"
+}
+
+@test "validate reports missing custom/templates as check failure" {
+  local SRC_DIR="$(mktemp -d)"
+  create_mock_source "$SRC_DIR"
+
+  # Create a valid installation
+  bash "$SCRIPT" init --source "$SRC_DIR" --yes "$TEST_DIR"
+
+  # Remove custom/templates/ to trigger validation failure
+  rm -rf "$TEST_DIR/custom/templates"
+
+  run bash "$SCRIPT" validate "$TEST_DIR"
+  # Validate should fail (non-zero exit) because custom/templates/ is missing
+  [ "$status" -ne 0 ]
+  # Output should mention the missing directory
+  [[ "$output" == *"custom/templates"* ]]
+
+  rm -rf "$SRC_DIR"
+}
+
+# ─── E6-S15: cp fallback nesting bug regression tests ─────────────────────────
+
+@test "E6-S15: cp fallback produces flat _gaia/ structure, no _gaia/_gaia/ nesting (AC1, AC5a)" {
+  local SRC_DIR="$(mktemp -d)"
+  create_mock_source "$SRC_DIR"
+
+  # Override PATH to disable rsync, forcing copy_gaia_files() to use cp fallback
+  local SAFE_PATH="$(mktemp -d)"
+  # Copy only essential commands but NOT rsync
+  for cmd in cp mkdir tar bash cat touch rm grep sed chmod ls head tail wc date printf readlink dirname basename mktemp find tr sort uname cut awk tee; do
+    local cmd_path
+    cmd_path="$(command -v "$cmd" 2>/dev/null)" && ln -sf "$cmd_path" "$SAFE_PATH/$cmd"
+  done
+
+  # Run init with rsync removed from PATH
+  PATH="$SAFE_PATH" run bash "$SCRIPT" init --source "$SRC_DIR" --yes "$TEST_DIR"
+  [ "$status" -eq 0 ]
+
+  # CRITICAL: Flat structure must exist
+  [ -d "$TEST_DIR/_gaia/_config" ]
+  [ -d "$TEST_DIR/_gaia/core" ]
+
+  # CRITICAL: Nested structure must NOT exist
+  [ ! -d "$TEST_DIR/_gaia/_gaia" ]
+
+  rm -rf "$SRC_DIR" "$SAFE_PATH"
+}
+
+@test "E6-S15: cp fallback merges into partial existing _gaia/ without nesting (AC4, AC5a)" {
+  local SRC_DIR="$(mktemp -d)"
+  create_mock_source "$SRC_DIR"
+
+  # Pre-create partial target _gaia/ with some content
+  mkdir -p "$TEST_DIR/_gaia/_config"
+  echo "existing-config" > "$TEST_DIR/_gaia/_config/user-settings.yaml"
+
+  # Override PATH to disable rsync
+  local SAFE_PATH="$(mktemp -d)"
+  for cmd in cp mkdir tar bash cat touch rm grep sed chmod ls head tail wc date printf readlink dirname basename mktemp find tr sort uname cut awk tee; do
+    local cmd_path
+    cmd_path="$(command -v "$cmd" 2>/dev/null)" && ln -sf "$cmd_path" "$SAFE_PATH/$cmd"
+  done
+
+  PATH="$SAFE_PATH" run bash "$SCRIPT" init --source "$SRC_DIR" --yes "$TEST_DIR"
+  [ "$status" -eq 0 ]
+
+  # Flat structure — contents merged
+  [ -d "$TEST_DIR/_gaia/_config" ]
+  [ -d "$TEST_DIR/_gaia/core" ]
+
+  # No nesting
+  [ ! -d "$TEST_DIR/_gaia/_gaia" ]
+
+  rm -rf "$SRC_DIR" "$SAFE_PATH"
+}
+
+@test "E6-S15: isolated cp path (rsync+tar disabled) produces flat structure (AC5a)" {
+  local SRC_DIR="$(mktemp -d)"
+  create_mock_source "$SRC_DIR"
+
+  # Override PATH to disable BOTH rsync and tar, isolating the cp path
+  local SAFE_PATH="$(mktemp -d)"
+  for cmd in cp mkdir bash cat touch rm grep sed chmod ls head tail wc date printf readlink dirname basename mktemp find tr sort uname cut awk tee; do
+    local cmd_path
+    cmd_path="$(command -v "$cmd" 2>/dev/null)" && ln -sf "$cmd_path" "$SAFE_PATH/$cmd"
+  done
+  # tar is intentionally excluded from SAFE_PATH
+
+  PATH="$SAFE_PATH" run bash "$SCRIPT" init --source "$SRC_DIR" --yes "$TEST_DIR"
+  [ "$status" -eq 0 ]
+
+  # Flat structure
+  [ -d "$TEST_DIR/_gaia/_config" ]
+  [ -d "$TEST_DIR/_gaia/core" ]
+
+  # No nesting
+  [ ! -d "$TEST_DIR/_gaia/_gaia" ]
+
+  rm -rf "$SRC_DIR" "$SAFE_PATH"
 }

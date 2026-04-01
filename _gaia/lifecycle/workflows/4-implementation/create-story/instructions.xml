@@ -92,7 +92,7 @@
   <action>Append DoD checklist: all AC met, tests pass, code reviewed, docs updated</action>
 </step>
 <step n="6" title="Generate Output">
-  <action>Read the story template from {project-root}/_gaia/lifecycle/templates/story-template.md</action>
+  <action>Read the story template from the engine-resolved template path. The engine resolves this in Step 1 (Load and Resolve Config): if {project-root}/custom/templates/story-template.md exists and is non-empty, the custom template is used; otherwise it falls back to {project-root}/_gaia/lifecycle/templates/story-template.md. Use whichever path the engine resolved.</action>
   <action>Read sizing_map from {project-root}/_gaia/_config/global.yaml to resolve T-shirt size to story points (S→2, M→5, L→8, XL→13).</action>
   <action>Populate ALL YAML frontmatter fields from epics-and-stories.md data:
     - key: story key from epics (e.g., E1-S1)

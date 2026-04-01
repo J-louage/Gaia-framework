@@ -78,6 +78,10 @@ describe("Supply Chain Management (E4-S4)", () => {
   });
 
   // AC3: Production audit hard gate
+  // Note: CI has two production audit hard gates (ci.yml lines 172-178):
+  // 1. --audit-level=high — blocks on high/critical vulnerabilities
+  // 2. --audit-level=moderate — blocks on moderate+ vulnerabilities
+  // This test validates the high-level gate; ci-workflow.test.js validates both.
   describe("AC3 — Production audit hard gate", () => {
     it("should run npm audit --omit=dev with --audit-level=high as hard gate", () => {
       const securitySteps = ciConfig.jobs.security.steps;
