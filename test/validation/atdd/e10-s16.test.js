@@ -154,18 +154,16 @@ describe("E10-S16: Add Inline Validation Step to add-stories", () => {
     it("instructions.xml checks Val prerequisites before invocation", () => {
       const content = loadFile(INSTRUCTIONS);
       expect(content).not.toBeNull();
-      const hasPrereqCheck =
-        /prerequisite|validator\.md|validator-sidecar/i.test(content);
+      const hasPrereqCheck = /prerequisite|validator\.md|validator-sidecar/i.test(content);
       expect(hasPrereqCheck).toBe(true);
     });
 
     it("instructions.xml handles Val invocation failure gracefully", () => {
       const content = loadFile(INSTRUCTIONS);
       expect(content).not.toBeNull();
-      const hasGraceful =
-        /warn_and_continue|graceful|degrad|warn.*continue|log.*warning/i.test(
-          content
-        );
+      const hasGraceful = /warn_and_continue|graceful|degrad|warn.*continue|log.*warning/i.test(
+        content
+      );
       expect(hasGraceful).toBe(true);
     });
 
@@ -174,8 +172,7 @@ describe("E10-S16: Add Inline Validation Step to add-stories", () => {
       expect(content).not.toBeNull();
       // Should mention marking as validating when Val is unavailable
       const hasValidatingOnFail =
-        /validating/i.test(content) &&
-        /unavailable|fail|missing|degrad/i.test(content);
+        /validating/i.test(content) && /unavailable|fail|missing|degrad/i.test(content);
       expect(hasValidatingOnFail).toBe(true);
     });
   });
@@ -185,28 +182,25 @@ describe("E10-S16: Add Inline Validation Step to add-stories", () => {
     it("instructions.xml iterates over each newly created story", () => {
       const content = loadFile(INSTRUCTIONS);
       expect(content).not.toBeNull();
-      const hasBatchIteration =
-        /for each|each.*story|per.story|batch.*iteration|iterate/i.test(
-          content
-        );
+      const hasBatchIteration = /for each|each.*story|per.story|batch.*iteration|iterate/i.test(
+        content
+      );
       expect(hasBatchIteration).toBe(true);
     });
 
     it("instructions.xml ensures one story failure does not block others", () => {
       const content = loadFile(INSTRUCTIONS);
       expect(content).not.toBeNull();
-      const hasIndependence =
-        /continue.*next.*story|independent|does not block|next story/i.test(
-          content
-        );
+      const hasIndependence = /continue.*next.*story|independent|does not block|next story/i.test(
+        content
+      );
       expect(hasIndependence).toBe(true);
     });
 
     it("instructions.xml reports batch validation summary", () => {
       const content = loadFile(INSTRUCTIONS);
       expect(content).not.toBeNull();
-      const hasSummary =
-        /batch.*summary|validation summary|summary/i.test(content);
+      const hasSummary = /batch.*summary|validation summary|summary/i.test(content);
       expect(hasSummary).toBe(true);
     });
   });
