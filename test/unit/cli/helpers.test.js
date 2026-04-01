@@ -1,11 +1,88 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { readFileSync } from "fs";
+import { createRequire } from "node:module";
 import { join } from "path";
 
-// gaia-framework.js uses CJS require() — we need to load it carefully.
-// For unit tests, we extract and test the logic directly.
+const require = createRequire(import.meta.url);
 
+// Absolute path to the CJS source module
 const SOURCE_PATH = join(import.meta.dirname, "../../../bin/gaia-framework.js");
+
+/**
+ * Helper to load functions from gaia-framework.js using require() with
+ * cache-busting and dependency patching (E3-S8: migrated from new Function eval).
+ *
+ * Since gaia-framework.js checks `require.main === module` before calling main(),
+ * requiring it from tests does NOT trigger main().
+ *
+ * Helper functions (findBash, ensureGit, etc.) capture module-level references
+ * to execSync, existsSync, etc. at require-time. To inject mocks, we patch the
+ * module singletons (child_process, fs) before require and restore after.
+ *
+ * process.exit and console are used dynamically, so we patch them around the
+ * actual function call in the test, not around require.
+ *
+ * @param {Object} [mocks] - Optional mock overrides
+ * @param {Function} [mocks.execSync] - Mock for child_process.execSync
+ * @param {Function} [mocks.existsSync] - Mock for fs.existsSync
+ * @param {Object} [mocks.env] - Mock process.env values (set before require for IS_WINDOWS env)
+ * @param {Function} [mocks.processExit] - Mock for process.exit
+ * @param {Object} [mocks.console] - Mock console object
+ */
+function loadHelpers(mocks = {}) {
+  // Clear module cache so module-level constants (IS_WINDOWS etc.) are re-evaluated
+  delete require.cache[SOURCE_PATH];
+
+  // Patch module singletons before require
+  const realChildProcess = require("child_process");
+  const realFs = require("fs");
+  const origExecSync = realChildProcess.execSync;
+  const origExistsSync = realFs.existsSync;
+
+  if (mocks.execSync) realChildProcess.execSync = mocks.execSync;
+  if (mocks.existsSync) realFs.existsSync = mocks.existsSync;
+
+  // Patch process.env before require (for IS_WINDOWS env var paths)
+  const origEnv = process.env;
+  if (mocks.env) {
+    process.env = { ...origEnv, ...mocks.env };
+  }
+
+  // Patch process.exit and console before require — fail() and ensureGit()
+  // use these dynamically but they're called at test-time, not require-time.
+  // However, the module-level Node version guard (line 36-39) calls process.exit
+  // during require if version check fails. So we patch before require to be safe.
+  const origExit = process.exit;
+  const origConsoleLog = console.log;
+  const origConsoleError = console.error;
+
+  if (mocks.processExit) process.exit = mocks.processExit;
+  if (mocks.console) {
+    console.log = mocks.console.log || origConsoleLog;
+    console.error = mocks.console.error || origConsoleError;
+  }
+
+  let exported;
+  try {
+    exported = require(SOURCE_PATH);
+  } finally {
+    // Restore module singletons — the module has captured its own references
+    // at require-time, so the captured values retain the mocked behavior.
+    realChildProcess.execSync = origExecSync;
+    realFs.existsSync = origExistsSync;
+    process.env = origEnv;
+    // NOTE: Do NOT restore process.exit and console here when mocks were provided.
+    // Functions like fail(), ensureGit() use these DYNAMICALLY at call time
+    // (not captured at require-time). Restoring them before the test calls
+    // the function would undo the mocking. The test's afterEach handles cleanup.
+    if (!mocks.processExit) process.exit = origExit;
+    if (!mocks.console) {
+      console.log = origConsoleLog;
+      console.error = origConsoleError;
+    }
+  }
+
+  return exported;
+}
 
 describe("findBash", () => {
   const originalPlatform = process.platform;
@@ -15,27 +92,27 @@ describe("findBash", () => {
     vi.restoreAllMocks();
   });
 
-  it("should return 'bash' on non-Windows platforms", async () => {
+  it("should return 'bash' on non-Windows platforms", () => {
     Object.defineProperty(process, "platform", { value: "darwin" });
 
-    const { findBash } = await loadHelpers();
+    const { findBash } = loadHelpers();
     expect(findBash()).toBe("bash");
   });
 
-  it("should return 'bash' on linux", async () => {
+  it("should return 'bash' on linux", () => {
     Object.defineProperty(process, "platform", { value: "linux" });
 
-    const { findBash } = await loadHelpers();
+    const { findBash } = loadHelpers();
     expect(findBash()).toBe("bash");
   });
 
   it.skipIf(process.platform === "win32")(
     "should return 'bash' on Windows when bash is in PATH",
-    async () => {
+    () => {
       Object.defineProperty(process, "platform", { value: "win32" });
 
       const mockExecSync = vi.fn(); // succeeds (no throw)
-      const { findBash } = await loadHelpers({
+      const { findBash } = loadHelpers({
         execSync: mockExecSync,
       });
 
@@ -44,7 +121,7 @@ describe("findBash", () => {
     }
   );
 
-  it("should find Git for Windows bash when PATH bash unavailable", async () => {
+  it("should find Git for Windows bash when PATH bash unavailable", () => {
     Object.defineProperty(process, "platform", { value: "win32" });
 
     const mockExecSync = vi.fn(() => {
@@ -54,7 +131,7 @@ describe("findBash", () => {
     const expectedPath = join("C:\\Program Files", "Git", "bin", "bash.exe");
     const mockExistsSync = vi.fn((p) => p === expectedPath);
 
-    const { findBash } = await loadHelpers({
+    const { findBash } = loadHelpers({
       execSync: mockExecSync,
       existsSync: mockExistsSync,
       env: {
@@ -67,7 +144,7 @@ describe("findBash", () => {
     expect(findBash()).toBe(expectedPath);
   });
 
-  it("should return null on Windows when no bash is available", async () => {
+  it("should return null on Windows when no bash is available", () => {
     Object.defineProperty(process, "platform", { value: "win32" });
 
     const mockExecSync = vi.fn(() => {
@@ -75,7 +152,7 @@ describe("findBash", () => {
     });
     const mockExistsSync = vi.fn(() => false);
 
-    const { findBash } = await loadHelpers({
+    const { findBash } = loadHelpers({
       execSync: mockExecSync,
       existsSync: mockExistsSync,
       env: {
@@ -88,7 +165,7 @@ describe("findBash", () => {
     expect(findBash()).toBe(null);
   });
 
-  it("should use default paths when Windows env vars are absent", async () => {
+  it("should use default paths when Windows env vars are absent", () => {
     Object.defineProperty(process, "platform", { value: "win32" });
 
     const mockExecSync = vi.fn(() => {
@@ -100,7 +177,7 @@ describe("findBash", () => {
       return false;
     });
 
-    const { findBash } = await loadHelpers({
+    const { findBash } = loadHelpers({
       execSync: mockExecSync,
       existsSync: mockExistsSync,
       env: {},
@@ -114,16 +191,23 @@ describe("findBash", () => {
 });
 
 describe("ensureGit", () => {
+  const savedExit = process.exit;
+  const savedLog = console.log;
+  const savedError = console.error;
+
   afterEach(() => {
+    process.exit = savedExit;
+    console.log = savedLog;
+    console.error = savedError;
     vi.restoreAllMocks();
   });
 
-  it("should not throw when git is available", async () => {
-    const { ensureGit } = await loadHelpers();
+  it("should not throw when git is available", () => {
+    const { ensureGit } = loadHelpers();
     expect(() => ensureGit()).not.toThrow();
   });
 
-  it("should call process.exit(1) when git is not available", async () => {
+  it("should call process.exit(1) when git is not available", () => {
     const mockExecSync = vi.fn(() => {
       throw new Error("not found");
     });
@@ -135,7 +219,7 @@ describe("ensureGit", () => {
       error: vi.fn(),
     };
 
-    const { ensureGit } = await loadHelpers({
+    const { ensureGit } = loadHelpers({
       execSync: mockExecSync,
       processExit: mockExit,
       console: mockConsole,
@@ -152,9 +236,9 @@ describe("showUsage", () => {
     vi.restoreAllMocks();
   });
 
-  it("should output usage text to console", async () => {
+  it("should output usage text to console", () => {
     const spy = vi.spyOn(console, "log").mockImplementation(() => {});
-    const { showUsage } = await loadHelpers();
+    const { showUsage } = loadHelpers();
 
     showUsage();
 
@@ -175,91 +259,16 @@ describe("readPackageVersion", () => {
     vi.restoreAllMocks();
   });
 
-  it("should return version from a valid package.json", async () => {
-    const { readPackageVersion } = await loadHelpers();
+  it("should return version from a valid package.json", () => {
+    const { readPackageVersion } = loadHelpers();
     const pkgPath = join(import.meta.dirname, "../../../package.json");
     const result = readPackageVersion(pkgPath);
     expect(typeof result).toBe("string");
     expect(result).toMatch(/^\d+\.\d+\.\d+/);
   });
 
-  it("should throw for a nonexistent package.json path", async () => {
-    const { readPackageVersion } = await loadHelpers();
+  it("should throw for a nonexistent package.json path", () => {
+    const { readPackageVersion } = loadHelpers();
     expect(() => readPackageVersion("/nonexistent/package.json")).toThrow();
   });
 });
-
-/**
- * Helper to load functions from gaia-framework.js.
- * Since the file is a CJS script that calls main() at the bottom,
- * we need to extract functions without triggering main().
- *
- * @param {Object} [mocks] - Optional mock overrides
- * @param {Function} [mocks.execSync] - Mock for child_process.execSync
- * @param {Function} [mocks.existsSync] - Mock for fs.existsSync
- * @param {Object} [mocks.env] - Mock process.env values
- * @param {Function} [mocks.processExit] - Mock for process.exit
- * @param {Object} [mocks.console] - Mock console object
- */
-async function loadHelpers(mocks = {}) {
-  const source = readFileSync(SOURCE_PATH, "utf8");
-
-  // Create a module scope without executing main()
-  const wrappedSource = source
-    .replace("main();", "// main() disabled for testing")
-    .replace("#!/usr/bin/env node", "");
-
-  const fn = new Function(
-    "require",
-    "process",
-    "console",
-    "__dirname",
-    "__filename",
-    `
-    const module = { exports: {} };
-    const exports = module.exports;
-    ${wrappedSource}
-    return { findBash, ensureGit, showUsage, fail, info, cleanup, readPackageVersion };
-  `
-  );
-
-  const binDir = join(import.meta.dirname, "../../../bin");
-
-  // Build a custom require that intercepts child_process and fs
-  const customRequire = (mod) => {
-    if (mod === "child_process" && (mocks.execSync || mocks.execFileSync)) {
-      const real = require("child_process");
-      return {
-        ...real,
-        execSync: mocks.execSync || real.execSync,
-        execFileSync: mocks.execFileSync || real.execFileSync,
-      };
-    }
-    if (mod === "fs" && mocks.existsSync) {
-      const real = require("fs");
-      return {
-        ...real,
-        existsSync: mocks.existsSync,
-      };
-    }
-    return require(mod);
-  };
-  // Preserve require.resolve for any code that uses it
-  customRequire.resolve = require.resolve;
-
-  // Build a custom process with optional overrides
-  const customProcess =
-    mocks.processExit || mocks.env
-      ? new Proxy(process, {
-          get(target, prop) {
-            if (prop === "exit" && mocks.processExit) return mocks.processExit;
-            if (prop === "env" && mocks.env) return { ...target.env, ...mocks.env };
-            return target[prop];
-          },
-        })
-      : process;
-
-  const customConsole = mocks.console || console;
-
-  return fn(customRequire, customProcess, customConsole, binDir, join(binDir, "gaia-framework.js"));
-}
