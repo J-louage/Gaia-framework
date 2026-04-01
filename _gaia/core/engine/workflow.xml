@@ -50,6 +50,12 @@ execution modes (normal/yolo/planning), checkpoints, and quality gates.
     <action>Resolve {installed_path} from workflow.yaml location</action>
     <action>Resolve {date} to current date</action>
     <action>Ask user for any remaining unresolved variables</action>
+
+    <!-- Template Resolution (ADR-020, FR-101) — custom/templates/ overrides _gaia/lifecycle/templates/ -->
+    <!-- Resolution order for template reads: custom/templates/{filename} > _gaia/lifecycle/templates/{filename} -->
+    <!-- Resolution order for template writes: custom/templates/ ONLY — NEVER _gaia/lifecycle/templates/ -->
+    <action>Resolve template paths: If workflow.yaml declares a 'template' field, extract the template filename from the fully resolved template path (e.g., extract "story-template.md" from "{project-root}/_gaia/lifecycle/templates/story-template.md"). Check if {project-root}/custom/templates/{filename} exists and is non-empty (file size > 0 bytes). If yes: the custom template overrides the framework default — replace the resolved template variable with the custom path ({project-root}/custom/templates/{filename}). The custom template takes full precedence and completely replaces the framework default (no merge). If no (custom/templates/ directory does not exist, the specific file is not found, or the file is empty / 0 bytes): keep the original resolved framework path unchanged. No error, no warning on fallback — this is silent. If workflow.yaml has no 'template' field, skip template resolution entirely.</action>
+    <action>Template write-path mandate: Any workflow that writes or modifies template files MUST write to {project-root}/custom/templates/, NEVER to {project-root}/_gaia/lifecycle/templates/. Framework default templates are read-only.</action>
   </step>
 
   <step n="2" title="Preflight Validation">
