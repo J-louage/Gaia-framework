@@ -4,8 +4,7 @@ import { resolve } from "path";
 import yaml from "js-yaml";
 
 const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
-const RETRO_DIR =
-  "_gaia/lifecycle/workflows/4-implementation/retrospective";
+const RETRO_DIR = "_gaia/lifecycle/workflows/4-implementation/retrospective";
 
 /** Load and cache the retro workflow.yaml as a parsed object. */
 function loadRetroWorkflow() {
@@ -15,11 +14,7 @@ function loadRetroWorkflow() {
 
 /** Extract the content of step 6 from the retro instructions.xml. */
 function extractStep6Content() {
-  const instructionsPath = resolve(
-    PROJECT_ROOT,
-    RETRO_DIR,
-    "instructions.xml"
-  );
+  const instructionsPath = resolve(PROJECT_ROOT, RETRO_DIR, "instructions.xml");
   const instructions = readFileSync(instructionsPath, "utf8");
   const step6Match = instructions.match(/<step\s+n="6"[\s\S]*?<\/step>/);
   if (!step6Match) {
@@ -57,9 +52,7 @@ describe("E10-S12: Retro Workflow Custom Skill Write Path", () => {
     });
 
     it("should use custom/skills/ for the write/append action", () => {
-      expect(step6).toMatch(
-        /(?:write|append|save)[\s\S]*?custom\/skills\//i
-      );
+      expect(step6).toMatch(/(?:write|append|save)[\s\S]*?custom\/skills\//i);
     });
   });
 
@@ -71,9 +64,7 @@ describe("E10-S12: Retro Workflow Custom Skill Write Path", () => {
     });
 
     it("should preserve SECTION markers when copying base skill", () => {
-      expect(step6).toMatch(
-        /preserv[\s\S]*?SECTION|SECTION[\s\S]*?marker[\s\S]*?preserv/i
-      );
+      expect(step6).toMatch(/preserv[\s\S]*?SECTION|SECTION[\s\S]*?marker[\s\S]*?preserv/i);
     });
   });
 
@@ -91,9 +82,7 @@ describe("E10-S12: Retro Workflow Custom Skill Write Path", () => {
   // ── AC5: Existing entries preserved ──
   describe("AC5: Existing .customize.yaml entries preserved", () => {
     it("should contain logic to preserve existing entries", () => {
-      expect(step6).toMatch(
-        /(?:already|existing|preserve|duplicate|exists)/i
-      );
+      expect(step6).toMatch(/(?:already|existing|preserve|duplicate|exists)/i);
     });
   });
 
