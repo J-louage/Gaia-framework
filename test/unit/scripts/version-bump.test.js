@@ -1,6 +1,6 @@
 /**
  * Unit tests for scripts/version-bump.js
- * Tests all 8 acceptance criteria for E5-S7
+ * Tests for version-bump.js (E5-S7 + E14-S2 acceptance criteria)
  */
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { execFileSync } from "node:child_process";
@@ -12,7 +12,7 @@ const SCRIPT = path.resolve(__dirname, "../../../scripts/version-bump.js");
 
 /**
  * Create a temporary directory with fixture files mimicking
- * the 5 global version files the script must update.
+ * the 2 global version files the script targets, plus ancillary files for test coverage.
  * gaia-install.sh was removed — it now reads version from package.json at runtime.
  */
 function createFixtures(version = "1.0.0") {
@@ -124,9 +124,9 @@ describe("version-bump.js", () => {
     if (dir) fs.rmSync(dir, { recursive: true, force: true });
   });
 
-  // AC1: patch/minor/major bumps update all 5 global files atomically
-  describe("AC1 — bump type updates all 5 global files", () => {
-    it("patch bump: 1.0.0 → 1.0.1 across all 5 files", () => {
+  // AC1: patch/minor/major bumps update all 2 global files atomically (ADR-025)
+  describe("AC1 — bump type updates all 2 global files", () => {
+    it("patch bump: 1.0.0 → 1.0.1 across both files", () => {
       runBump(dir, ["patch"]);
 
       const pkg = JSON.parse(readVersion(dir, "package.json"));
@@ -134,13 +134,6 @@ describe("version-bump.js", () => {
 
       const global = readVersion(dir, "_gaia/_config/global.yaml");
       expect(global).toContain('framework_version: "1.0.1"');
-
-      const claude = readVersion(dir, "CLAUDE.md");
-      expect(claude).toContain("# GAIA Framework v1.0.1");
-
-      const readme = readVersion(dir, "README.md");
-      expect(readme).toContain("framework-v1.0.1-blue");
-      expect(readme).toContain('framework_version: "1.0.1"');
     });
 
     it("minor bump: 1.0.0 → 1.1.0", () => {
@@ -214,12 +207,12 @@ describe("version-bump.js", () => {
 
   // AC5: missing/unreadable file halts before writing
   describe("AC5 — missing file halts with error", () => {
-    it("halts and names the missing file when CLAUDE.md is deleted", () => {
-      fs.unlinkSync(path.join(dir, "CLAUDE.md"));
+    it("halts and names the missing file when global.yaml is deleted", () => {
+      fs.unlinkSync(path.join(dir, "_gaia", "_config", "global.yaml"));
       const result = runBumpError(dir, ["patch"]);
 
       expect(result.exitCode).not.toBe(0);
-      expect(result.stderr + result.stdout).toContain("CLAUDE.md");
+      expect(result.stderr + result.stdout).toContain("global.yaml");
 
       // Other files should NOT have been written
       const pkg = JSON.parse(readVersion(dir, "package.json"));
@@ -265,7 +258,7 @@ describe("version-bump.js", () => {
 
   // E4-S7 AC5: explicit version mode
   describe("AC5 — explicit version mode", () => {
-    it("accepts explicit version '1.65.0' and updates all 5 files", () => {
+    it("accepts explicit version '1.65.0' and updates both global files", () => {
       runBump(dir, ["1.65.0"]); // explicit version mode
 
       const pkg = JSON.parse(readVersion(dir, "package.json"));
@@ -273,13 +266,6 @@ describe("version-bump.js", () => {
 
       const global = readVersion(dir, "_gaia/_config/global.yaml");
       expect(global).toContain('framework_version: "1.65.0"');
-
-      const claude = readVersion(dir, "CLAUDE.md");
-      expect(claude).toContain("# GAIA Framework v1.65.0");
-
-      const readme = readVersion(dir, "README.md");
-      expect(readme).toContain("framework-v1.65.0-blue");
-      expect(readme).toContain('framework_version: "1.65.0"');
     });
 
     it("rejects invalid explicit version string with non-zero exit", () => {
@@ -299,7 +285,7 @@ describe("version-bump.js", () => {
       // Should report drift but still succeed
       expect(stdout).toMatch(/drift/i);
 
-      // All 5 files should be synced to 1.65.0
+      // Both global files should be synced to 1.65.0
       const pkg = JSON.parse(readVersion(dir, "package.json"));
       expect(pkg.version).toBe("1.65.0");
 
@@ -316,6 +302,80 @@ describe("version-bump.js", () => {
       // Files should NOT be modified
       const pkg = JSON.parse(readVersion(dir, "package.json"));
       expect(pkg.version).toBe("1.0.0");
+    });
+  });
+
+  // E14-S2: Reduce version files from 6 to 2
+  describe("E14-S2 — globalFilePatterns returns exactly 2 entries (AC5)", () => {
+    it("globalFilePatterns returns exactly 2 pattern entries", () => {
+      // Test via dry-run output: should list exactly 2 global file targets
+      const stdout = runBump(dir, ["patch", "--dry-run"]);
+      const globalSection =
+        stdout.split("Global files:")[1]?.split("Module files:")[0] ||
+        stdout.split("Global files:")[1] ||
+        "";
+      const fileLines = globalSection
+        .split("\n")
+        .filter((l) => l.trim() !== "" && l.includes(":") && l.includes("→"));
+      expect(fileLines.length).toBe(2);
+    });
+
+    it("dry-run does NOT list CLAUDE.md as a target (AC3, AC8)", () => {
+      const stdout = runBump(dir, ["patch", "--dry-run"]);
+      expect(stdout).not.toContain("CLAUDE.md");
+    });
+
+    it("dry-run does NOT list README.md as a target (AC4, AC8)", () => {
+      const stdout = runBump(dir, ["patch", "--dry-run"]);
+      expect(stdout).not.toContain("README.md");
+    });
+  });
+
+  describe("E14-S2 — bump only writes to 2 files (AC5)", () => {
+    it("patch bump updates only package.json and global.yaml, leaves CLAUDE.md unchanged", () => {
+      runBump(dir, ["patch"]);
+
+      // package.json and global.yaml should be updated
+      const pkg = JSON.parse(readVersion(dir, "package.json"));
+      expect(pkg.version).toBe("1.0.1");
+      const global = readVersion(dir, "_gaia/_config/global.yaml");
+      expect(global).toContain('framework_version: "1.0.1"');
+
+      // CLAUDE.md should NOT be updated (still contains 1.0.0 if it exists)
+      const claude = readVersion(dir, "CLAUDE.md");
+      expect(claude).toContain("v1.0.0");
+      expect(claude).not.toContain("v1.0.1");
+    });
+
+    it("patch bump leaves README.md unchanged", () => {
+      runBump(dir, ["patch"]);
+
+      // README.md should NOT be updated
+      const readme = readVersion(dir, "README.md");
+      expect(readme).toContain("framework-v1.0.0-blue");
+      expect(readme).not.toContain("framework-v1.0.1-blue");
+    });
+  });
+
+  describe("E14-S2 — script succeeds without CLAUDE.md present (AC5)", () => {
+    it("bump succeeds even when CLAUDE.md does not exist", () => {
+      fs.unlinkSync(path.join(dir, "CLAUDE.md"));
+      // Should NOT fail — CLAUDE.md is no longer a required target
+      const stdout = runBump(dir, ["patch"]);
+      expect(stdout).toContain("1.0.1");
+
+      const pkg = JSON.parse(readVersion(dir, "package.json"));
+      expect(pkg.version).toBe("1.0.1");
+    });
+
+    it("bump succeeds even when README.md does not exist", () => {
+      fs.unlinkSync(path.join(dir, "README.md"));
+      // Should NOT fail — README.md is no longer a required target
+      const stdout = runBump(dir, ["patch"]);
+      expect(stdout).toContain("1.0.1");
+
+      const pkg = JSON.parse(readVersion(dir, "package.json"));
+      expect(pkg.version).toBe("1.0.1");
     });
   });
 });
