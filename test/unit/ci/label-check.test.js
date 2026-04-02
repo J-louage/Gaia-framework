@@ -86,29 +86,20 @@ describe("E14-S6: PR Label Enforcement Status Check — Label Validation Logic",
 
   beforeAll(() => {
     // Load the validation function from the helper module
-    validateBumpLabels = require(
-      path.join(PROJECT_ROOT, "bin/helpers/validate-bump-labels.js"),
-    );
+    validateBumpLabels = require(path.join(PROJECT_ROOT, "bin/helpers/validate-bump-labels.js"));
   });
 
   const VALID_LABELS = ["bump:major", "bump:minor", "bump:patch", "bump:none"];
 
   // AC2: Exactly one valid bump label passes
   describe("AC2: Passes with exactly one bump label", () => {
-    it.each(VALID_LABELS)(
-      "should pass when '%s' is the only bump label",
-      (label) => {
-        const result = validateBumpLabels([label]);
-        expect(result.pass).toBe(true);
-      },
-    );
+    it.each(VALID_LABELS)("should pass when '%s' is the only bump label", (label) => {
+      const result = validateBumpLabels([label]);
+      expect(result.pass).toBe(true);
+    });
 
     it("should pass with bump:patch and non-bump labels", () => {
-      const result = validateBumpLabels([
-        "bump:patch",
-        "documentation",
-        "enhancement",
-      ]);
+      const result = validateBumpLabels(["bump:patch", "documentation", "enhancement"]);
       expect(result.pass).toBe(true);
     });
 
@@ -151,11 +142,7 @@ describe("E14-S6: PR Label Enforcement Status Check — Label Validation Logic",
     });
 
     it("should fail when multiple bump labels plus non-bump labels are present", () => {
-      const result = validateBumpLabels([
-        "bump:major",
-        "bump:none",
-        "documentation",
-      ]);
+      const result = validateBumpLabels(["bump:major", "bump:none", "documentation"]);
       expect(result.pass).toBe(false);
       expect(result.message).toContain("Multiple bump labels found");
     });
@@ -164,11 +151,7 @@ describe("E14-S6: PR Label Enforcement Status Check — Label Validation Logic",
   // Edge case: non-bump labels are ignored
   describe("Non-bump labels are ignored", () => {
     it("should not count labels that do not start with bump:", () => {
-      const result = validateBumpLabels([
-        "feature",
-        "priority:high",
-        "bump:patch",
-      ]);
+      const result = validateBumpLabels(["feature", "priority:high", "bump:patch"]);
       expect(result.pass).toBe(true);
     });
 

@@ -3,12 +3,7 @@
  * Used by .github/workflows/label-check.yml (E14-S6, ADR-025).
  */
 
-const VALID_BUMP_LABELS = Object.freeze([
-  "bump:major",
-  "bump:minor",
-  "bump:patch",
-  "bump:none",
-]);
+const VALID_BUMP_LABELS = Object.freeze(["bump:major", "bump:minor", "bump:patch", "bump:none"]);
 
 /**
  * Validate that exactly one bump:* label is present on a PR.
