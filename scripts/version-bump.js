@@ -43,6 +43,8 @@ function pat(file, label, readRe, replRe) {
 
 /**
  * The 2 global version targets: package.json and global.yaml (ADR-025).
+ * gaia-install.sh was removed — it now reads version from package.json at runtime.
+ * CLAUDE.md, README.md were removed — version is no longer hardcoded in those files.
  */
 function globalFilePatterns(root) {
   const j = (...segs) => path.join(root, ...segs);
@@ -112,7 +114,9 @@ function computeNewVersion(currentVersion, bumpType, prerelease, stripPrerelease
   // bump:none — increment RC counter only
   if (bumpType === "none") {
     if (parsed.rc == null) {
-      console.error(`Error: No RC suffix to increment. Version "${currentVersion}" has no -rc.N suffix. Use a bump type (patch/minor/major) with --prerelease rc instead.`);
+      console.error(
+        `Error: No RC suffix to increment. Version "${currentVersion}" has no -rc.N suffix. Use a bump type (patch/minor/major) with --prerelease rc instead.`
+      );
       process.exit(1);
     }
     return formatVersion({ ...parsed, rc: parsed.rc + 1 });
@@ -121,7 +125,9 @@ function computeNewVersion(currentVersion, bumpType, prerelease, stripPrerelease
   // --prerelease rc with bump type
   if (prerelease === "rc") {
     if (parsed.rc != null) {
-      console.error(`Error: Version "${currentVersion}" already has an RC suffix. Use "none" to increment the RC counter, or --strip-prerelease to remove it first.`);
+      console.error(
+        `Error: Version "${currentVersion}" already has an RC suffix. Use "none" to increment the RC counter, or --strip-prerelease to remove it first.`
+      );
       process.exit(1);
     }
 
@@ -132,13 +138,25 @@ function computeNewVersion(currentVersion, bumpType, prerelease, stripPrerelease
       return formatVersion({ major: parsed.major, minor: parsed.minor + 1, patch: 0, rc: 1 });
     }
     // patch
-    return formatVersion({ major: parsed.major, minor: parsed.minor, patch: parsed.patch + 1, rc: 1 });
+    return formatVersion({
+      major: parsed.major,
+      minor: parsed.minor,
+      patch: parsed.patch + 1,
+      rc: 1,
+    });
   }
 
   // Standard bump (no prerelease)
-  if (bumpType === "major") return formatVersion({ major: parsed.major + 1, minor: 0, patch: 0, rc: null });
-  if (bumpType === "minor") return formatVersion({ major: parsed.major, minor: parsed.minor + 1, patch: 0, rc: null });
-  return formatVersion({ major: parsed.major, minor: parsed.minor, patch: parsed.patch + 1, rc: null });
+  if (bumpType === "major")
+    return formatVersion({ major: parsed.major + 1, minor: 0, patch: 0, rc: null });
+  if (bumpType === "minor")
+    return formatVersion({ major: parsed.major, minor: parsed.minor + 1, patch: 0, rc: null });
+  return formatVersion({
+    major: parsed.major,
+    minor: parsed.minor,
+    patch: parsed.patch + 1,
+    rc: null,
+  });
 }
 
 // ── File I/O helpers ────────────────────────────────────────────────────────
