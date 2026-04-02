@@ -375,7 +375,7 @@ describe("version-bump.js", () => {
       fs.writeFileSync(
         path.join(dir, "README.md"),
         [
-          '[![Framework](https://img.shields.io/badge/framework-v1.0.0-blue)]()',
+          "[![Framework](https://img.shields.io/badge/framework-v1.0.0-blue)]()",
           "",
           "```yaml",
           'framework_version: "1.0.0"',
