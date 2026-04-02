@@ -7,7 +7,7 @@
  * Usage:
  *   node scripts/version-bump.js <patch|minor|major|X.Y.Z> [--modules mod1,mod2] [--dry-run]
  *
- * Updates 5 global files atomically. Optionally updates module config.yaml
+ * Updates 2 global files atomically. Optionally updates module config.yaml
  * and manifest.yaml entries when --modules is provided.
  *
  * Zero runtime dependencies (ADR-005). File-based regex patterns (ADR-006).
@@ -42,8 +42,9 @@ function pat(file, label, readRe, replRe) {
 }
 
 /**
- * The 5 global version targets. Two entries share README.md (badge + code block).
+ * The 2 global version targets: package.json and global.yaml (ADR-025).
  * gaia-install.sh was removed — it now reads version from package.json at runtime.
+ * CLAUDE.md, README.md were removed — version is no longer hardcoded in those files.
  */
 function globalFilePatterns(root) {
   const j = (...segs) => path.join(root, ...segs);
@@ -57,24 +58,6 @@ function globalFilePatterns(root) {
     pat(
       j("_gaia", "_config", "global.yaml"),
       "_gaia/_config/global.yaml",
-      /framework_version:\s*"(\d+\.\d+\.\d+)"/,
-      /(framework_version:\s*")(\d+\.\d+\.\d+)(")/
-    ),
-    pat(
-      j("CLAUDE.md"),
-      "CLAUDE.md",
-      /# GAIA Framework v(\d+\.\d+\.\d+)/,
-      /(# GAIA Framework v)(\d+\.\d+\.\d+)()/
-    ),
-    pat(
-      j("README.md"),
-      "README.md (badge)",
-      /badge\/framework-v(\d+\.\d+\.\d+)-blue/,
-      /(badge\/framework-v)(\d+\.\d+\.\d+)(-blue)/
-    ),
-    pat(
-      j("README.md"),
-      "README.md (code block)",
       /framework_version:\s*"(\d+\.\d+\.\d+)"/,
       /(framework_version:\s*")(\d+\.\d+\.\d+)(")/
     ),
