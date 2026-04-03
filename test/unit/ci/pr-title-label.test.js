@@ -9,10 +9,7 @@ function readProjectFile(relativePath) {
   return fs.readFileSync(path.join(PROJECT_ROOT, relativePath), "utf8");
 }
 
-const deriveBumpLabel = require(path.join(
-  PROJECT_ROOT,
-  "bin/helpers/derive-bump-label.js",
-));
+const deriveBumpLabel = require(path.join(PROJECT_ROOT, "bin/helpers/derive-bump-label.js"));
 
 // --- Part 1: derive-bump-label unit tests ---
 
@@ -61,7 +58,7 @@ describe("E14-S11: deriveBumpLabel — PR title to bump label mapping", () => {
   it("should return bump:major when body contains BREAKING CHANGE", () => {
     const result = deriveBumpLabel(
       "feat: new API",
-      "Some details\n\nBREAKING CHANGE: removed old endpoints",
+      "Some details\n\nBREAKING CHANGE: removed old endpoints"
     );
     expect(result).toEqual({
       label: "bump:major",
@@ -201,7 +198,7 @@ describe("E14-S11: deriveBumpLabel — PR title to bump label mapping", () => {
   it("should return bump:major for fix: with BREAKING CHANGE in body", () => {
     const result = deriveBumpLabel(
       "fix: repair parser",
-      "Details\n\nBREAKING CHANGE: changed return type",
+      "Details\n\nBREAKING CHANGE: changed return type"
     );
     expect(result).toEqual({
       label: "bump:major",
@@ -218,9 +215,17 @@ describe("E14-S11: deriveBumpLabel — PR title to bump label mapping", () => {
   it("should export TYPE_TO_LABEL as a frozen object with all 9 types", () => {
     const map = deriveBumpLabel.TYPE_TO_LABEL;
     expect(Object.isFrozen(map)).toBe(true);
-    expect(Object.keys(map).sort()).toEqual(
-      ["chore", "ci", "docs", "feat", "fix", "perf", "refactor", "style", "test"],
-    );
+    expect(Object.keys(map).sort()).toEqual([
+      "chore",
+      "ci",
+      "docs",
+      "feat",
+      "fix",
+      "perf",
+      "refactor",
+      "style",
+      "test",
+    ]);
   });
 });
 

@@ -8,8 +8,7 @@
  *   Returns the derived bump label info, or null if title doesn't match.
  */
 
-const TITLE_REGEX =
-  /^(feat|fix|refactor|perf|test|docs|chore|ci|style)(\(.+\))?(!)?: .+$/;
+const TITLE_REGEX = /^(feat|fix|refactor|perf|test|docs|chore|ci|style)(\(.+\))?(!)?: .+$/;
 
 const TYPE_TO_LABEL = Object.freeze({
   feat: "bump:minor",
@@ -29,8 +28,7 @@ function deriveBumpLabel(title, body) {
 
   const type = match[1];
   const bang = match[3] === "!";
-  const bodyBreaking =
-    typeof body === "string" && body.includes("BREAKING CHANGE");
+  const bodyBreaking = typeof body === "string" && body.includes("BREAKING CHANGE");
   const breaking = bang || bodyBreaking;
 
   const label = breaking ? "bump:major" : TYPE_TO_LABEL[type];
