@@ -11,13 +11,7 @@ const SCHEMA_RUNNING = join(
   "templates",
   "gap-entry-schema.md"
 );
-const SCHEMA_PRODUCT = join(
-  PROJECT_ROOT,
-  "_gaia",
-  "lifecycle",
-  "templates",
-  "gap-entry-schema.md"
-);
+const SCHEMA_PRODUCT = join(PROJECT_ROOT, "_gaia", "lifecycle", "templates", "gap-entry-schema.md");
 
 /**
  * E11-S18: Add Optional Protocol Field to Gap Entry Schema
@@ -68,8 +62,7 @@ describe("E11-S18: Gap Entry Schema — Protocol Field", () => {
   describe("AC2: Backward compatibility", () => {
     it("Required vs Optional section clarifies protocol is optional sub-field", () => {
       const content = readFileSync(SCHEMA_PRODUCT, "utf8");
-      const reqOptSection =
-        content.split("### Required vs Optional")[1]?.split("###")[0] || "";
+      const reqOptSection = content.split("### Required vs Optional")[1]?.split("###")[0] || "";
       // Should mention protocol as optional sub-field
       expect(reqOptSection).toMatch(/protocol/i);
       expect(reqOptSection).toMatch(/optional/i);
@@ -123,8 +116,7 @@ describe("E11-S18: Gap Entry Schema — Protocol Field", () => {
   describe("Format Validation", () => {
     it("format validation includes evidence.protocol rule", () => {
       const content = readFileSync(SCHEMA_PRODUCT, "utf8");
-      const formatSection =
-        content.split("### Format Validation")[1]?.split("###")[0] || "";
+      const formatSection = content.split("### Format Validation")[1]?.split("###")[0] || "";
       expect(formatSection).toMatch(/evidence\.protocol/);
     });
   });
