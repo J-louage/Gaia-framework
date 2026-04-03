@@ -14,14 +14,7 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import {
-  readFileSync,
-  existsSync,
-  writeFileSync,
-  mkdirSync,
-  mkdtempSync,
-  rmSync,
-} from "fs";
+import { readFileSync, existsSync, writeFileSync, mkdirSync, mkdtempSync, rmSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
 import { execSync } from "child_process";
@@ -46,10 +39,7 @@ describe("E10-S15: Custom Write-Path Integration Tests", () => {
     let retroConfig;
 
     beforeAll(() => {
-      const content = readFileSync(
-        join(RETRO_WORKFLOW_DIR, "workflow.yaml"),
-        "utf8"
-      );
+      const content = readFileSync(join(RETRO_WORKFLOW_DIR, "workflow.yaml"), "utf8");
       retroConfig = yaml.load(content);
     });
 
@@ -71,11 +61,7 @@ describe("E10-S15: Custom Write-Path Integration Tests", () => {
 
     it("should have resolved config consistent with workflow.yaml skill_updates", () => {
       // Check for resolved config — may or may not exist
-      const resolvedPath = join(
-        RETRO_WORKFLOW_DIR,
-        ".resolved",
-        "retrospective.yaml"
-      );
+      const resolvedPath = join(RETRO_WORKFLOW_DIR, ".resolved", "retrospective.yaml");
       if (!existsSync(resolvedPath)) {
         // No resolved config present — skip consistency check (not a failure)
         return;
@@ -119,8 +105,7 @@ describe("E10-S15: Custom Write-Path Integration Tests", () => {
       });
       writeFileSync(
         join(sourceDir, "package.json"),
-        JSON.stringify({ name: "gaia-framework", version: "1.66.0" }, null, 2) +
-          "\n"
+        JSON.stringify({ name: "gaia-framework", version: "1.66.0" }, null, 2) + "\n"
       );
       // Create CLAUDE.md so the installer can copy it
       writeFileSync(join(sourceDir, "CLAUDE.md"), "# GAIA\n");
@@ -147,10 +132,11 @@ describe("E10-S15: Custom Write-Path Integration Tests", () => {
     /** Run the installer against tempDir using the source-local copy of the script */
     function runInstaller() {
       const script = join(sourceDir, "gaia-install.sh");
-      execSync(
-        `bash "${script}" init --source "${sourceDir}" --yes "${tempDir}"`,
-        { stdio: "pipe", timeout: 30000, env: { ...process.env, TERM: "dumb" } }
-      );
+      execSync(`bash "${script}" init --source "${sourceDir}" --yes "${tempDir}"`, {
+        stdio: "pipe",
+        timeout: 30000,
+        env: { ...process.env, TERM: "dumb" },
+      });
     }
 
     it("should create custom/skills/ directory after init", () => {
@@ -221,13 +207,7 @@ describe("E10-S15: Custom Write-Path Integration Tests", () => {
           return { path: customPath, source: "custom" };
         }
       }
-      const frameworkPath = join(
-        projectRoot,
-        "_gaia",
-        "lifecycle",
-        "templates",
-        filename
-      );
+      const frameworkPath = join(projectRoot, "_gaia", "lifecycle", "templates", filename);
       if (existsSync(frameworkPath)) {
         return { path: frameworkPath, source: "framework" };
       }
@@ -272,10 +252,7 @@ describe("E10-S15: Custom Write-Path Integration Tests", () => {
         mkdirSync(join(bareProject, "_gaia", "lifecycle", "templates"), {
           recursive: true,
         });
-        writeFileSync(
-          join(bareProject, "_gaia", "lifecycle", "templates", "test.md"),
-          "# Default"
-        );
+        writeFileSync(join(bareProject, "_gaia", "lifecycle", "templates", "test.md"), "# Default");
 
         const result = resolveTemplate(bareProject, "test.md");
         expect(result).not.toBeNull();
