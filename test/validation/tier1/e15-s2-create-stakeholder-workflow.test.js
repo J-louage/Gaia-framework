@@ -51,8 +51,7 @@ function parseCSV(relativePath) {
 // ─── AC1: Workflow registration and structure ────────────────
 
 describe("AC1: Workflow scaffolding and registration", () => {
-  const workflowDir =
-    "_gaia/lifecycle/workflows/4-implementation/create-stakeholder";
+  const workflowDir = "_gaia/lifecycle/workflows/4-implementation/create-stakeholder";
 
   it("workflow.yaml exists", () => {
     expect(fileExists(`${workflowDir}/workflow.yaml`)).toBe(true);
@@ -85,9 +84,7 @@ describe("AC1: Workflow scaffolding and registration", () => {
   });
 
   it("slash command file exists", () => {
-    expect(fileExists(".claude/commands/gaia-create-stakeholder.md")).toBe(
-      true
-    );
+    expect(fileExists(".claude/commands/gaia-create-stakeholder.md")).toBe(true);
   });
 
   it("slash command references correct workflow.yaml", () => {
