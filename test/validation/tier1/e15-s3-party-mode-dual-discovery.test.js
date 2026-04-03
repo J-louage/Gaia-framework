@@ -12,8 +12,7 @@ function fileExists(relativePath) {
   return existsSync(join(PROJECT_ROOT, relativePath));
 }
 
-const STEP_FILE =
-  "_gaia/core/workflows/party-mode/steps/step-01-agent-loading.md";
+const STEP_FILE = "_gaia/core/workflows/party-mode/steps/step-01-agent-loading.md";
 
 function getStepContent() {
   return readFile(STEP_FILE);
@@ -86,9 +85,7 @@ describe("AC3: Name collision disambiguation", () => {
 describe("AC4: Stakeholder-only party (zero GAIA agents)", () => {
   it("allows party with zero GAIA agents and one+ stakeholders", () => {
     const content = getStepContent().toLowerCase();
-    expect(content).toMatch(
-      /zero.*gaia.*agent|stakeholder.only|no.*gaia.*agent/
-    );
+    expect(content).toMatch(/zero.*gaia.*agent|stakeholder.only|no.*gaia.*agent/);
     expect(content).toMatch(/valid/);
   });
 
@@ -156,9 +153,7 @@ describe("Merged invitation options", () => {
 describe("Edge case handling", () => {
   it("handles missing custom/stakeholders/ directory silently", () => {
     const content = getStepContent().toLowerCase();
-    expect(content).toMatch(
-      /directory.*not exist|does not exist|no.*directory|silently/
-    );
+    expect(content).toMatch(/directory.*not exist|does not exist|no.*directory|silently/);
   });
 
   it("handles empty stakeholder files (0 bytes)", () => {
