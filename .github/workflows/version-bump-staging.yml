@@ -128,7 +128,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add package.json Gaia-framework/_gaia/_config/global.yaml
+          git add package.json _gaia/_config/global.yaml
 
           if git diff --cached --quiet; then
             echo "No version changes to commit"
