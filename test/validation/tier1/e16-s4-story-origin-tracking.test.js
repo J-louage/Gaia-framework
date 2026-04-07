@@ -5,10 +5,7 @@ import { PROJECT_ROOT } from "../../helpers/project-root.js";
 
 // ─── File Paths ─────────────────────────────────────────────
 
-const FRAMEWORK_TEMPLATE = join(
-  PROJECT_ROOT,
-  "_gaia/lifecycle/templates/story-template.md"
-);
+const FRAMEWORK_TEMPLATE = join(PROJECT_ROOT, "_gaia/lifecycle/templates/story-template.md");
 
 const CREATE_STORY_INSTRUCTIONS = join(
   PROJECT_ROOT,
@@ -71,18 +68,14 @@ describe("AC2: Create-story instructions populate origin fields", () => {
   it("should include origin in the YAML frontmatter field list alongside other fields", () => {
     // The action that populates frontmatter fields should list origin
     // Look for a section that lists multiple frontmatter fields AND includes origin
-    const populateSection = content.match(
-      /Populate ALL YAML frontmatter[\s\S]*?<\/action>/i
-    );
+    const populateSection = content.match(/Populate ALL YAML frontmatter[\s\S]*?<\/action>/i);
     expect(populateSection).not.toBeNull();
     expect(populateSection[0]).toContain("origin");
   });
 
   it("should detect problem-solving invocation context for setting origin", () => {
     // There should be logic to detect when invoked from problem-solving routing
-    expect(content).toMatch(
-      /problem.solving.*origin|origin.*problem.solving/is
-    );
+    expect(content).toMatch(/problem.solving.*origin|origin.*problem.solving/is);
   });
 });
 
@@ -94,9 +87,7 @@ describe("AC3: Validate-story treats missing origin fields as acceptable", () =>
   it("should NOT list origin in required YAML frontmatter fields", () => {
     // The required field count should remain at 14 (not 16)
     // origin and origin_ref are optional
-    const requiredFieldsMatch = content.match(
-      /(?:required fields|verify all \d+ required)/i
-    );
+    const requiredFieldsMatch = content.match(/(?:required fields|verify all \d+ required)/i);
     if (requiredFieldsMatch) {
       // If a count is mentioned, it should be 14 (not include origin/origin_ref)
       expect(requiredFieldsMatch[0]).not.toMatch(/16/);
