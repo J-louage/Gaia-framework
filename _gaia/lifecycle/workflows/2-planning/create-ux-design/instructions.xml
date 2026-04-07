@@ -32,12 +32,21 @@
   <action>Plan keyboard navigation, screen reader support</action>
   <action>Define color contrast and text sizing standards</action>
 </step>
-<step n="7" title="Generate Output">
+<step n="7" title="Figma Import Mode (Optional)" if="figma_mcp_available">
+  <ask>A Figma MCP server is available. Would you like to import an existing Figma file to generate ux-design.md? This reads design data from Figma (read-only — no write operations). (import / skip)</ask>
+  <action if="import">JIT-load figma-integration:import-detection section. Prompt user for Figma file URL or raw file key. Parse and validate the key via MCP.</action>
+  <action if="import">JIT-load figma-integration:import-discovery section. Run page and frame discovery — enumerate all pages and frames from the Figma file.</action>
+  <action if="import">JIT-load figma-integration:import-tokens section. Extract design tokens from the Figma file and write design-tokens.json in W3C DTCG format to {planning_artifacts}/design-system/.</action>
+  <action if="import">JIT-load figma-integration:import-screens section. Build screen inventory from frame hierarchy with viewport classification and component instance extraction.</action>
+  <action if="import">JIT-load figma-integration:import-generate section. Generate ux-design.md with figma: YAML frontmatter (file_key, pages, node_ids), Design Tokens section, Component Inventory, and Screen Descriptions.</action>
+  <action if="skip">Figma import skipped. Proceeding with manual UX design generation.</action>
+</step>
+<step n="8" title="Generate Output">
   <template-output file="{planning_artifacts}/ux-design.md">
-    Generate UX design document with: personas, information architecture, wireframe descriptions, interaction patterns, component specifications, accessibility plan, and FR-to-Screen Mapping table (FR ID | Screen/Page | Wireframe Section).
+    Generate UX design document with: personas, information architecture, wireframe descriptions, interaction patterns, component specifications, accessibility plan, and FR-to-Screen Mapping table (FR ID | Screen/Page | Wireframe Section). If Figma import was used in Step 7, the document is already populated — enhance it with any additional UX decisions from Steps 2-6.
   </template-output>
 </step>
-<step n="8" title="Optional: Accessibility Review">
+<step n="9" title="Optional: Accessibility Review">
   <ask>Would you like to review the UX design for WCAG 2.1 accessibility compliance? This spawns a subagent in a separate context. Recommended for user-facing applications. (yes / skip)</ask>
   <action>If yes: spawn a subagent using the Agent tool: "Load {project-root}/_gaia/core/tasks/review-accessibility.xml. Read its entire contents. Target: {planning_artifacts}/ux-design.md. Follow the flow steps EXACTLY. Generate accessibility findings report."</action>
   <action>If skip: accessibility review can be run anytime later with /gaia-review-a11y</action>

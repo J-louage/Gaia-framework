@@ -61,4 +61,9 @@ skills:
       - { id: components, line_range: [96, 129], description: "Component spec extraction to tech-agnostic YAML" }
       - { id: frames, line_range: [130, 148], description: "UI kit frame generation across viewports" }
       - { id: assets, line_range: [149, 170], description: "Asset export at multiple densities" }
-      - { id: export, line_range: [171, 219], description: "Per-stack token resolution table for all dev agents" }
+      - { id: export, line_range: [171, 220], description: "Per-stack token resolution table for all dev agents" }
+      - { id: import-detection, line_range: [221, 243], description: "Import mode entry point — URL/key validation, error handling" }
+      - { id: import-discovery, line_range: [244, 267], description: "Import mode page and frame discovery via MCP" }
+      - { id: import-tokens, line_range: [269, 287], description: "Import mode design token extraction to W3C DTCG" }
+      - { id: import-screens, line_range: [288, 311], description: "Import mode screen inventory and frame-to-screen mapping" }
+      - { id: import-generate, line_range: [312, 339], description: "Import mode ux-design.md generation with figma: frontmatter" }
