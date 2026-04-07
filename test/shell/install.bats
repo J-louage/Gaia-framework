@@ -2012,3 +2012,44 @@ YAML
 
   rm -rf "$SRC_DIR"
 }
+
+@test "E18-S1: sprint gate still blocks in --dry-run mode (gate runs before file ops)" {
+  local sprint_yaml
+  sprint_yaml="$(cat <<'YAML'
+sprint_id: "sprint-10"
+stories:
+  - key: "E1-S1"
+    title: "Active Story"
+    status: "in-progress"
+    points: 3
+YAML
+)"
+  local SRC_DIR
+  SRC_DIR="$(create_installed_target_with_sprint "$TEST_DIR" "$sprint_yaml")"
+
+  run bash "$SCRIPT" update --source "$SRC_DIR" --yes --dry-run "$TEST_DIR"
+  [ "$status" -eq 1 ]
+  [[ "$output" == *"Upgrade blocked"* ]]
+
+  rm -rf "$SRC_DIR"
+}
+
+@test "E18-S1: sprint gate shows 'unknown' sprint_id when sprint_id field absent" {
+  local sprint_yaml
+  sprint_yaml="$(cat <<'YAML'
+stories:
+  - key: "E1-S1"
+    title: "Active Story"
+    status: "in-progress"
+    points: 3
+YAML
+)"
+  local SRC_DIR
+  SRC_DIR="$(create_installed_target_with_sprint "$TEST_DIR" "$sprint_yaml")"
+
+  run bash "$SCRIPT" update --source "$SRC_DIR" --yes "$TEST_DIR"
+  [ "$status" -eq 1 ]
+  [[ "$output" == *"unknown"* ]]
+
+  rm -rf "$SRC_DIR"
+}
