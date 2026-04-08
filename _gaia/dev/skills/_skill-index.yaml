@@ -56,10 +56,15 @@ skills:
 
   - file: figma-integration.md
     sections:
-      - { id: detection, line_range: [6, 17], description: "MCP probe, timeout, mode selection" }
-      - { id: tokens, line_range: [19, 31], description: "Design token extraction to W3C DTCG JSON" }
-      - { id: components, line_range: [33, 45], description: "Component spec extraction to YAML" }
-      - { id: frames, line_range: [47, 57], description: "Frame generation (Generate mode)" }
-      - { id: assets, line_range: [59, 70], description: "Asset export (icons, images, multi-density)" }
-      - { id: export, line_range: [72, 86], description: "Per-stack token resolution tables" }
-      - { id: fidelity, line_range: [88, 180], description: "Design-to-implementation fidelity gate" }
+      - { id: detection, line_range: [48, 135], description: "Figma MCP detection probe, failure handling, adapter selection, security guardrails, API scopes, error sanitization" }
+      - { id: tokens, line_range: [136, 166], description: "Design token extraction in W3C DTCG format" }
+      - { id: components, line_range: [167, 202], description: "Component spec extraction to tech-agnostic YAML" }
+      - { id: frames, line_range: [203, 223], description: "UI kit frame generation across viewports" }
+      - { id: assets, line_range: [224, 247], description: "Asset export at multiple densities" }
+      - { id: export, line_range: [248, 299], description: "Per-stack token resolution table, path resolution rules, and semantic alias resolution for all dev agents" }
+      - { id: import-detection, line_range: [300, 322], description: "Import mode entry point — URL/key validation, error handling" }
+      - { id: import-discovery, line_range: [323, 347], description: "Import mode page and frame discovery via MCP" }
+      - { id: import-tokens, line_range: [348, 366], description: "Import mode design token extraction to W3C DTCG" }
+      - { id: import-screens, line_range: [367, 390], description: "Import mode screen inventory and frame-to-screen mapping" }
+      - { id: import-generate, line_range: [391, 419], description: "Import mode ux-design.md generation with figma: frontmatter" }
+      - { id: fidelity, line_range: [420, 498], description: "Design-to-implementation fidelity gate — token drift detection, per-category reporting, threshold-based gating" }
