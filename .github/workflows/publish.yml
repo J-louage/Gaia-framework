@@ -186,8 +186,15 @@ jobs:
 
       - name: Generate checksums
         run: |
+          VERSION=$(node -p "require('./package.json').version")
+          rm -f gaia-framework-*.tgz
           npm pack
-          TGZ_FILE=$(ls gaia-framework-*.tgz)
+          TGZ_FILE="gaia-framework-${VERSION}.tgz"
+          if [ ! -f "$TGZ_FILE" ]; then
+            echo "::error::Expected tarball $TGZ_FILE not found after npm pack"
+            ls -la gaia-framework-*.tgz || true
+            exit 1
+          fi
           sha256sum "$TGZ_FILE" > checksums.txt
           echo "Generated checksums:"
           cat checksums.txt
