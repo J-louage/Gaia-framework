@@ -18,6 +18,7 @@ validation-target: 'Story implementation'
 - [ ] All tests pass
 - [ ] No lint errors
 - [ ] Code follows conventions
+- [ ] PR merged to {promotion_chain[0].branch}
 ## Completion
 - [ ] Status updated to review
 - [ ] sprint-status.yaml updated
