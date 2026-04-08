@@ -53,3 +53,12 @@ skills:
       - { id: input-validation, line_range: [69, 118], description: "Validation at system boundaries" }
       - { id: secrets-management, line_range: [119, 166], description: "Environment-based secrets" }
       - { id: cors-csrf, line_range: [167, 230], description: "CORS and CSRF configuration, protection" }
+
+  - file: figma-integration.md
+    sections:
+      - { id: detection, line_range: [20, 73], description: "Figma MCP server detection probe and failure handling" }
+      - { id: tokens, line_range: [74, 78], description: "Design token extraction (placeholder)" }
+      - { id: components, line_range: [79, 83], description: "Component mapping (placeholder)" }
+      - { id: frames, line_range: [84, 88], description: "Frame navigation (placeholder)" }
+      - { id: assets, line_range: [89, 93], description: "Asset export (placeholder)" }
+      - { id: export, line_range: [94, 97], description: "Export pipeline (placeholder)" }
