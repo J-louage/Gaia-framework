@@ -101,7 +101,9 @@ describe("E20-S7: Dev-Story Step 15 — Wait for CI Checks", () => {
       const content = loadFile(DEV_STORY_INSTRUCTIONS);
       expect(content).not.toBeNull();
       expect(content).toMatch(/gaia-resume/);
-      expect(content).toMatch(/timed?\s*out.*minute|minute.*timed?\s*out|\{N\}.*minute|minute.*\{N\}/i);
+      expect(content).toMatch(
+        /timed?\s*out.*minute|minute.*timed?\s*out|\{N\}.*minute|minute.*\{N\}/i
+      );
     });
   });
 
@@ -111,7 +113,9 @@ describe("E20-S7: Dev-Story Step 15 — Wait for CI Checks", () => {
     it("instructions.xml Step 15 defines CI success path showing success summary and proceeding to Step 16", () => {
       const content = loadFile(DEV_STORY_INSTRUCTIONS);
       expect(content).not.toBeNull();
-      expect(content).toMatch(/all.*ci.*check.*pass|ci.*check.*all.*pass|all.*checks.*pass[\s\S]*step.?16|all.*passed[\s\S]*step.?16/i);
+      expect(content).toMatch(
+        /all.*ci.*check.*pass|ci.*check.*all.*pass|all.*checks.*pass[\s\S]*step.?16|all.*passed[\s\S]*step.?16/i
+      );
     });
   });
 
