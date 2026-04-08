@@ -3,12 +3,7 @@ import { readFileSync, existsSync } from "fs";
 import { join } from "path";
 import { PROJECT_ROOT } from "../../helpers/project-root.js";
 
-const EXAMPLE_PATH = join(
-  PROJECT_ROOT,
-  "docs",
-  "test-artifacts",
-  "test-environment.yaml.example"
-);
+const EXAMPLE_PATH = join(PROJECT_ROOT, "docs", "test-artifacts", "test-environment.yaml.example");
 
 const VALIDATOR_PATH = join(
   PROJECT_ROOT,
@@ -98,9 +93,7 @@ describe("E17-S7: test-environment.yaml Manifest Schema", () => {
       const result = validateTestEnvironment(yamlContent);
       expect(result.valid).toBe(false);
       expect(result.warnings.length).toBeGreaterThan(0);
-      expect(
-        result.warnings.some((w) => w.toLowerCase().includes("version"))
-      ).toBe(true);
+      expect(result.warnings.some((w) => w.toLowerCase().includes("version"))).toBe(true);
     });
 
     it("validator rejects missing 'runners' field", async () => {
@@ -108,9 +101,7 @@ describe("E17-S7: test-environment.yaml Manifest Schema", () => {
       const yamlContent = `version: 1`;
       const result = validateTestEnvironment(yamlContent);
       expect(result.valid).toBe(false);
-      expect(
-        result.warnings.some((w) => w.toLowerCase().includes("runners"))
-      ).toBe(true);
+      expect(result.warnings.some((w) => w.toLowerCase().includes("runners"))).toBe(true);
     });
 
     it("validator rejects runner entry without 'command'", async () => {
@@ -121,9 +112,7 @@ runners:
     tier: 1`;
       const result = validateTestEnvironment(yamlContent);
       expect(result.valid).toBe(false);
-      expect(
-        result.warnings.some((w) => w.toLowerCase().includes("command"))
-      ).toBe(true);
+      expect(result.warnings.some((w) => w.toLowerCase().includes("command"))).toBe(true);
     });
 
     it("validator passes a valid manifest with required fields only", async () => {
