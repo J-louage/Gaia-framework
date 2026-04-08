@@ -416,3 +416,83 @@ Assemble the extracted data into a complete ux-design.md document with Figma met
 - `{planning_artifacts}/design-system/component-specs.yaml` — component specs (updated with import data)
 
 **Shared formats:** Import mode writes the same intermediate files as Generate mode (design-tokens.json, component-specs.yaml) using identical schemas from E13-S3. This ensures downstream dev agents consume imported designs identically to generated ones.
+
+<!-- SECTION: fidelity -->
+## Design-to-Implementation Fidelity Gate
+
+Post-implementation verification layer that compares token values in generated code against the approved `design-tokens.json` to detect and measure drift between design intent and implementation. Addresses FR-171 and ADR-024. Consumed by `/gaia-code-review` as a conditional step when the story has a `figma:` frontmatter block.
+
+### Token Extraction from Generated Code
+
+Scan generated code files for token references using platform-specific patterns:
+
+- **CSS custom properties:** `var(--color-primary-500)` maps to `color.primary.500`
+- **SCSS variables:** `$color-primary-500` maps to `color.primary.500`
+- **Flutter ThemeData:** `AppTokens.color.primary500` maps to `color.primary.500`
+- **Spring properties:** `design.tokens.color.primary.500`
+- **Python dict:** `TOKENS['color']['primary.500']`
+- **React Native / Swift / Compose:** platform-specific mappings per the export section resolution table
+
+Use the per-stack token resolution table from the `export` section above to reverse-map platform-specific references back to canonical W3C DTCG paths before comparison.
+
+### Deep Comparison Engine
+
+For each token reference extracted from code:
+
+1. Look up the canonical W3C DTCG path in `{planning_artifacts}/design-system/design-tokens.json`
+2. Compare the value used in code against the approved value in design-tokens.json
+3. Classify each token as:
+   - **matched** — value in code exactly matches design-tokens.json
+   - **drifted** — token exists in design-tokens.json but value differs
+   - **missing** — token referenced in code but absent from design-tokens.json
+
+### Per-Category Drift Reporting
+
+Group all compared tokens by W3C DTCG top-level category:
+
+- `color.*` — color palette, semantic colors, surface colors
+- `typography.*` — font families, sizes, weights, line heights
+- `spacing.*` — margins, paddings, gaps
+- `border.*` / `radius.*` — border widths, styles, border-radius values
+
+Calculate drift percentage per category using the formula: `drift_pct = (drifted + missing) / total × 100`
+
+Generate a structured fidelity report with a per-category breakdown table:
+
+| Category | Total | Matched | Drifted | Missing | Drift % | Status |
+|----------|-------|---------|---------|---------|---------|--------|
+| color.*  | 20    | 18      | 1       | 1       | 10%     | WARN   |
+
+### Threshold-Based Gating
+
+Two configurable thresholds (defaults from FR-171):
+
+- **10% WARNING** — drift exceeds 10% in any category: raise a WARNING. Story may continue but issue is flagged.
+- **25% BLOCK** — drift exceeds 25% in any category: story completion is BLOCKED and re-review is required.
+
+**Edge case handling:**
+
+- **Empty categories** — if a category has zero tokens referenced, skip it (do not report 0/0 as drift)
+- **N=1 single-token categories** — if a category has only one token and it is drifted, flag with a note "Single-token category — flagged but not auto-blocked (N=1 exception)" instead of blocking. Prevents a single mismatched border-radius from blocking an entire story.
+- **Missing design-tokens.json** — if `design-tokens.json` does not exist at the expected path, skip the fidelity check gracefully with a note: "Fidelity check skipped — design-tokens.json not found at {path}." No crash, no block.
+- **Zero tokens consumed** — if generated code references zero tokens (no `figma:` block consumed or no token patterns found), report "N/A — no tokens consumed" and skip the fidelity check.
+
+### Report Persistence
+
+Save the fidelity report to `{implementation_artifacts}/reviews/{story_key}/fidelity-report.md`. The report includes:
+
+- **Timestamp** — ISO 8601 date of the fidelity check
+- **Story key** — the story_key being checked
+- **Token source file path** — path to the design-tokens.json used as baseline
+- **Per-category breakdown table** (as shown above)
+- **Overall drift percentage** — weighted average across all categories
+- **Verdict** — PASS / WARNING / BLOCKED
+
+After saving the report, write the overall drift percentage to the story file YAML frontmatter:
+
+```yaml
+figma:
+  fidelity_drift_pct: 8.5
+```
+
+The `figma.fidelity_drift_pct` value is the weighted overall drift across all categories.

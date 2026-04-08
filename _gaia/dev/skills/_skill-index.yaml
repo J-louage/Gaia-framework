@@ -66,4 +66,5 @@ skills:
       - { id: import-discovery, line_range: [323, 347], description: "Import mode page and frame discovery via MCP" }
       - { id: import-tokens, line_range: [348, 366], description: "Import mode design token extraction to W3C DTCG" }
       - { id: import-screens, line_range: [367, 390], description: "Import mode screen inventory and frame-to-screen mapping" }
-      - { id: import-generate, line_range: [391, 418], description: "Import mode ux-design.md generation with figma: frontmatter" }
+      - { id: import-generate, line_range: [391, 419], description: "Import mode ux-design.md generation with figma: frontmatter" }
+      - { id: fidelity, line_range: [420, 498], description: "Design-to-implementation fidelity gate — token drift detection, per-category reporting, threshold-based gating" }
