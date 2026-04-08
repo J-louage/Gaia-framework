@@ -115,9 +115,7 @@ describe("E19-S1: Gap Analysis Workflow — Coverage Mode", () => {
       const content = loadFile(INSTRUCTIONS_XML);
       expect(content).not.toBeNull();
       // Must handle the no-gap scenario — not just the happy path
-      expect(content).toMatch(
-        /no.*(?:gap|coverage\s*gap).*detected|no.*coverage.*gaps|zero.*gap/i
-      );
+      expect(content).toMatch(/no.*(?:gap|coverage\s*gap).*detected|no.*coverage.*gaps|zero.*gap/i);
     });
   });
 });
