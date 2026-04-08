@@ -223,9 +223,7 @@ describe("E13-S8 AC2: Generates design-tokens.json in W3C DTCG format", () => {
     const parsed = JSON.parse(raw);
 
     // W3C DTCG: tokens are objects with a $value and $type field
-    const firstTokenKey = Object.keys(parsed).find(
-      (k) => !k.startsWith("$")
-    );
+    const firstTokenKey = Object.keys(parsed).find((k) => !k.startsWith("$"));
     expect(firstTokenKey).toBeDefined();
     const token = parsed[firstTokenKey];
     expect(token).toHaveProperty("$value");
@@ -240,10 +238,7 @@ describe("E13-S8 AC2: Generates design-tokens.json in W3C DTCG format", () => {
     const parsed = JSON.parse(raw);
 
     // DTCG files should declare their schema or contain metadata
-    const hasSchema =
-      "$schema" in parsed ||
-      "$metadata" in parsed ||
-      "$description" in parsed;
+    const hasSchema = "$schema" in parsed || "$metadata" in parsed || "$description" in parsed;
     expect(hasSchema).toBe(true);
   });
 });
@@ -319,10 +314,7 @@ describe("E13-S8 AC4: Output placed in design-system seed directory", () => {
   beforeEach(() => {
     cleanFixtures();
     projectDir = createFixtureDir("ac4-output-path");
-    writeFileSync(
-      join(projectDir, "styles.css"),
-      `:root { --color-primary: #3b82f6; }`
-    );
+    writeFileSync(join(projectDir, "styles.css"), `:root { --color-primary: #3b82f6; }`);
   });
 
   it("should create the design-system directory if it does not exist", async () => {
@@ -374,14 +366,8 @@ describe("E13-S8 AC5: Integrates with gaia-brownfield after E11 codebase scan", 
         { path: "Button.tsx", type: "component" },
       ],
     };
-    writeFileSync(
-      join(projectDir, "codebase-manifest.json"),
-      JSON.stringify(e11Output, null, 2)
-    );
-    writeFileSync(
-      join(projectDir, "styles.css"),
-      `:root { --color-primary: #3b82f6; }`
-    );
+    writeFileSync(join(projectDir, "codebase-manifest.json"), JSON.stringify(e11Output, null, 2));
+    writeFileSync(join(projectDir, "styles.css"), `:root { --color-primary: #3b82f6; }`);
 
     const result = await extractDesignTokens(projectDir, {
       e11ScanManifest: join(projectDir, "codebase-manifest.json"),
@@ -393,10 +379,7 @@ describe("E13-S8 AC5: Integrates with gaia-brownfield after E11 codebase scan", 
   });
 
   it("should fall back to filesystem scan when no E11 manifest is provided", async () => {
-    writeFileSync(
-      join(projectDir, "styles.css"),
-      `:root { --color-primary: #3b82f6; }`
-    );
+    writeFileSync(join(projectDir, "styles.css"), `:root { --color-primary: #3b82f6; }`);
 
     const result = await extractDesignTokens(projectDir, {
       outputDir: join(projectDir, "design-system"),
@@ -427,9 +410,7 @@ describe("E13-S8 AC6: Handles missing or partial design systems gracefully", () 
     // Empty project directory — no CSS, SCSS, Tailwind, etc.
     const outputDir = join(projectDir, "design-system");
 
-    await expect(
-      extractDesignTokens(projectDir, { outputDir })
-    ).resolves.not.toThrow();
+    await expect(extractDesignTokens(projectDir, { outputDir })).resolves.not.toThrow();
   });
 
   it("should mark unresolvable tokens as TBD in the output", async () => {
@@ -450,10 +431,7 @@ describe("E13-S8 AC6: Handles missing or partial design systems gracefully", () 
   });
 
   it("should include a gaps report listing what could not be extracted", async () => {
-    writeFileSync(
-      join(projectDir, "styles.css"),
-      `:root { --color-primary: var(--undefined); }`
-    );
+    writeFileSync(join(projectDir, "styles.css"), `:root { --color-primary: var(--undefined); }`);
     const outputDir = join(projectDir, "design-system");
 
     const result = await extractDesignTokens(projectDir, { outputDir });
@@ -464,10 +442,7 @@ describe("E13-S8 AC6: Handles missing or partial design systems gracefully", () 
 
   it("should still write valid seed files even when gaps exist", async () => {
     // Partial — only some formats present
-    writeFileSync(
-      join(projectDir, "styles.css"),
-      `:root { --color-primary: #3b82f6; }`
-    );
+    writeFileSync(join(projectDir, "styles.css"), `:root { --color-primary: #3b82f6; }`);
     // No SCSS, no Tailwind, no Flutter, no iOS, no Android
     const outputDir = join(projectDir, "design-system");
 
