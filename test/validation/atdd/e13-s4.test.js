@@ -36,13 +36,7 @@ const CREATE_UX_INSTRUCTIONS = path.join(
   "instructions.xml"
 );
 
-const FIGMA_SKILL = path.join(
-  PROJECT_ROOT,
-  "_gaia",
-  "dev",
-  "skills",
-  "figma-integration.md"
-);
+const FIGMA_SKILL = path.join(PROJECT_ROOT, "_gaia", "dev", "skills", "figma-integration.md");
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
