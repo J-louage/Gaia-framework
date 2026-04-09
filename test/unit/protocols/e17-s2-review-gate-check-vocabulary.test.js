@@ -3,10 +3,7 @@ import { readFileSync } from "fs";
 import { resolve } from "path";
 
 const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
-const PROTOCOL_PATH = resolve(
-  PROJECT_ROOT,
-  "_gaia/core/protocols/review-gate-check.xml",
-);
+const PROTOCOL_PATH = resolve(PROJECT_ROOT, "_gaia/core/protocols/review-gate-check.xml");
 
 describe("E17-S2: Review-Gate-Check Protocol Vocabulary (FR-191, NFR-035)", () => {
   const xml = readFileSync(PROTOCOL_PATH, "utf8");
@@ -37,9 +34,7 @@ describe("E17-S2: Review-Gate-Check Protocol Vocabulary (FR-191, NFR-035)", () =
 
     it("protocol does not transition to done when any gate is UNVERIFIED or FAILED", () => {
       // The evaluation step must only trigger status-sync to done under the all-PASSED branch
-      expect(xml).toMatch(
-        /If ALL 6 rows show PASSED[\s\S]*new_status="done"/,
-      );
+      expect(xml).toMatch(/If ALL 6 rows show PASSED[\s\S]*new_status="done"/);
     });
   });
 
@@ -61,9 +56,7 @@ describe("E17-S2: Review-Gate-Check Protocol Vocabulary (FR-191, NFR-035)", () =
     it("protocol emits the 'N gates not yet run' phrase with gate names", () => {
       expect(xml).toMatch(/gates?\s+not\s+yet\s+run/i);
       // must reference emitting the gate names (not only the count)
-      expect(xml).toMatch(
-        /UNVERIFIED[\s\S]{0,400}(gate names|names of|list)/i,
-      );
+      expect(xml).toMatch(/UNVERIFIED[\s\S]{0,400}(gate names|names of|list)/i);
     });
 
     it("protocol blocks advancement when any gate is UNVERIFIED", () => {
@@ -87,9 +80,7 @@ describe("E17-S2: Review-Gate-Check Protocol Vocabulary (FR-191, NFR-035)", () =
     it("normalization happens BEFORE gate evaluation", () => {
       // The normalization action must appear in Step 1 (parsing) so Step 2
       // (evaluation) operates on already-canonical values
-      const step1Match = xml.match(
-        /<step n="1"[\s\S]*?<\/step>/,
-      );
+      const step1Match = xml.match(/<step n="1"[\s\S]*?<\/step>/);
       expect(step1Match).not.toBeNull();
       expect(step1Match[0]).toMatch(/normaliz/i);
       expect(step1Match[0]).toMatch(/UNVERIFIED/);
