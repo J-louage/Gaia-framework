@@ -12,13 +12,7 @@ const INSTRUCTIONS_XML = join(
   "create-story",
   "instructions.xml"
 );
-const EDGE_CASES_SKILL = join(
-  PROJECT_ROOT,
-  "_gaia",
-  "dev",
-  "skills",
-  "edge-cases.md"
-);
+const EDGE_CASES_SKILL = join(PROJECT_ROOT, "_gaia", "dev", "skills", "edge-cases.md");
 
 function loadFile(path) {
   if (!existsSync(path)) return null;
@@ -42,7 +36,9 @@ describe("E19-S9: Edge Case Mandatory Sub-Step in /gaia-create-story", () => {
       // Must include the size check with M/L/XL triggering the sub-step
       expect(content).toMatch(/size.*(?:M|L|XL)|(?:M|L|XL).*size/i);
       // Must explicitly invoke or load the edge-cases skill (not just mention it)
-      expect(content).toMatch(/load.*edge.?cases|invoke.*edge.?cases|edge.?cases.*skill|JIT.*edge|edge.*JIT/i);
+      expect(content).toMatch(
+        /load.*edge.?cases|invoke.*edge.?cases|edge.?cases.*skill|JIT.*edge|edge.*JIT/i
+      );
     });
 
     it("edge-cases.md skill file exists at _gaia/dev/skills/edge-cases.md", () => {
@@ -115,7 +111,9 @@ describe("E19-S9: Edge Case Mandatory Sub-Step in /gaia-create-story", () => {
       // Must reference the structured output format with at least two field names from
       // { id, scenario, input, expected, category } appearing together in a list/object context
       // A vague reference to edge case analysis is NOT sufficient
-      expect(content).toMatch(/(?:id.*scenario.*input|scenario.*input.*expected|input.*expected.*category)/i);
+      expect(content).toMatch(
+        /(?:id.*scenario.*input|scenario.*input.*expected|input.*expected.*category)/i
+      );
     });
   });
 
@@ -140,7 +138,9 @@ describe("E19-S9: Edge Case Mandatory Sub-Step in /gaia-create-story", () => {
       expect(content).not.toBeNull();
       // Must store results in a variable or action — not merely mention edge cases
       // Matches: edge_case_results, edge-case-results, store edge case, capture edge case results
-      expect(content).toMatch(/edge.?case.?results?\s*=|store.*edge.?case|capture.*edge.?case|edge.?case.*stored/i);
+      expect(content).toMatch(
+        /edge.?case.?results?\s*=|store.*edge.?case|capture.*edge.?case|edge.?case.*stored/i
+      );
     });
   });
 
