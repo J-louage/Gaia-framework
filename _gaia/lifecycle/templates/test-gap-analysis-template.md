@@ -1,0 +1,141 @@
+---
+mode: coverage
+date: "{date}"
+project: "{project_name}"
+story_count: 0
+gap_count: 0
+---
+
+# Test Gap Analysis — {date}
+
+> **Schema version:** 1.0.0
+> **Traces to:** FR-223, ADR-030 §10.22
+> **Story:** E19-S3
+> **Template location:** `_gaia/lifecycle/templates/test-gap-analysis-template.md`
+>
+> Standardized output schema for the `/gaia-test-gap-analysis` workflow.
+> This template scaffolds the `test-gap-analysis-{date}.md` artifact written by
+> the workflow in both `coverage` and `verification` modes. Downstream tools and
+> agents parse this file — keep the schema stable and bump the schema version on
+> any breaking change.
+
+## Schema Definition
+
+The output file consists of five mandatory sections, in this order:
+
+1. **YAML frontmatter** — five required fields (see below)
+2. **Executive Summary** — high-level narrative and headline numbers
+3. **Gap Table** — one row per gap, four columns
+4. **Per-Story Detail** — one subsection per story with gaps
+5. **Recommendations** — prioritized remediation actions
+
+### YAML Frontmatter
+
+Five required fields, parsed by `js-yaml` without error (AC4):
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `mode` | enum | `coverage` or `verification` — matches the workflow mode that produced the file |
+| `date` | string | ISO-8601 date the gap analysis was run (e.g., `2026-04-09`) |
+| `project` | string | Project name (from `global.yaml` `project_name`) |
+| `story_count` | integer | Number of stories analyzed in this run |
+| `gap_count` | integer | Total number of gaps detected across all stories |
+
+All five fields are required. Missing any field MUST be flagged by Val as a
+WARNING (AC6). The frontmatter block MUST be delimited by `---` lines at the
+top of the file and MUST parse cleanly with any standards-compliant YAML
+parser.
+
+### Gap Type Enum (closed)
+
+Gap types are drawn from a fixed, **closed** enum. No extension is permitted
+without a schema version bump (AC2).
+
+| Value | Description |
+|-------|-------------|
+| `missing-test` | An acceptance criterion or requirement has no associated test case in `test-plan.md` |
+| `unexecuted` | A test case exists but was never run (no JUnit, LCOV, or E17 evidence) |
+| `uncovered-ac` | An acceptance criterion on a story is not referenced by any test case ID |
+| `missing-edge-case` | The test plan references the story but fails to cover a required edge case documented in story Test Scenarios or ATDD |
+
+Any value outside this enum MUST be flagged by Val as CRITICAL.
+
+### Severity Enum
+
+Severity values are also fixed (AC3):
+
+| Value | Description |
+|-------|-------------|
+| `critical` | Blocks release — high-risk story with no coverage |
+| `high` | Significant coverage gap requiring prompt attention |
+| `medium` | Moderate gap, should be addressed in the current sprint |
+| `low` | Minor gap, can be deferred |
+
+Any value outside this enum MUST be flagged by Val as CRITICAL.
+
+## Executive Summary
+
+{1-3 sentence narrative summarizing the run.}
+
+- **Stories analyzed:** {story_count}
+- **Gaps detected:** {gap_count}
+- **Overall coverage rate:** {coverage_percentage}%
+- **Mode:** {mode}
+
+If `gap_count` is 0, state `No coverage gaps detected.` explicitly.
+
+## Gap Table
+
+Flat table of every gap in this run. Columns (in this order) are canonical:
+
+| story_key | gap_type | severity | description |
+|-----------|----------|----------|-------------|
+| E1-S1 | uncovered-ac | high | AC3 has no matching test case in test-plan.md |
+| E1-S2 | missing-edge-case | medium | Test scenario 4 (empty input) is not exercised |
+
+- `story_key` — the canonical story key (e.g., `E19-S3`)
+- `gap_type` — one of the four values from the closed enum above
+- `severity` — one of the four values from the severity enum above
+- `description` — one-line summary of the gap (keep under 120 chars)
+
+If no gaps exist, render the table header alone with a single row reading
+`| — | — | — | No gaps detected |`.
+
+## Per-Story Detail
+
+One subsection per story that has one or more rows in the Gap Table.
+
+### {story_key} — {story_title}
+
+- **Total ACs:** {count}
+- **Covered ACs:** {count}
+- **Uncovered ACs:** {list of AC identifiers}
+- **Missing tests:** {list of test case IDs or descriptions}
+- **Remediation:** {1-2 sentence suggested action}
+
+Stories with zero gaps MAY be omitted from this section to keep the document
+focused. The Gap Table is the canonical list.
+
+## Recommendations
+
+Prioritized list of concrete next steps, ordered by severity:
+
+1. **{critical|high|medium|low}** — {action} — owner: {agent or team}
+2. ...
+
+Each recommendation SHOULD map to one or more Gap Table rows so downstream
+tools can generate traceability.
+
+---
+
+## Notes
+
+- This template is read by `/gaia-test-gap-analysis` in both coverage and
+  verification modes. The workflow populates placeholder values and writes
+  the result to `{test_artifacts}/test-gap-analysis-{date}.md`.
+- The gap type enum is **closed**. Adding a new gap type is a breaking change
+  and requires a schema version bump in the `Schema version` header above.
+- Val validates output files against this schema via the
+  `gap-analysis-output` ruleset in `_memory/validator-sidecar/ground-truth.md`.
+- Per ADR-020, projects MAY override this template by placing a file at
+  `custom/templates/test-gap-analysis-template.md`.

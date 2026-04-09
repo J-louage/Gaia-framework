@@ -12,6 +12,7 @@ config_source: "{project-root}/_gaia/testing/config.yaml"
 installed_path: "{project-root}/_gaia/testing/workflows/test-gap-analysis"
 instructions: "{installed_path}/instructions.xml"
 validation: "{installed_path}/checklist.md"
+template: "{project-root}/_gaia/lifecycle/templates/test-gap-analysis-template.md"
 traces_to:
   - FR-221
   - FR-222

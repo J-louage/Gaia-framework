@@ -1,9 +1,9 @@
 ---
 name: document-rulesets
-version: '1.1'
+version: '1.2'
 applicable_agents: [validator]
-description: 'Document-specific validation rulesets for artifact type detection (path and frontmatter), structural quality checks per artifact type (application, infrastructure, platform PRDs), and two-pass validation logic.'
-sections: [type-detection, prd-rules, infra-prd-rules, platform-prd-rules, arch-rules, ux-rules, test-plan-rules, epics-rules, two-pass-logic]
+description: 'Document-specific validation rulesets for artifact type detection (path and frontmatter), structural quality checks per artifact type (application, infrastructure, platform PRDs, gap analysis output), and two-pass validation logic.'
+sections: [type-detection, prd-rules, infra-prd-rules, platform-prd-rules, arch-rules, ux-rules, test-plan-rules, epics-rules, gap-analysis-rules, two-pass-logic]
 ---
 
 <!-- SECTION: type-detection -->
@@ -38,6 +38,7 @@ If no frontmatter match is found, detect the artifact type from the file path ba
 | `ux-design.md` | ux-rules | UX Design Specification |
 | `test-plan.md` | test-plan-rules | Test Plan |
 | `epics-and-stories.md` | epics-rules | Epics and Stories |
+| `test-gap-analysis-*.md` | gap-analysis-rules | Test Gap Analysis Output (E19-S3, FR-223) |
 
 ### Path-Based Detection Algorithm
 
@@ -221,6 +222,71 @@ Verify each story has: key, title, user story (As a/I want/So that), acceptance 
 ### Dependency Consistency
 
 Verify all `depends_on` and `blocks` references point to existing stories. Check for circular dependencies. Verify priority ordering respects dependency chains. Flag broken references as WARNING.
+<!-- END SECTION -->
+
+<!-- SECTION: gap-analysis-rules -->
+## Gap Analysis Output Validation Rules
+
+Structural quality checks for the test gap analysis output artifact produced by `/gaia-test-gap-analysis`. These rules validate conformance to the FR-223 output schema defined by `_gaia/lifecycle/templates/test-gap-analysis-template.md` (E19-S3, ADR-030 §10.22).
+
+**Scope:** files matching `docs/test-artifacts/test-gap-analysis-*.md`.
+
+**Schema version:** 1.0.0
+
+### YAML Frontmatter — Required Fields
+
+The frontmatter block must parse cleanly as YAML and contain all five required fields. Missing any field is a WARNING. A frontmatter parse failure (malformed YAML, missing `---` delimiters, unquoted special characters) is a CRITICAL finding.
+
+| Field | Type | Constraint |
+|-------|------|------------|
+| `mode` | enum | must be `coverage` or `verification` |
+| `date` | string | non-empty ISO-8601 date (YYYY-MM-DD) |
+| `project` | string | non-empty |
+| `story_count` | integer | >= 0 |
+| `gap_count` | integer | >= 0 |
+
+### Gap Type Enum (Closed)
+
+The `gap_type` field on every Gap Table row must match exactly one of these four values. Any other value is a CRITICAL finding. This enum is closed by design — adding a new gap type is a breaking change and requires a schema version bump.
+
+- `missing-test`
+- `unexecuted`
+- `uncovered-ac`
+- `missing-edge-case`
+
+### Severity Enum (Closed)
+
+The `severity` field on every Gap Table row must match exactly one of these four values. Any other value is a CRITICAL finding.
+
+- `critical`
+- `high`
+- `medium`
+- `low`
+
+### Required Sections
+
+The output must contain these four top-level sections in this order. Missing any section is a WARNING.
+
+1. `## Executive Summary`
+2. `## Gap Table`
+3. `## Per-Story Detail`
+4. `## Recommendations`
+
+### Gap Table Column Order
+
+The Gap Table must declare its columns in this exact order. A table with columns in a different order or with missing columns is a WARNING.
+
+1. `story_key`
+2. `gap_type`
+3. `severity`
+4. `description`
+
+### Cross-Field Consistency
+
+- If `gap_count == 0`, the Executive Summary should contain the phrase `No coverage gaps detected` — absence is an INFO finding.
+- `gap_count` should equal the number of data rows in the Gap Table (excluding the header and separator rows) — mismatch is a WARNING.
+
+**References:** FR-223, ADR-030 §10.22, story E19-S3, test cases TGA-17–20.
 <!-- END SECTION -->
 
 <!-- SECTION: two-pass-logic -->
