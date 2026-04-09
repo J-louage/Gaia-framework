@@ -38,6 +38,25 @@
   <action>Calculate overall coverage percentage across all stories</action>
 </step>
 
+<step n="4b" title="Frontend Dimensions Analysis (conditional)">
+  <action>Inline frontend detection — set the `is_frontend` flag by checking {project-path} for any of the following markers (order of precedence):
+    (a) `angular.json` at repo root → project_type=angular, is_frontend=true
+    (b) `flutter.yaml` present, or `pubspec.yaml` containing `flutter:` dependency → project_type=flutter, is_frontend=true
+    (c) `.component.ts` files present under `src/` → project_type=angular, is_frontend=true
+    (d) `src/app/` directory present (Angular or generic frontend layout) → is_frontend=true
+    (e) `package.json` dependencies or devDependencies contain any of: `react`, `vue`, `svelte`, `@angular/core`, `next`, `nuxt`, `@remix-run/react` → project_type mapped accordingly, is_frontend=true
+    If NONE of (a)-(e) match: is_frontend=false. NOTE: These detection signals are inline-duplicated from the E12 brownfield-onboarding workflow. Extraction to a shared `scripts/lib/project-type-detection.js` module is tracked as tech debt in E19-S5 Findings — see that story for the backlog spin-off.</action>
+  <action if="is_frontend == false">Skip this step entirely. Do NOT emit a "## Frontend Dimensions" section in the output artifact. Proceed directly to Step 5. No error, no warning, no empty table. Non-frontend projects must see no trace of this section.</action>
+  <action if="is_frontend == true">For each of the six architectural dimensions (per ADR-030 §10.22.3 and FR-224), scan the project and compute (gap_count, coverage_score 0-100%, top_3_uncovered):
+    1. **Unit Tests** — glob `src/**/*.{test,spec}.{ts,tsx,js,jsx}`. If an LCOV report is present at `coverage/lcov.info` or `coverage/lcov-report/`, parse line-coverage percentage. Gap if coverage &lt; 60% or no spec files found. top_3_uncovered = first 3 source files with lowest coverage (or "no spec files" when absent).
+    2. **E2E Tests** — glob `tests/**/*.spec.{ts,js}`, `e2e/**/*.spec.{ts,js}`, and `cypress/e2e/**/*.cy.{ts,js}`. Gap if no E2E spec files found. top_3_uncovered = names of 3 largest source components lacking an E2E spec.
+    3. **Cross-browser** — read `playwright.config.{ts,js}` or `cypress.config.{ts,js}` and extract configured browser projects. Gap if only chromium/electron present, or if config file is absent. top_3_uncovered = missing browsers from the set {chromium, firefox, webkit}.
+    4. **Accessibility** — read `package.json` dependencies and devDependencies. Gap if none of `axe-core`, `jest-axe`, `@testing-library/jest-axe`, `@axe-core/playwright`, or `cypress-axe` are present. top_3_uncovered = the missing canonical a11y packages for the detected test runner.
+    5. **Visual Regression** — read `package.json` dependencies. Gap if none of `@percy/cli`, `@percy/playwright`, `@chromatic-com/playwright`, `chromatic`, or `playwright-visual-comparisons` are present. top_3_uncovered = 3 of the missing canonical visual-regression packages.
+    6. **Responsive/Viewport** — grep test files for any of: `setViewportSize`, `cy.viewport`, `--viewport`, `viewport:` in Playwright config. Gap if no matches. top_3_uncovered = names of 3 top-level pages/components with no responsive test.</action>
+  <action if="is_frontend == true">Populate the "## Frontend Dimensions" section of the output template with 6 rows, one per dimension, each row containing (gap_count, coverage_score, top_3_uncovered). The per-dimension coverage_score feeds E19-S6's overall coverage aggregation.</action>
+</step>
+
 <step n="5" title="Generate Output (FR-223 Schema)">
   <action>Generate the output artifact at {test_artifacts}/test-gap-analysis-{date}.md</action>
   <action>Output must include the following FR-223 schema sections:
