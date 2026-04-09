@@ -12,7 +12,13 @@ const TEMPLATE_PATH = join(
   "test-gap-analysis-template.md"
 );
 
-const VAL_GROUND_TRUTH_PATH = join(PROJECT_ROOT, "_memory", "validator-sidecar", "ground-truth.md");
+const DOCUMENT_RULESETS_PATH = join(
+  PROJECT_ROOT,
+  "_gaia",
+  "lifecycle",
+  "skills",
+  "document-rulesets.md"
+);
 
 // Canonical enums from the FR-223 schema — keep these in sync with
 // test-gap-analysis-template.md and the gap-analysis-output Val ruleset.
@@ -110,24 +116,30 @@ describe("E19-S3: Gap Analysis Output Schema", () => {
     expect(content).toMatch(/schema version/i);
   });
 
-  // --- AC6: Val ground truth contains the gap analysis output ruleset ---
-  it("Val ground-truth.md references the gap-analysis-output validation ruleset", () => {
-    expect(existsSync(VAL_GROUND_TRUTH_PATH)).toBe(true);
-    const gtContent = readFileSync(VAL_GROUND_TRUTH_PATH, "utf8");
-    expect(gtContent).toMatch(/gap-analysis-output/i);
+  // --- AC6: Val document-rulesets skill declares the gap-analysis ruleset ---
+  it("document-rulesets.md declares a gap-analysis-rules section", () => {
+    expect(existsSync(DOCUMENT_RULESETS_PATH)).toBe(true);
+    const rulesetsContent = readFileSync(DOCUMENT_RULESETS_PATH, "utf8");
+    // Section marker must exist so Val can JIT-load the ruleset
+    expect(rulesetsContent).toMatch(/<!--\s*SECTION:\s*gap-analysis-rules\s*-->/);
+    // Frontmatter sections list must include gap-analysis-rules
+    expect(rulesetsContent).toMatch(/sections:\s*\[[^\]]*gap-analysis-rules/);
+    // Path-to-ruleset mapping table entry must exist
+    expect(rulesetsContent).toMatch(/test-gap-analysis-\*\.md.*gap-analysis-rules/);
+    // Ruleset must enumerate every gap_type enum value
     for (const val of GAP_TYPE_ENUM) {
-      expect(gtContent).toContain(val);
+      expect(rulesetsContent).toContain(val);
     }
   });
 
   // --- AC6: Val ruleset enumerates severity enum and required frontmatter ---
-  it("Val ruleset enumerates required frontmatter fields and severity enum", () => {
-    const gtContent = readFileSync(VAL_GROUND_TRUTH_PATH, "utf8");
+  it("gap-analysis-rules ruleset enumerates required frontmatter fields and severity enum", () => {
+    const rulesetsContent = readFileSync(DOCUMENT_RULESETS_PATH, "utf8");
     for (const field of REQUIRED_FRONTMATTER_FIELDS) {
-      expect(gtContent).toContain(field);
+      expect(rulesetsContent).toContain(field);
     }
     for (const val of SEVERITY_ENUM) {
-      expect(gtContent).toContain(val);
+      expect(rulesetsContent).toContain(val);
     }
   });
 });
