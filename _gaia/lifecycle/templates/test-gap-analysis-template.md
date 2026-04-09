@@ -126,6 +126,39 @@ Prioritized list of concrete next steps, ordered by severity:
 Each recommendation SHOULD map to one or more Gap Table rows so downstream
 tools can generate traceability.
 
+## Frontend Dimensions
+
+> **Traces to:** FR-224, ADR-030 §10.22.3
+> **Story:** E19-S5
+>
+> Six-dimension test-type breakdown for frontend projects. This section is
+> **present only when** the workflow detects the scanned project as a
+> frontend stack (Angular, Flutter, React, Vue, Svelte, or a generic
+> `src/app/` layout). For non-frontend projects the section is **omitted
+> entirely** — no empty table, no error, no warning.
+
+| Dimension | Gap Count | Coverage Score | Top-3 Uncovered |
+|-----------|-----------|----------------|-----------------|
+| Unit Tests | {count} | {0-100}% | {list or "—"} |
+| E2E Tests | {count} | {0-100}% | {list or "—"} |
+| Cross-browser | {count} | {0-100}% | {list or "—"} |
+| Accessibility | {count} | {0-100}% | {list or "—"} |
+| Visual Regression | {count} | {0-100}% | {list or "—"} |
+| Responsive | {count} | {0-100}% | {list or "—"} |
+
+**Detection signals** (per architecture §10.22.3):
+
+- **Unit Tests** — `*.test.{ts,js}` / `*.spec.{ts,js}` in `src/`; gap if coverage < 60%
+- **E2E Tests** — Playwright or Cypress spec files; gap if none found
+- **Cross-browser** — browser matrix in `playwright.config.{ts,js}` or `cypress.config.{ts,js}`; gap if `browsers: [chromium]` only or absent
+- **Accessibility** — `axe-core`, `jest-axe`, `@testing-library/jest-axe`, `@axe-core/playwright`, or `cypress-axe` in package.json; gap if none installed
+- **Visual Regression** — Percy, Chromatic, or `playwright-visual-comparisons` in package.json; gap if none configured
+- **Responsive** — viewport resize tests, `--viewport` flag in Playwright, or `cy.viewport` in Cypress; gap if absent from test files
+
+Per-dimension coverage scores feed into E19-S6's overall coverage percentage
+calculation. A non-frontend project's output skips this section entirely and
+E19-S6 falls back to the generic Gap Table totals.
+
 ---
 
 ## Notes
