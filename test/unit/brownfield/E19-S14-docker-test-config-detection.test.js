@@ -343,10 +343,7 @@ CMD ["node", "server.js"]
   });
 
   it("BTI-18: no Docker files present returns null", async () => {
-    writeFileSync(
-      join(projectDir, "README.md"),
-      "# Just a readme, no docker files here."
-    );
+    writeFileSync(join(projectDir, "README.md"), "# Just a readme, no docker files here.");
 
     const result = await detectDockerTestConfig(projectDir);
     expect(result).toBeNull();
