@@ -48,6 +48,7 @@
 
 import { mkdirSync, writeFileSync } from "fs";
 import { dirname, join } from "path";
+import { normaliseTierName } from "./layer-2-tier-selection.js";
 
 // ─── Constants ─────────────────────────────────────────────────────────────
 
@@ -280,6 +281,11 @@ export function parseResults(execution) {
  * @property {string} outputDir      — base directory for test-results/
  *                                     (typically docs/test-artifacts)
  * @property {string} [executedAt]   — optional ISO 8601 timestamp; defaults to now
+ * @property {"unit" | "integration" | "e2e" | 1 | 2 | 3 | null} [tier]
+ *   — optional tier that was executed for this run (E17-S11 / FR-195).
+ *     Accepts canonical names or numeric ids (1/2/3); normalised to a
+ *     canonical name on write. Defaults to null when omitted so
+ *     pre-E17-S11 callers continue to emit a valid evidence record.
  */
 
 /**
@@ -303,7 +309,7 @@ export function parseResults(execution) {
  * @returns {string} absolute path to the written evidence file
  */
 export function writeEvidence(opts) {
-  const { parsed, storyKey, runner, mode, durationSeconds, outputDir, executedAt } = opts;
+  const { parsed, storyKey, runner, mode, durationSeconds, outputDir, executedAt, tier } = opts;
 
   if (!storyKey || typeof storyKey !== "string") {
     throw new TypeError("writeEvidence: storyKey is required (string)");
@@ -315,12 +321,19 @@ export function writeEvidence(opts) {
     throw new TypeError("writeEvidence: parsed result is required (object)");
   }
 
+  // E17-S11 / FR-195 — normalise the optional tier field to its canonical
+  // name (unit / integration / e2e). Unknown or missing values become null
+  // so the evidence record stays valid for projects that have not adopted
+  // the three-tier model.
+  const normalisedTier = tier === undefined || tier === null ? null : normaliseTierName(tier);
+
   /** @type {Record<string, any>} */
   const base = {
     schema_version: EVIDENCE_SCHEMA_VERSION,
     story_key: storyKey,
     runner: runner || "unknown",
     mode: mode || "local",
+    tier: normalisedTier,
     executed_at: executedAt || new Date().toISOString(),
     duration_seconds: typeof durationSeconds === "number" ? durationSeconds : 0,
     summary: parsed.summary || { total: 0, passed: 0, failed: 0, skipped: 0 },
