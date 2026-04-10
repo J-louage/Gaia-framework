@@ -153,6 +153,21 @@ Run `/gaia-run-all-reviews` to execute all six reviews sequentially via subagent
 
 If any review fails, the story returns to `in-progress`. The Review Gate table in the story file tracks progress.
 
+### Review Gate-to-Tier Mapping (E17-S12, FR-195)
+
+When the Test Execution Bridge (ADR-028) is enabled, each review gate is linked to a set of test tiers (from the E17-S11 three-tier model) whose evidence is required to produce a PASSED verdict. The canonical mapping lives in `Gaia-framework/src/bridge/review-gate-tier-mapping.js` (`DEFAULT_GATE_TIER_MAPPING`) and can be overridden per-project via the `tiers.gate_mapping` block in `test-environment.yaml`.
+
+| Review Gate | Required Tiers |
+|---|---|
+| `/gaia-qa-tests` | Tier 1 + Tier 2 (unit + integration) |
+| `/gaia-test-automate` | Tier 1 (unit) |
+| `/gaia-test-review` | Tier 2 (integration) |
+| `/gaia-review-perf` | Tier 3 (e2e) |
+| `/gaia-security-review` | Tier 2 + Tier 3 (integration + e2e) |
+| `/gaia-code-review` | no tier (static analysis only) |
+
+When a gate is UNVERIFIED, the Nudge Block surfaces the required tiers (e.g., "run Tier 1 + Tier 2 tests") via `formatNudgeSuggestion(gate, mapping)`. Full rationale and override semantics live in architecture §10.20.4.
+
 ### Infra Review Gate Substitutions
 
 For infrastructure stories (those whose `traces_to` field contains `IR-###`, `OR-###`, or `SR-###` requirement IDs), 4 of the 6 review gates use adapted criteria. Code Review and Security Review remain unchanged for all story types.
