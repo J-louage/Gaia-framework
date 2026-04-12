@@ -23,7 +23,7 @@ import { join } from "path";
  * Supported JavaScript test runners (aligned with E17-S20 compatibility
  * guard naming convention).
  */
-const SUPPORTED_RUNNERS = ["vitest", "jest", "mocha", "bats"];
+export const SUPPORTED_RUNNERS = ["vitest", "jest", "mocha", "bats"];
 
 const DEFAULT_COMMANDS = {
   vitest: "vitest run",
