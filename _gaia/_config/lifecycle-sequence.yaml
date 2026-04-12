@@ -580,6 +580,17 @@ sequence:
         - command: /gaia-test-design
           context: "To redesign the test plan based on gap analysis findings"
 
+  fill-test-gaps:
+    module: testing
+    command: /gaia-fill-test-gaps
+    next:
+      standalone: true
+      suggestions:
+        - command: /gaia-test-gap-analysis
+          context: "To regenerate the gap analysis report before triaging"
+        - command: /gaia-sprint-plan
+          context: "To schedule remediation stories from the triage table"
+
   traceability:
     module: testing
     command: /gaia-trace
