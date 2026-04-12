@@ -39,13 +39,7 @@
 </step>
 
 <step n="4b" title="Frontend Dimensions Analysis (conditional)">
-  <action>Inline frontend detection — set the `is_frontend` flag by checking {project-path} for any of the following markers (order of precedence):
-    (a) `angular.json` at repo root → project_type=angular, is_frontend=true
-    (b) `flutter.yaml` present, or `pubspec.yaml` containing `flutter:` dependency → project_type=flutter, is_frontend=true
-    (c) `.component.ts` files present under `src/` → project_type=angular, is_frontend=true
-    (d) `src/app/` directory present (Angular or generic frontend layout) → is_frontend=true
-    (e) `package.json` dependencies or devDependencies contain any of: `react`, `vue`, `svelte`, `@angular/core`, `next`, `nuxt`, `@remix-run/react` → project_type mapped accordingly, is_frontend=true
-    If NONE of (a)-(e) match: is_frontend=false. NOTE: These detection signals are inline-duplicated from the E12 brownfield-onboarding workflow. Extraction to a shared `scripts/lib/project-type-detection.js` module is tracked as tech debt in E19-S5 Findings — see that story for the backlog spin-off.</action>
+  <action>Frontend detection via shared module — call detectProjectType({project-path}) from scripts/lib/project-type-detection.js. If result.type is 'frontend', 'fullstack', or 'mobile', set is_frontend=true and project_type=result.type. If result.type is any other value, set is_frontend=false. The evidence array provides the matched signals for documentation. (E19-S22: extracted from inline duplication to shared module.)</action>
   <action if="is_frontend == false">Skip this step entirely. Do NOT emit a "## Frontend Dimensions" section in the output artifact. Proceed directly to Step 5. No error, no warning, no empty table. Non-frontend projects must see no trace of this section.</action>
   <action if="is_frontend == true">For each of the six architectural dimensions (per ADR-030 §10.22.3 and FR-224), scan the project and compute (gap_count, coverage_score 0-100%, top_3_uncovered):
     1. **Unit Tests** — glob `src/**/*.{test,spec}.{ts,tsx,js,jsx}`. If an LCOV report is present at `coverage/lcov.info` or `coverage/lcov-report/`, parse line-coverage percentage. Gap if coverage &lt; 60% or no spec files found. top_3_uncovered = first 3 source files with lowest coverage (or "no spec files" when absent).
