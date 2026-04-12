@@ -1,0 +1,8 @@
+{"Time":"2026-04-10T12:00:00Z","Action":"run","Package":"example.com/singlepass","Test":"TestAdd"}
+{"Time":"2026-04-10T12:00:00Z","Action":"output","Package":"example.com/singlepass","Test":"TestAdd","Output":"=== RUN   TestAdd\n"}
+{"Time":"2026-04-10T12:00:00Z","Action":"output","Package":"example.com/singlepass","Test":"TestAdd","Output":"--- PASS: TestAdd (0.01s)\n"}
+{"Time":"2026-04-10T12:00:00Z","Action":"pass","Package":"example.com/singlepass","Test":"TestAdd","Elapsed":0.01}
+{"Time":"2026-04-10T12:00:00Z","Action":"run","Package":"example.com/singlepass","Test":"TestSub"}
+{"Time":"2026-04-10T12:00:00Z","Action":"output","Package":"example.com/singlepass","Test":"TestSub","Output":"--- PASS: TestSub (0.02s)\n"}
+{"Time":"2026-04-10T12:00:00Z","Action":"pass","Package":"example.com/singlepass","Test":"TestSub","Elapsed":0.02}
+{"Time":"2026-04-10T12:00:00Z","Action":"pass","Package":"example.com/singlepass","Elapsed":0.03}

@@ -1,0 +1,8 @@
+panic: deliberate crash
+
+goroutine 5 [running]:
+example.com/panic.TestCrash(0x0?)
+	/project/panic_test.go:12 +0x2c
+testing.tRunner(0xc0000836c0, 0x6c1a58)
+	/usr/local/go/src/testing/testing.go:1689 +0xfb
+FAIL	example.com/panic	0.003s
