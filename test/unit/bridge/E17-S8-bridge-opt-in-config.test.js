@@ -7,9 +7,8 @@
  * Traces: FR-202, NFR-035 | ADR-028
  * Risk: low | Epic: E17 — Review Gate Enhancement & Test Execution Bridge
  *
- * Note: test IDs TEB-34/35/36 from the E17 test plan collide with IDs already
- * assigned elsewhere. This suite is therefore story-scoped rather than test-ID
- * scoped — see Findings in the story file for the documentation ticket.
+ * Test IDs: TEB-44 (config block presence/defaults), TEB-45 (zero-change when
+ * disabled), TEB-46 (bridge activation when enabled). See test-plan.md §11.24.11.
  */
 
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
@@ -43,7 +42,7 @@ afterEach(() => {
 // ─── AC1 / AC4 — global.yaml declares the opt-in block ──────────────────────
 
 describe("E17-S8: test_execution_bridge opt-in config", () => {
-  describe("AC1 — global.yaml declares the block", () => {
+  describe("TEB-44: AC1 — global.yaml declares the opt-in block", () => {
     it("global.yaml contains a test_execution_bridge block", () => {
       const raw = readFileSync(GLOBAL_YAML_PATH, "utf8");
       const parsed = YAML.parse(raw);
@@ -83,7 +82,7 @@ describe("E17-S8: test_execution_bridge opt-in config", () => {
 
   // ─── AC2 — Zero-change when disabled (NFR-035) ─────────────────────────────
 
-  describe("AC2 / NFR-035 — zero-change when disabled", () => {
+  describe("TEB-45: AC2 / NFR-035 — zero-change when disabled", () => {
     it("Layer 0 is skipped when bridge_enabled is false (no file reads)", () => {
       // Intentionally write NO package.json — any file access would fail the
       // other checks. Skipped=true + ready=true proves the guard short-circuits
@@ -123,7 +122,7 @@ describe("E17-S8: test_execution_bridge opt-in config", () => {
 
   // ─── AC3 — Bridge activates when enabled ───────────────────────────────────
 
-  describe("AC3 — bridge activates when enabled", () => {
+  describe("TEB-46: AC3 — bridge activates when enabled", () => {
     it("Layer 0 runs checks when bridge_enabled is true", () => {
       writePkg(tmpRoot, {
         name: "fixture",
@@ -145,7 +144,7 @@ describe("E17-S8: test_execution_bridge opt-in config", () => {
 
   // ─── AC5 — build-configs propagation ──────────────────────────────────────
 
-  describe("AC5 — build-configs propagation contract", () => {
+  describe("TEB-44: AC5 — build-configs propagation contract", () => {
     it("test_execution_bridge lives in global.yaml (the single source of truth)", () => {
       // build-configs inherits global.yaml into every resolved workflow config.
       // By placing the block in global.yaml (verified above), any subsequent
