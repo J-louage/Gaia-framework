@@ -33,7 +33,10 @@ import {
 let tempDir;
 
 function createTempDir() {
-  const dir = join(tmpdir(), `e17-s20-test-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
+  const dir = join(
+    tmpdir(),
+    `e17-s20-test-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+  );
   mkdirSync(dir, { recursive: true });
   return dir;
 }
@@ -126,7 +129,10 @@ describe("TEB-41: pytest-only halt (AC3, AC4)", () => {
   });
 
   it("handles multiple unsupported runners", () => {
-    const manifestPath = writeManifest(tempDir, "bridge_enabled: true\nrunners: [pytest, cargo-test, go-test]\n");
+    const manifestPath = writeManifest(
+      tempDir,
+      "bridge_enabled: true\nrunners: [pytest, cargo-test, go-test]\n"
+    );
     const result = checkRunnerCompatibility({ manifestPath, storyKey: "E17-S20" });
 
     expect(result.status).toBe("unsupported");
@@ -139,7 +145,10 @@ describe("TEB-41: pytest-only halt (AC3, AC4)", () => {
 
 describe("TEB-42: mixed-stack WARNING (AC5)", () => {
   it("returns status 'partial' for mixed supported+unsupported runners", () => {
-    const manifestPath = writeManifest(tempDir, "bridge_enabled: true\nrunners: [vitest, pytest]\n");
+    const manifestPath = writeManifest(
+      tempDir,
+      "bridge_enabled: true\nrunners: [vitest, pytest]\n"
+    );
     const result = checkRunnerCompatibility({ manifestPath, storyKey: "E17-S20" });
 
     expect(result.status).toBe("partial");
@@ -148,7 +157,10 @@ describe("TEB-42: mixed-stack WARNING (AC5)", () => {
   });
 
   it("emits a WARNING message naming skipped runners", () => {
-    const manifestPath = writeManifest(tempDir, "bridge_enabled: true\nrunners: [vitest, pytest]\n");
+    const manifestPath = writeManifest(
+      tempDir,
+      "bridge_enabled: true\nrunners: [vitest, pytest]\n"
+    );
     const result = checkRunnerCompatibility({ manifestPath, storyKey: "E17-S20" });
 
     expect(result.messages).toHaveLength(1);
@@ -186,7 +198,10 @@ describe("TEB-43: supported-only silent pass (AC6)", () => {
   });
 
   it("returns status 'supported' for all four supported runners", () => {
-    const manifestPath = writeManifest(tempDir, "bridge_enabled: true\nrunners: [vitest, jest, mocha, bats]\n");
+    const manifestPath = writeManifest(
+      tempDir,
+      "bridge_enabled: true\nrunners: [vitest, jest, mocha, bats]\n"
+    );
     const result = checkRunnerCompatibility({ manifestPath, storyKey: "E17-S20" });
 
     expect(result.status).toBe("supported");
@@ -253,7 +268,10 @@ describe("Edge cases", () => {
   });
 
   it("is idempotent across repeated invocations", () => {
-    const manifestPath = writeManifest(tempDir, "bridge_enabled: true\nrunners: [vitest, pytest]\n");
+    const manifestPath = writeManifest(
+      tempDir,
+      "bridge_enabled: true\nrunners: [vitest, pytest]\n"
+    );
     const r1 = checkRunnerCompatibility({ manifestPath, storyKey: "E17-S20" });
     const r2 = checkRunnerCompatibility({ manifestPath, storyKey: "E17-S20" });
 

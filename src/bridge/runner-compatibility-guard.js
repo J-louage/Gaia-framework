@@ -62,7 +62,12 @@ function loadManifestRunners(manifestPath) {
   if (blockMatch) {
     const runners = blockMatch[1]
       .split("\n")
-      .map((line) => line.replace(/^\s+-\s+/, "").trim().replace(/^["']|["']$/g, ""))
+      .map((line) =>
+        line
+          .replace(/^\s+-\s+/, "")
+          .trim()
+          .replace(/^["']|["']$/g, "")
+      )
       .filter(Boolean);
     return { runners, bridgeEnabled };
   }
@@ -163,7 +168,9 @@ export function writeCompatibilityEvidence({
     story_key: storyKey,
     bridge_status: bridgeStatus,
     unsupported_runners: unsupportedRunners,
-    ...(bridgeStatus === "partial" ? { skipped_runners: unsupportedRunners, supported_runners: supportedRunners } : {}),
+    ...(bridgeStatus === "partial"
+      ? { skipped_runners: unsupportedRunners, supported_runners: supportedRunners }
+      : {}),
     manifest_path: manifestPath,
     timestamp: new Date().toISOString(),
   };

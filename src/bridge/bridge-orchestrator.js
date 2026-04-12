@@ -9,7 +9,10 @@
  * Traces to: FR-307, ADR-028, ADR-038
  */
 
-import { checkRunnerCompatibility, writeCompatibilityEvidence } from "./runner-compatibility-guard.js";
+import {
+  checkRunnerCompatibility,
+  writeCompatibilityEvidence,
+} from "./runner-compatibility-guard.js";
 import { checkEnvironmentReadiness } from "./layer-0-environment-check.js";
 import { discoverRunners } from "./layer-1-test-runner-discovery.js";
 import { parseResults, writeEvidence, deriveVerdict } from "./layer-3-result-parsing.js";
@@ -31,9 +34,17 @@ import { parseResults, writeEvidence, deriveVerdict } from "./layer-3-result-par
  * @param {string} [options.outputDir] - Base directory for evidence files
  * @returns {Promise<object>}
  */
-export async function runBridge({ projectPath, storyKey, config = {}, executionOutput, outputDir, manifestPath } = {}) {
+export async function runBridge({
+  projectPath,
+  storyKey,
+  config = {},
+  executionOutput,
+  outputDir,
+  manifestPath,
+} = {}) {
   // E17-S20: Pre-Layer-0 runner compatibility guard
-  const resolvedManifestPath = manifestPath || (projectPath ? `${projectPath}/test-environment.yaml` : "");
+  const resolvedManifestPath =
+    manifestPath || (projectPath ? `${projectPath}/test-environment.yaml` : "");
   const compatibility = checkRunnerCompatibility({
     manifestPath: resolvedManifestPath,
     storyKey,
