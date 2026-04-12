@@ -23,7 +23,7 @@ import { join } from "path";
  * Supported JavaScript test runners (aligned with E17-S20 compatibility
  * guard naming convention).
  */
-const SUPPORTED_RUNNERS = ["vitest", "jest", "mocha", "bats"];
+export const SUPPORTED_RUNNERS = ["vitest", "jest", "mocha", "bats"];
 
 const DEFAULT_COMMANDS = {
   vitest: "vitest run",
@@ -169,8 +169,7 @@ function renderReport(checks, elapsedMs, ready) {
     return `  ${status.padEnd(4)}  ${c.name.padEnd(24)}  ${detail}`;
   });
   const header =
-    "Bridge Layer 0 — Environment Readiness\n" +
-    "──────────────────────────────────────\n";
+    "Bridge Layer 0 — Environment Readiness\n" + "──────────────────────────────────────\n";
   const footer = `\n──────────────────────────────────────\n  Overall: ${
     ready ? "READY" : "NOT READY"
   }  (${elapsedMs}ms)`;
@@ -211,10 +210,7 @@ function parseScalar(raw) {
   if (raw === "null" || raw === "~") return null;
   if (/^-?\d+$/.test(raw)) return parseInt(raw, 10);
   if (/^-?\d+\.\d+$/.test(raw)) return parseFloat(raw);
-  if (
-    (raw.startsWith('"') && raw.endsWith('"')) ||
-    (raw.startsWith("'") && raw.endsWith("'"))
-  ) {
+  if ((raw.startsWith('"') && raw.endsWith('"')) || (raw.startsWith("'") && raw.endsWith("'"))) {
     return raw.slice(1, -1);
   }
   return raw;
@@ -308,9 +304,7 @@ function parseTestEnvironmentYaml(text) {
       }
 
       const target =
-        currentSubKey && currentMap[currentSubKey]
-          ? currentMap[currentSubKey]
-          : currentMap;
+        currentSubKey && currentMap[currentSubKey] ? currentMap[currentSubKey] : currentMap;
 
       if (v.startsWith("[") && v.endsWith("]")) {
         target[k] = parseFlowSequence(v);
@@ -603,9 +597,7 @@ function readinessCheck(projectPath, config = {}) {
 
   const elapsedMs = Date.now() - started;
   const ready = checks.every((c) => c.passed);
-  const remediations = checks
-    .filter((c) => !c.passed && c.remediation)
-    .map((c) => c.remediation);
+  const remediations = checks.filter((c) => !c.passed && c.remediation).map((c) => c.remediation);
   const report = renderReport(checks, elapsedMs, ready);
 
   return {
@@ -631,10 +623,7 @@ async function discoverRunners(projectPath, manifest = {}) {
   }
 
   // 1. Explicit declarations from test-environment.yaml
-  const {
-    runners: envRunners,
-    primaryRunnerName,
-  } = detectFromTestEnvironment(projectPath);
+  const { runners: envRunners, primaryRunnerName } = detectFromTestEnvironment(projectPath);
 
   // 2. Inferred runners from package.json
   const pkgRunners = detectFromPackageJson(projectPath);
@@ -656,9 +645,7 @@ async function discoverRunners(projectPath, manifest = {}) {
   if (primaryRunnerName) {
     primary =
       ranked.find(
-        (r) =>
-          r.source === "test-environment.yaml" &&
-          r.runner_name === primaryRunnerName
+        (r) => r.source === "test-environment.yaml" && r.runner_name === primaryRunnerName
       ) || ranked.find((r) => r.runner_name === primaryRunnerName);
   }
 
@@ -670,9 +657,7 @@ async function discoverRunners(projectPath, manifest = {}) {
       primary = ranked[0];
     } else {
       const topPriority = SOURCE_PRIORITY[ranked[0].source] ?? 99;
-      const topTier = ranked.filter(
-        (r) => (SOURCE_PRIORITY[r.source] ?? 99) === topPriority
-      );
+      const topTier = ranked.filter((r) => (SOURCE_PRIORITY[r.source] ?? 99) === topPriority);
       if (topTier.length === 1) {
         primary = topTier[0];
       } else {

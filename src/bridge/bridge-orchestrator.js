@@ -9,6 +9,10 @@
  * Traces to: FR-307, ADR-028, ADR-038
  */
 
+import {
+  checkRunnerCompatibility,
+  writeCompatibilityEvidence,
+} from "./runner-compatibility-guard.js";
 import { checkEnvironmentReadiness } from "./layer-0-environment-check.js";
 import { discoverRunners } from "./layer-1-test-runner-discovery.js";
 import { parseResults, writeEvidence, deriveVerdict } from "./layer-3-result-parsing.js";
@@ -30,7 +34,63 @@ import { parseResults, writeEvidence, deriveVerdict } from "./layer-3-result-par
  * @param {string} [options.outputDir] - Base directory for evidence files
  * @returns {Promise<object>}
  */
-export async function runBridge({ projectPath, storyKey, config = {}, executionOutput, outputDir } = {}) {
+export async function runBridge({
+  projectPath,
+  storyKey,
+  config = {},
+  executionOutput,
+  outputDir,
+  manifestPath,
+} = {}) {
+  // E17-S20: Pre-Layer-0 runner compatibility guard
+  const resolvedManifestPath =
+    manifestPath || (projectPath ? `${projectPath}/test-environment.yaml` : "");
+  const compatibility = checkRunnerCompatibility({
+    manifestPath: resolvedManifestPath,
+    storyKey,
+    config,
+  });
+
+  if (compatibility.status === "unsupported") {
+    // AC3: Halt — all runners unsupported
+    for (const msg of compatibility.messages) {
+      process.stderr.write(msg + "\n");
+    }
+    // AC4: Write evidence stub
+    if (outputDir) {
+      writeCompatibilityEvidence({
+        storyKey,
+        bridgeStatus: "unsupported_runner",
+        unsupportedRunners: compatibility.unsupported,
+        manifestPath: resolvedManifestPath,
+        outputDir,
+      });
+    }
+    return {
+      status: "unsupported-runner",
+      compatibility,
+      readiness: null,
+      evidence: null,
+    };
+  }
+
+  if (compatibility.status === "partial") {
+    // AC5: Warning — mixed stack, proceed with supported subset
+    for (const msg of compatibility.messages) {
+      process.stderr.write(msg + "\n");
+    }
+    if (outputDir) {
+      writeCompatibilityEvidence({
+        storyKey,
+        bridgeStatus: "partial",
+        unsupportedRunners: compatibility.unsupported,
+        supportedRunners: compatibility.supported,
+        manifestPath: resolvedManifestPath,
+        outputDir,
+      });
+    }
+  }
+
   // Layer 0: Environment readiness
   const readiness = checkEnvironmentReadiness({ projectPath, config });
   if (!readiness.ready) {

@@ -21,6 +21,10 @@
  * Traces to: FR-196, FR-201, FR-307, ADR-028, ADR-038 | Test cases: TEB-21 to TEB-25
  */
 
+// Re-export SUPPORTED_RUNNERS from the JS adapter as the canonical import
+// point for the bridge compatibility guard (E17-S20, AC1).
+export { SUPPORTED_RUNNERS } from "./adapters/js-adapter.js";
+
 // ─── Public API ─────────────────────────────────────────────────────────────
 
 /**
