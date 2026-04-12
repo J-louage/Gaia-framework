@@ -154,12 +154,12 @@ describe("E19-S5: Frontend-Specific Six-Dimension Gap Breakdown", () => {
     expect(instructionsContent).toMatch(/is_frontend\s*==\s*false|Skip this step|Do NOT emit/);
   });
 
-  // --- AC1: Detection markers are enumerated in the instructions ---
-  it("workflow step enumerates frontend detection markers (angular.json, flutter, component.ts, src/app/, package.json)", () => {
+  // --- AC1: Detection delegates to shared module (E19-S22 refactor) ---
+  it("workflow step references shared detectProjectType module instead of inline markers", () => {
     expect(instructionsContent).toBeDefined();
-    // Spot-check at least 3 of the 5 markers to allow flexible wording
-    const markers = [/angular\.json/, /flutter/i, /\.component\.ts/, /src\/app/, /package\.json/];
-    const matches = markers.filter((rx) => rx.test(instructionsContent)).length;
-    expect(matches).toBeGreaterThanOrEqual(3);
+    // After E19-S22, detection markers live in the shared module at
+    // scripts/lib/project-type-detection.js — the instructions reference
+    // the module rather than enumerating markers inline.
+    expect(instructionsContent).toMatch(/detectProjectType|project-type-detection/);
   });
 });

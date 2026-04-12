@@ -14,7 +14,7 @@
   <action>API Detection: scan for route definitions, controllers, OpenAPI/Swagger specs. Set {has_apis} flag (true/false)</action>
   <action>Event Detection: scan for Kafka, RabbitMQ, SNS-SQS, Redis pub-sub, NATS, or other messaging patterns. Set {has_events} flag (true/false)</action>
   <action>Dependency Detection: scan for outbound HTTP clients, SDKs, service URLs, database connections. Set {has_external_deps} flag (true/false)</action>
-  <action>Frontend Detection: scan for React, Angular, Vue, Flutter, SwiftUI, UI frameworks, CSS/styling. Set {has_frontend} flag (true/false)</action>
+  <action>Frontend Detection: use the shared detectProjectType module at scripts/lib/project-type-detection.js — call detectProjectType({project-path}) and check the result. If result.type is 'frontend', 'fullstack', or 'mobile', set {has_frontend} = true. Otherwise set {has_frontend} = false. The evidence array provides the matched signals for documentation.</action>
   <action>Testing infrastructure: identify test framework, coverage config, test count, test patterns</action>
   <action>CI/CD: identify GitHub Actions, Jenkins, Docker, Terraform, or other pipeline files</action>
   <action>Project Type Detection (ADR-022 Template Discriminator Pattern): scan {project-path} for infrastructure file patterns across 6 marker categories to determine {project_type}. Each category is independently detected:
