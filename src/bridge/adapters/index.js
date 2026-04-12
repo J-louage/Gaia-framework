@@ -17,6 +17,7 @@ import { join } from "path";
 import jsAdapter from "./js-adapter.js";
 import pythonAdapter from "./python-adapter.js";
 import javaAdapter from "./java-adapter.js";
+import goAdapter from "./go-adapter.js";
 
 // ─── StackAdapter contract typedef ──────────────────────────────────────────
 
@@ -66,14 +67,15 @@ export function validateAdapter(adapter, modulePath) {
 validateAdapter(jsAdapter, "./js-adapter.js");
 validateAdapter(pythonAdapter, "./python-adapter.js");
 validateAdapter(javaAdapter, "./java-adapter.js");
+validateAdapter(goAdapter, "./go-adapter.js");
 
 /**
  * Built-in adapters in deterministic priority order (§10.20.11.2).
  * Order: javascript → python → java → go → flutter.
- * E25-S3..E25-S4 will extend this array.
+ * E25-S4 will extend this array with the flutter adapter.
  * @type {StackAdapter[]}
  */
-const ADAPTERS = [jsAdapter, pythonAdapter, javaAdapter];
+const ADAPTERS = [jsAdapter, pythonAdapter, javaAdapter, goAdapter];
 
 // ─── Public API ─────────────────────────────────────────────────────────────
 

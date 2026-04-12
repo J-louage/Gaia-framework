@@ -1,0 +1,5 @@
+{"Time":"2026-04-10T12:00:00Z","Action":"run","Package":"example.com/panic","Test":"TestOk"}
+{"Time":"2026-04-10T12:00:00Z","Action":"output","Package":"example.com/panic","Test":"TestOk","Output":"--- PASS: TestOk (0.00s)\n"}
+{"Time":"2026-04-10T12:00:00Z","Action":"pass","Package":"example.com/panic","Test":"TestOk","Elapsed":0.00}
+{"Time":"2026-04-10T12:00:00Z","Action":"run","Package":"example.com/panic","Test":"TestCrash"}
+{"Time":"2026-04-10T12:00:00Z","Action":"output","Package":"example.com/panic","Test":"TestCrash","Output":"=== RUN   TestCrash\n"}
