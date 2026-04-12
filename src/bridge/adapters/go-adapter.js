@@ -113,9 +113,7 @@ function readinessCheck(projectPath, options = {}) {
 
   const passed = toolchainOk && goModOk;
   const elapsedMs = Date.now() - started;
-  const remediations = checks
-    .filter((c) => !c.passed && c.remediation)
-    .map((c) => c.remediation);
+  const remediations = checks.filter((c) => !c.passed && c.remediation).map((c) => c.remediation);
 
   return {
     passed,
@@ -492,9 +490,8 @@ function correlateEvents(events) {
     if (entry.status === "failed" || entry.status === "error") {
       const joined = rec.output.join("");
       if (joined) {
-        entry.failure_message = joined.length > RAW_OUTPUT_SNIPPET_MAX
-          ? joined.slice(0, RAW_OUTPUT_SNIPPET_MAX)
-          : joined;
+        entry.failure_message =
+          joined.length > RAW_OUTPUT_SNIPPET_MAX ? joined.slice(0, RAW_OUTPUT_SNIPPET_MAX) : joined;
       }
     }
     tests.push(entry);

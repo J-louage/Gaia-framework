@@ -147,10 +147,7 @@ describe("E25-S3 AC3: discoverRunners — single module", () => {
   });
 
   it("returns primary command `go test -json ./...` mapped to unit tier", async () => {
-    const result = await adapter.discoverRunners(
-      join(FIXTURES, "single-module-pass"),
-      {}
-    );
+    const result = await adapter.discoverRunners(join(FIXTURES, "single-module-pass"), {});
     expect(result.status).toBe("ok");
     expect(result.primary.command).toBe("go test -json ./...");
     expect(result.primary.tier).toBe("unit");
@@ -178,10 +175,7 @@ describe("E25-S3 AC4: parseOutput streaming JSON events", () => {
   });
 
   it("parses passing go test -json stream into tests + summary", () => {
-    const stdout = readFileSync(
-      join(FIXTURES, "single-module-pass", "stdout.json"),
-      "utf8"
-    );
+    const stdout = readFileSync(join(FIXTURES, "single-module-pass", "stdout.json"), "utf8");
     const result = adapter.parseOutput(stdout, "", 0);
     expect(result.summary).toEqual({ total: 2, passed: 2, failed: 0, skipped: 0 });
     expect(result.tests).toHaveLength(2);
@@ -241,14 +235,8 @@ describe("E25-S3 AC5: panic mid-suite — partial stream", () => {
   });
 
   it("emits partial evidence with parse_error=false and raw_output_snippet from stderr", () => {
-    const stdout = readFileSync(
-      join(FIXTURES, "single-module-panic", "stdout.json"),
-      "utf8"
-    );
-    const stderr = readFileSync(
-      join(FIXTURES, "single-module-panic", "stderr.txt"),
-      "utf8"
-    );
+    const stdout = readFileSync(join(FIXTURES, "single-module-panic", "stdout.json"), "utf8");
+    const stderr = readFileSync(join(FIXTURES, "single-module-panic", "stderr.txt"), "utf8");
     const result = adapter.parseOutput(stdout, stderr, 2);
     expect(result.parse_error).toBe(false);
     expect(result.status).toBe("error");
