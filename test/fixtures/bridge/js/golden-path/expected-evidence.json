@@ -1,0 +1,21 @@
+{
+  "summary": {
+    "total": 2,
+    "passed": 1,
+    "failed": 1,
+    "skipped": 0
+  },
+  "tests": [
+    {
+      "name": "math addition works",
+      "status": "passed",
+      "duration_ms": 0
+    },
+    {
+      "name": "math subtraction works",
+      "status": "failed",
+      "duration_ms": 0,
+      "failure_message": "expected 2 but received 3"
+    }
+  ]
+}

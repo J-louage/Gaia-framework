@@ -1,0 +1,9 @@
+{"protocolVersion":"0.1.1","runnerVersion":"3.0.0","pid":1,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"test/math_test.dart"},"type":"suite","time":1}
+{"group":{"id":1,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":null,"column":null,"url":null},"type":"group","time":2}
+{"test":{"id":2,"name":"math addition works","suiteID":0,"groupIDs":[1],"metadata":{"skip":false,"skipReason":null},"line":1,"column":1,"url":null},"type":"testStart","time":3}
+{"testID":2,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5}
+{"test":{"id":3,"name":"math subtraction works","suiteID":0,"groupIDs":[1],"metadata":{"skip":false,"skipReason":null},"line":2,"column":1,"url":null},"type":"testStart","time":6}
+{"testID":3,"error":"Expected: 2 Actual: 3","stackTrace":"package:test_api","isFailure":true,"type":"error","time":8}
+{"testID":3,"result":"failure","skipped":false,"hidden":false,"type":"testDone","time":9}
+{"success":false,"type":"done","time":10}

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.gaia.MathTest" tests="2" failures="1" errors="0" skipped="0">
+  <testcase classname="dev.gaia.MathTest" name="testAddition" time="0.002"/>
+  <testcase classname="dev.gaia.MathTest" name="testSubtraction" time="0.003">
+    <failure message="expected: 2 but was: 3">java.lang.AssertionError</failure>
+  </testcase>
+</testsuite>

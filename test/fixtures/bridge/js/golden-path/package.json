@@ -1,0 +1,8 @@
+{
+  "name": "e25-s8-js-golden-path",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "vitest run"
+  }
+}
