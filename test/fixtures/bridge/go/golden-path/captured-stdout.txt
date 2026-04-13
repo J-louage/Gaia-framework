@@ -1,0 +1,5 @@
+{"Time":"2026-04-12T10:00:00Z","Action":"run","Package":"example.com/e25-s8-go-golden-path","Test":"TestAddition"}
+{"Time":"2026-04-12T10:00:00.002Z","Action":"pass","Package":"example.com/e25-s8-go-golden-path","Test":"TestAddition","Elapsed":0.002}
+{"Time":"2026-04-12T10:00:00.003Z","Action":"run","Package":"example.com/e25-s8-go-golden-path","Test":"TestSubtraction"}
+{"Time":"2026-04-12T10:00:00.006Z","Action":"fail","Package":"example.com/e25-s8-go-golden-path","Test":"TestSubtraction","Elapsed":0.003}
+{"Time":"2026-04-12T10:00:00.007Z","Action":"fail","Package":"example.com/e25-s8-go-golden-path","Elapsed":0.007}

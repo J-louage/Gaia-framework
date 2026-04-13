@@ -1,0 +1,26 @@
+{
+  "parse_error": false,
+  "summary": {
+    "total": 2,
+    "passed": 1,
+    "failed": 1,
+    "skipped": 0,
+    "incomplete": 0
+  },
+  "tests": [
+    {
+      "id": 2,
+      "name": "math addition works",
+      "status": "passed",
+      "duration_ms": 2
+    },
+    {
+      "id": 3,
+      "name": "math subtraction works",
+      "status": "failed",
+      "duration_ms": 3,
+      "failure_message": "Expected: 2 Actual: 3\npackage:test_api"
+    }
+  ],
+  "exit_code": 1
+}
