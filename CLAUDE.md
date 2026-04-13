@@ -187,8 +187,22 @@ For infrastructure stories (those whose `traces_to` field contains `IR-###`, `OR
 
 The Test Execution Bridge (ADR-028, architecture §10.20) orchestrates test runs ONLY. The bridge does not deploy services, does not modify databases, and does not alter any infrastructure. This is a hard scope constraint enforced in code (FR-203) and must be preserved in every future change.
 
+**Supported stacks (built-in adapters, architecture §10.20.11):**
+
+The bridge ships with five static-import stack adapters, selected automatically by `getAdapter()` in `Gaia-framework/src/bridge/adapters/index.js`. Priority order is deterministic: `javascript → python → java → go → flutter`.
+
+| Stack | Representative runner command | Detection pattern |
+|---|---|---|
+| JavaScript / TypeScript | `npx vitest run` (also `npm test`, Jest, Mocha, TAP) | `package.json` |
+| Python | `pytest` | `pyproject.toml` / `pytest.ini` / `setup.cfg` / `setup.py` |
+| Java | `mvn test` (also `gradle test`) | `pom.xml` / `build.gradle` |
+| Go | `go test ./...` | `go.mod` |
+| Flutter / Dart | `flutter test` | `pubspec.yaml` |
+
+Adding a new stack adapter is documented in `docs/architecture/bridge-adapter-contract.md`. External / dynamic adapter loading is explicitly out of scope (architecture §10.20.11.4, threat T37).
+
 **The bridge DOES:**
-- Invoke project-owned test runners via standard CLI commands (e.g., `npx vitest run`, `npm test`, `pytest`, `mvn test`)
+- Invoke project-owned test runners via standard CLI commands — one adapter per stack, one representative runner shown per row above
 - Trigger a single CI workflow declared in `test-environment.yaml` via `gh workflow run`
 - Poll the CI run until terminal state and fetch the run log
 - Parse runner/CI output into the `test-results/{story_key}-execution.json` evidence schema
