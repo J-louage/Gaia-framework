@@ -4,6 +4,14 @@ module: lifecycle
 agent: sm
 val_validate_output: true
 template_output_prompt: "auto"
+# E19-S28 AC3 / FR-315: optional flag declarations
+# --skip-gap-prompt suppresses the FR-237 / Step 3b gap analysis tip for the remainder of the run.
+# The flag is scoped to sprint-planning only and does NOT affect independent invocation of /gaia-fill-test-gaps.
+flags:
+  skip-gap-prompt:
+    type: boolean
+    default: false
+    description: "Suppress the FR-237 gap analysis tip (Step 3b). Does not affect /gaia-fill-test-gaps."
 config_resolved: "{installed_path}/.resolved/sprint-planning.yaml"
 config_source: "{project-root}/_gaia/lifecycle/config.yaml"
 installed_path: "{project-root}/_gaia/lifecycle/workflows/4-implementation/sprint-planning"
