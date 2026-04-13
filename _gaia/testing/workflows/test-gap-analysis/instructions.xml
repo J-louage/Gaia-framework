@@ -80,6 +80,8 @@
 <step n="6" title="Performance Validation (Coverage Mode)">
   <action>Verify workflow completed within the NFR-040 constraint of under 60 seconds</action>
   <action>Log total execution time in the output footer</action>
+  <!-- E19-S28 AC1 / FR-315: completion nudge — display-only, never auto-executes, emitted in both normal and YOLO modes -->
+  <action if="total_gaps &gt; 0">Emit the completion nudge to the user verbatim: "Run `/gaia-fill-test-gaps` to remediate these gaps now." Do NOT auto-invoke the remediation workflow — the user retains full control. Emit in both normal and YOLO execution modes.</action>
 </step>
 
 <!-- ================================= -->
@@ -137,5 +139,7 @@
 <step n="11" title="Performance Validation (Verification Mode)">
   <action>Verify workflow completed within the NFR-040 constraint of under 60 seconds</action>
   <action>Log total execution time in the output footer</action>
+  <!-- E19-S28 AC1 / FR-315: completion nudge — display-only, never auto-executes, emitted in both normal and YOLO modes -->
+  <action if="total_gaps &gt; 0">Emit the completion nudge to the user verbatim: "Run `/gaia-fill-test-gaps` to remediate these gaps now." Do NOT auto-invoke the remediation workflow — the user retains full control. Emit in both normal and YOLO execution modes.</action>
 </step>
 </workflow>
