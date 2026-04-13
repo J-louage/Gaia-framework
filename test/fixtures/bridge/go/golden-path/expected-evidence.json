@@ -1,0 +1,23 @@
+{
+  "summary": {
+    "total": 2,
+    "passed": 1,
+    "failed": 1,
+    "skipped": 0
+  },
+  "tests": [
+    {
+      "package": "example.com/e25-s8-go-golden-path",
+      "name": "example.com/e25-s8-go-golden-path.TestAddition",
+      "status": "passed",
+      "duration_ms": 2
+    },
+    {
+      "package": "example.com/e25-s8-go-golden-path",
+      "name": "example.com/e25-s8-go-golden-path.TestSubtraction",
+      "status": "failed",
+      "duration_ms": 3
+    }
+  ],
+  "exit_code": 1
+}

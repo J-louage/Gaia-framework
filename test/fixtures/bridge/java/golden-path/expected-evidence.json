@@ -1,0 +1,21 @@
+{
+  "summary": {
+    "total": 2,
+    "passed": 1,
+    "failed": 1,
+    "skipped": 0
+  },
+  "tests": [
+    {
+      "name": "dev.gaia.MathTest.testAddition",
+      "status": "passed",
+      "duration_ms": 2
+    },
+    {
+      "name": "dev.gaia.MathTest.testSubtraction",
+      "status": "failed",
+      "duration_ms": 3,
+      "failure_message": "expected: 2 but was: 3\njava.lang.AssertionError"
+    }
+  ]
+}

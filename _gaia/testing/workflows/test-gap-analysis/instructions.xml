@@ -35,26 +35,53 @@
   <action>For each story's acceptance criteria, check if a corresponding test case exists in the test plan</action>
   <action>Flag each AC as covered (has test case) or uncovered-ac (no test case found)</action>
   <action>Calculate coverage rate per story: covered_ACs / total_ACs</action>
-  <action>Calculate overall coverage percentage across all stories</action>
+  <action>Calculate overall coverage percentage across all stories. Note: the authoritative calculation logic lives in `scripts/lib/coverage-calc.js` (E19-S25). Step 4c uses the shared helper for per-module and aggregate percentages.</action>
+</step>
+
+<step n="4b" title="Frontend Dimensions Analysis (conditional)">
+  <action>Frontend detection via shared module — call detectProjectType({project-path}) from scripts/lib/project-type-detection.js. If result.type is 'frontend', 'fullstack', or 'mobile', set is_frontend=true and project_type=result.type. If result.type is any other value, set is_frontend=false. The evidence array provides the matched signals for documentation. (E19-S22: extracted from inline duplication to shared module.)</action>
+  <action if="is_frontend == false">Skip this step entirely. Do NOT emit a "## Frontend Dimensions" section in the output artifact. Proceed directly to Step 5. No error, no warning, no empty table. Non-frontend projects must see no trace of this section.</action>
+  <action if="is_frontend == true">For each of the six architectural dimensions (per ADR-030 §10.22.3 and FR-224), scan the project and compute (gap_count, coverage_score 0-100%, top_3_uncovered):
+    1. **Unit Tests** — glob `src/**/*.{test,spec}.{ts,tsx,js,jsx}`. If an LCOV report is present at `coverage/lcov.info` or `coverage/lcov-report/`, parse line-coverage percentage. Gap if coverage &lt; 60% or no spec files found. top_3_uncovered = first 3 source files with lowest coverage (or "no spec files" when absent).
+    2. **E2E Tests** — glob `tests/**/*.spec.{ts,js}`, `e2e/**/*.spec.{ts,js}`, and `cypress/e2e/**/*.cy.{ts,js}`. Gap if no E2E spec files found. top_3_uncovered = names of 3 largest source components lacking an E2E spec.
+    3. **Cross-browser** — read `playwright.config.{ts,js}` or `cypress.config.{ts,js}` and extract configured browser projects. Gap if only chromium/electron present, or if config file is absent. top_3_uncovered = missing browsers from the set {chromium, firefox, webkit}.
+    4. **Accessibility** — read `package.json` dependencies and devDependencies. Gap if none of `axe-core`, `jest-axe`, `@testing-library/jest-axe`, `@axe-core/playwright`, or `cypress-axe` are present. top_3_uncovered = the missing canonical a11y packages for the detected test runner.
+    5. **Visual Regression** — read `package.json` dependencies. Gap if none of `@percy/cli`, `@percy/playwright`, `@chromatic-com/playwright`, `chromatic`, or `playwright-visual-comparisons` are present. top_3_uncovered = 3 of the missing canonical visual-regression packages.
+    6. **Responsive/Viewport** — grep test files for any of: `setViewportSize`, `cy.viewport`, `--viewport`, `viewport:` in Playwright config. Gap if no matches. top_3_uncovered = names of 3 top-level pages/components with no responsive test.</action>
+  <action if="is_frontend == true">Populate the "## Frontend Dimensions" section of the output template with 6 rows, one per dimension, each row containing (gap_count, coverage_score, top_3_uncovered). The per-dimension coverage_score feeds E19-S6's overall coverage aggregation.</action>
+</step>
+
+<step n="4c" title="Per-Module Coverage Calculation (E19-S6, FR-225)">
+  <action>Group all scanned story files by epic key — parse the `epic:` frontmatter field from each story file. Stories sharing the same epic prefix (e.g., `E19`) are aggregated into a single module row. Story files whose `epic:` field is missing or empty are grouped under a synthetic `ungrouped` module key.</action>
+  <action>For each epic group, count `total_acs` — the sum of acceptance criteria items (`AC1`, `AC2`, ...) across all story files in the group, reusing the story→AC map built in Step 3.</action>
+  <action>For each epic group, count `tested_acs` — the number of acceptance criteria in the group that have at least one matching test case in the test plan map built in Step 2. An AC is considered tested when a test case explicitly references either the story key or the `{story_key}/ACn` identifier.</action>
+  <action>For each epic group, count `gap_count` — the number of ACs in the group classified as `uncovered-ac` by Step 4.</action>
+  <action>Calculate per-epic and aggregate coverage percentages using the shared helper `scripts/lib/coverage-calc.js` as the single source of truth (E19-S25). Build the input array with one entry per epic group: `{ name: epicKey, covered: tested_acs, total: total_acs }`. Call `calculateCoverage({ modules })` to obtain `perModule` (per-epic percentages) and `overall` (aggregate percentage). The helper applies banker's rounding to one decimal place and returns 0 for division-by-zero cases. See the module JSDoc for the full contract.</action>
+  <action>Exclude epics with zero story files from the per-module table. Count the number excluded and emit a footnote beneath the table: "{N} epics with no story files were excluded." When N is 0, omit the footnote entirely.</action>
+  <action>Determinism requirement (AC5): the computation MUST be deterministic — given identical inputs (same story files, same test plan), the workflow MUST produce byte-identical per-module rows, aggregate percentage, and sort order. The `calculateCoverage` helper guarantees deterministic output (sorted keys, banker's rounding, no side effects). Sort the per-module table rows by `coverage_pct` ascending (lowest coverage first); break ties by epic key lexicographical ascending.</action>
+  <action>Populate the "## Per-Module Coverage" section of the output template with one row per included epic, columns: `module`, `total_acs`, `tested_acs`, `coverage_pct`, `gap_count`. The `module` column renders as the epic key (e.g., `E19`). The `coverage_pct` column renders as `{n}.{d}%` (one decimal + percent sign).</action>
 </step>
 
 <step n="5" title="Generate Output (FR-223 Schema)">
   <action>Generate the output artifact at {test_artifacts}/test-gap-analysis-{date}.md</action>
   <action>Output must include the following FR-223 schema sections:
-    - Summary section with total count of stories analyzed, ACs scanned, gaps found, and overall coverage percentage
+    - Summary section with total count of stories analyzed, ACs scanned, gaps found, and overall coverage percentage (from Step 4c `aggregate_coverage_pct`)
+    - Per-module coverage table (from Step 4c) with columns module, total_acs, tested_acs, coverage_pct, gap_count
     - Per-story gap table listing each story, its ACs, and their coverage status
     - Coverage rate breakdown showing covered vs uncovered acceptance criteria
   </action>
   <action>If zero gaps are detected (all ACs have corresponding test cases):
     Output "No coverage gaps detected" in the summary section with a gap count of 0 and coverage rate of 100%</action>
   <template-output file="{test_artifacts}/test-gap-analysis-{date}.md">
-    Gap analysis report following FR-223 schema with summary count, per-story gap table, and coverage percentage.
+    Gap analysis report following FR-223 schema with summary count, per-module coverage table, per-story gap table, and aggregate coverage percentage.
   </template-output>
 </step>
 
 <step n="6" title="Performance Validation (Coverage Mode)">
   <action>Verify workflow completed within the NFR-040 constraint of under 60 seconds</action>
   <action>Log total execution time in the output footer</action>
+  <!-- E19-S28 AC1 / FR-315: completion nudge — display-only, never auto-executes, emitted in both normal and YOLO modes -->
+  <action if="total_gaps &gt; 0">Emit the completion nudge to the user verbatim: "Run `/gaia-fill-test-gaps` to remediate these gaps now." Do NOT auto-invoke the remediation workflow — the user retains full control. Emit in both normal and YOLO execution modes.</action>
 </step>
 
 <!-- ================================= -->
@@ -63,10 +90,10 @@
 <!-- ================================= -->
 
 <step n="7" title="Scan Generated Test Cases (Verification Mode)">
-  <action>Scan docs/test-artifacts/ for all generated test case files and test plan references</action>
+  <action>Scan docs/test-artifacts/ for all generated test case files matching `{story_key}-*.md` and ATDD files `atdd-{story_key}*.md` (E19-S7 Task 1.1)</action>
   <action>Build a map of generated test cases per story: story_key -> [test_case_id, test_file, test_name]</action>
   <action>Cross-reference generated test cases with story files in docs/implementation-artifacts/</action>
-  <action>Count total generated test cases per story and in aggregate</action>
+  <action>Count total generated test cases per story (`generated` count — E19-S7 Task 1.2) and in aggregate (`total_generated`). The per-story `generated` count is the number of distinct test case IDs (TC IDs) attributed to that story across all scanned test-artifacts files.</action>
 </step>
 
 <step n="8" title="Detect and Parse Execution Results (Verification Mode)">
@@ -86,27 +113,33 @@
 <step n="9" title="Cross-Reference Generated vs Executed (Verification Mode)">
   <action>For each story, cross-reference its generated test cases against the executed tests map</action>
   <action>Classify each generated test case as: EXECUTED (found in results with pass/fail status) or UNEXECUTED (not found in any result file)</action>
-  <action>Calculate per story counts: generated test cases count, executed test cases count</action>
-  <action>Calculate aggregate totals: total generated across all stories, total executed across all stories</action>
-  <action>Flag stories with zero executed tests as HIGH priority gaps — these stories have generated test cases but none have been run</action>
+  <action>Calculate per-story counts: `generated` (count of generated test cases for the story) and `executed` (count of generated test cases found in execution results for the story). Per E19-S7 Task 2.1/2.2, `executed` is sourced from evidence JSON (E17-S10 format) and JUnit XML; Task 2.3 requires deduplication across result sources — a single test case counted in both evidence JSON and JUnit XML is counted once.</action>
+  <action>Deduplicate executed test cases across result sources: if the same test identifier appears in both JUnit XML and evidence JSON, count it exactly once in the per-story `executed` tally. Deduplication key is the canonical test case ID (TC-ID) when present, otherwise the fully-qualified test name (`suite.test_name`).</action>
+  <action>Calculate per-story `exec_ratio = (executed / generated) * 100`, rounded to one decimal place. Division-by-zero handling (E19-S7 Task 3.3): when `generated == 0`, set `exec_ratio = 0.0` and render as `0.0%` with the note `0/0 (no generated tests)`. Never raise a division-by-zero error.</action>
+  <action>Calculate aggregate totals: `total_generated` = sum of per-story `generated` across all stories; `total_executed` = sum of per-story `executed` across all stories. Compute `aggregate_exec_ratio = (total_executed / total_generated) * 100`, rounded to one decimal place. When `total_generated == 0`, set `aggregate_exec_ratio = 0.0`.</action>
+  <action>Flag stories with zero executed tests (where `executed == 0` and `generated &gt; 0`) as HIGH priority gaps — these stories have generated test cases but none have been run. The flag is reflected in the Gap Table row severity (`high`) and in the Per-Story Detail remediation line. Per E19-S7 Task 3.2, the HIGH flag is mandatory whenever `executed count is 0` for a story with at least one generated test.</action>
 </step>
 
 <step n="10" title="Generate Verification Output (FR-226 Schema)">
-  <action>Generate the output artifact at {test_artifacts}/test-gap-analysis-{date}.md in verification mode format</action>
+  <action>Generate the output artifact at {test_artifacts}/test-gap-analysis-{date}.md in verification mode format, using the FR-223 schema template at `_gaia/lifecycle/templates/test-gap-analysis-template.md`.</action>
+  <action>Populate the Executive Summary section with the aggregate **Generated vs Executed** row (E19-S7, AC3) in the exact format `Generated vs Executed: {total_executed}/{total_generated} ({aggregate_exec_ratio}%)`. This row sits alongside `Stories analyzed`, `Gaps detected`, and `Overall coverage rate`. When `total_generated == 0`, render `0/0 (0.0%)`.</action>
+  <action>Populate the Per-Story Detail section for each story with the `generated`, `executed`, and `exec_ratio` fields (E19-S7, AC2, AC5). The `exec_ratio` field is rendered as a percentage with one decimal place (e.g., `60.0%`). When `generated == 0`, render `exec_ratio` as `0.0%` with the inline note `(0/0 — no generated tests)` — this is the canonical division-by-zero rendering.</action>
   <action>Output must include the following FR-226 schema sections:
-    - Summary section with total generated test count, total executed test count, and verification percentage
-    - Per-story generated-vs-executed count table listing each story with its generated count, executed count, and gap priority
-    - Aggregate generated-vs-executed count showing overall totals
+    - Executive Summary with the aggregate `Generated vs Executed: {total_executed}/{total_generated} ({aggregate_exec_ratio}%)` row
+    - Per-story generated-vs-executed count table listing each story with its `generated`, `executed`, and `exec_ratio` fields
+    - Aggregate generated-vs-executed count showing overall totals (`total_generated`, `total_executed`, `aggregate_exec_ratio`)
     - Unverified tests table listing test files with UNVERIFIED status and story key
   </action>
-  <action>For stories with zero executed tests: set gap priority to HIGH in the per-story table</action>
+  <action>For stories where `executed count is 0` (zero executed tests) and `generated &gt; 0`: set gap priority to HIGH in the per-story table (E19-S7, AC4). The HIGH flag MUST also appear as the severity of the corresponding Gap Table row when the workflow emits an `unexecuted` gap for the story.</action>
   <template-output file="{test_artifacts}/test-gap-analysis-{date}.md">
-    Verification mode gap analysis report with per-story and aggregate generated-vs-executed counts, HIGH priority flags for zero-executed stories.
+    Verification mode gap analysis report with per-story and aggregate generated-vs-executed counts, exec_ratio percentages, and HIGH priority flags for zero-executed stories.
   </template-output>
 </step>
 
 <step n="11" title="Performance Validation (Verification Mode)">
   <action>Verify workflow completed within the NFR-040 constraint of under 60 seconds</action>
   <action>Log total execution time in the output footer</action>
+  <!-- E19-S28 AC1 / FR-315: completion nudge — display-only, never auto-executes, emitted in both normal and YOLO modes -->
+  <action if="total_gaps &gt; 0">Emit the completion nudge to the user verbatim: "Run `/gaia-fill-test-gaps` to remediate these gaps now." Do NOT auto-invoke the remediation workflow — the user retains full control. Emit in both normal and YOLO execution modes.</action>
 </step>
 </workflow>

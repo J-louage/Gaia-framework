@@ -1,0 +1,3 @@
+bridge_enabled: true
+runners: [vitest]
+primary_runner: vitest

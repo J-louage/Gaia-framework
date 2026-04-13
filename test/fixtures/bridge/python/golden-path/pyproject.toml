@@ -1,0 +1,6 @@
+[project]
+name = "e25-s8-python-golden-path"
+version = "1.0.0"
+
+[tool.pytest.ini_options]
+junit_family = "xunit2"

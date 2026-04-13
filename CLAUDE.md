@@ -140,16 +140,33 @@ backlog → validating → ready-for-dev → in-progress → invalid → review 
 ```
 
 **Review Gate:** A story in `review` requires ALL six reviews to pass before moving to `done`:
-- `/gaia-code-review` — APPROVE or REQUEST_CHANGES
+- `/gaia-code-review` — PASSED or FAILED
 - `/gaia-qa-tests` — PASSED or FAILED
 - `/gaia-security-review` — PASSED or FAILED
 - `/gaia-test-automate` — PASSED or FAILED
 - `/gaia-test-review` — PASSED or FAILED
 - `/gaia-review-perf` — PASSED or FAILED
 
+**Gate status vocabulary** (canonical, enforced by `/gaia-validate-story`): `UNVERIFIED` (default, not yet run) | `PASSED` (review passed) | `FAILED` (review failed). No other values are permitted in the Review Gate table. Code Review uses `APPROVE`/`REQUEST_CHANGES` as its internal verdict keyword in the report body, but writes `PASSED`/`FAILED` to the Review Gate row.
+
 Run `/gaia-run-all-reviews` to execute all six reviews sequentially via subagents — one command instead of six.
 
 If any review fails, the story returns to `in-progress`. The Review Gate table in the story file tracks progress.
+
+### Review Gate-to-Tier Mapping (E17-S12, FR-195)
+
+When the Test Execution Bridge (ADR-028) is enabled, each review gate is linked to a set of test tiers (from the E17-S11 three-tier model) whose evidence is required to produce a PASSED verdict. The canonical mapping lives in `Gaia-framework/src/bridge/review-gate-tier-mapping.js` (`DEFAULT_GATE_TIER_MAPPING`) and can be overridden per-project via the `tiers.gate_mapping` block in `test-environment.yaml`.
+
+| Review Gate | Required Tiers |
+|---|---|
+| `/gaia-qa-tests` | Tier 1 + Tier 2 (unit + integration) |
+| `/gaia-test-automate` | Tier 1 (unit) |
+| `/gaia-test-review` | Tier 2 (integration) |
+| `/gaia-review-perf` | Tier 3 (e2e) |
+| `/gaia-security-review` | Tier 2 + Tier 3 (integration + e2e) |
+| `/gaia-code-review` | no tier (static analysis only) |
+
+When a gate is UNVERIFIED, the Nudge Block surfaces the required tiers (e.g., "run Tier 1 + Tier 2 tests") via `formatNudgeSuggestion(gate, mapping)`. Full rationale and override semantics live in architecture §10.20.4.
 
 ### Infra Review Gate Substitutions
 
@@ -165,6 +182,52 @@ For infrastructure stories (those whose `traces_to` field contains `IR-###`, `OR
 | Performance Review | Cost Review + Scaling Validation | Cost analysis and autoscaling validation replace load testing |
 
 **Detection mechanism:** The `review-gate-check` protocol reads the story's `traces_to` field and checks the requirement ID prefix. Each story is evaluated independently — platform projects with mixed stories get per-story gate selection based on their own requirement prefix.
+
+## Bridge Scope
+
+The Test Execution Bridge (ADR-028, architecture §10.20) orchestrates test runs ONLY. The bridge does not deploy services, does not modify databases, and does not alter any infrastructure. This is a hard scope constraint enforced in code (FR-203) and must be preserved in every future change.
+
+**Supported stacks (built-in adapters, architecture §10.20.11):**
+
+The bridge ships with five static-import stack adapters, selected automatically by `getAdapter()` in `Gaia-framework/src/bridge/adapters/index.js`. Priority order is deterministic: `javascript → python → java → go → flutter`.
+
+| Stack | Representative runner command | Detection pattern |
+|---|---|---|
+| JavaScript / TypeScript | `npx vitest run` (also `npm test`, Jest, Mocha, TAP) | `package.json` |
+| Python | `pytest` | `pyproject.toml` / `pytest.ini` / `setup.cfg` / `setup.py` |
+| Java | `mvn test` (also `gradle test`) | `pom.xml` / `build.gradle` |
+| Go | `go test ./...` | `go.mod` |
+| Flutter / Dart | `flutter test` | `pubspec.yaml` |
+
+Adding a new stack adapter is documented in `docs/architecture/bridge-adapter-contract.md`. External / dynamic adapter loading is explicitly out of scope (architecture §10.20.11.4, threat T37).
+
+**The bridge DOES:**
+- Invoke project-owned test runners via standard CLI commands — one adapter per stack, one representative runner shown per row above
+- Trigger a single CI workflow declared in `test-environment.yaml` via `gh workflow run`
+- Poll the CI run until terminal state and fetch the run log
+- Parse runner/CI output into the `test-results/{story_key}-execution.json` evidence schema
+- Reject commands containing shell chaining operators (`;`, `&&`, `||`, `|`, `>`, `<`) outside of quoted arguments
+- Reject any command not explicitly allowlisted from `test-environment.yaml` runners or the `package.json` test script
+
+**The bridge DOES NOT:**
+- Deploy services, applications, or container images
+- Provision, modify, or tear down infrastructure (no `terraform apply`, no `kubectl apply`, no `docker run -d`)
+- Alter databases (no migrations, no seed scripts, no schema changes)
+- Commit code, push branches, or mutate the git repository
+- Execute arbitrary shell commands or shell substitution (`` ` `` and `$()` are always rejected)
+- Trigger any GitHub Actions workflow other than the `ci_workflow` declared in `test-environment.yaml`
+
+**Enforcement points:**
+- `Gaia-framework/src/bridge/bridge-scope-guard.js` — shared scope guard module exporting `assertInScope`, `assertCommandAllowed`, `assertCiWorkflowAllowed`
+- Layer 2 local execution (`layer-2-local-execution.js`) calls all three guards before `spawn`
+- Layer 2 CI execution (`layer-2-ci-execution.js`) calls the shell-operator guard on the runner command and the CI workflow allowlist guard before `gh workflow run`
+
+**Threat model:** Architecture §10.20.10 enumerates the five bridge threats:
+- **T20** — Environment misconfiguration (runner declared in `test-environment.yaml` does not match project stack). Mitigated by Layer 0 readiness checks and `assertCommandAllowed`.
+- **T21** — Runner discovery failure (Layer 1 cannot match story key to test files). Mitigated by structured Layer 1 failure + `bridge_status: runner_not_found` evidence fallback.
+- **T22** — Execution timeout (subprocess or CI workflow hangs). Mitigated by NFR-033 configurable timeout + SIGTERM/SIGKILL escalation.
+- **T23** — Subprocess runaway via shell injection (chaining/substitution/redirection operators). Mitigated by `assertInScope` scope guard.
+- **T24** — CI API unavailability (`gh` missing, auth expired, network failure). Mitigated by `defaultGhCheck` probe and local fallback + `assertCiWorkflowAllowed` on the fallback workflow.
 
 ## Memory Hygiene
 

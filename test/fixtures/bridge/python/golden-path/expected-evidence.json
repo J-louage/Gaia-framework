@@ -1,0 +1,21 @@
+{
+  "summary": {
+    "total": 2,
+    "passed": 1,
+    "failed": 1,
+    "skipped": 0
+  },
+  "tests": [
+    {
+      "name": "test_math.test_addition",
+      "status": "passed",
+      "duration_ms": 3
+    },
+    {
+      "name": "test_math.test_subtraction",
+      "status": "failed",
+      "duration_ms": 4,
+      "failure_message": "AssertionError: expected 2 got 3"
+    }
+  ]
+}

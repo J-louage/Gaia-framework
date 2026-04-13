@@ -194,6 +194,182 @@ function validateRunnerEntry(runner, index) {
   return warnings;
 }
 
+// ─── E25-S6: tiers.stack_hints validation ──────────────────────
+//
+// The generic parseSimpleYaml above only supports 2-level maps, so the
+// deeply-nested `tiers.stack_hints.{pytest_markers,gradle_tasks,go_build_tags,
+// flutter_suites}` block is scanned directly from the raw YAML text. This keeps
+// the existing parser untouched and avoids introducing a new YAML dependency
+// (same approach used elsewhere in the bridge adapters — see ADR-038 §10.20.11).
+//
+// Contract: FR-312, ADR-038 §10.20.11 (stack adapter registry).
+// See docs/test-artifacts/test-environment.yaml.example for canonical usage.
+
+/**
+ * Allowed keys inside `tiers.stack_hints`. Any other key is a validation error
+ * naming the unknown key and the accepted keys (AC6).
+ */
+const STACK_HINT_KEYS = Object.freeze([
+  "pytest_markers",
+  "gradle_tasks",
+  "go_build_tags",
+  "flutter_suites",
+]);
+
+/**
+ * Extract the `tiers.stack_hints` block from raw YAML text using a
+ * line-oriented indent scan. Returns an object describing the block and any
+ * shape violations — does not throw. When the block is absent, returns null.
+ *
+ * Supported shapes (partial blocks are valid — unset tiers fall back to the
+ * adapter default, per Dev Notes):
+ *   tiers:
+ *     stack_hints:
+ *       pytest_markers: ["slow", "integration"]
+ *       gradle_tasks:
+ *         unit: test
+ *         integration: integrationTest
+ *         e2e: e2eTest
+ *       go_build_tags: [integration, e2e]
+ *       flutter_suites:
+ *         unit: test/
+ *         integration: integration_test/
+ *         e2e: integration_test/e2e/
+ *
+ * @param {string} text
+ * @returns {{ raw: object, warnings: string[] }|null}
+ */
+function extractStackHints(text) {
+  const lines = text.split(/\r?\n/);
+
+  // Locate `tiers:` at column 0.
+  let tiersIdx = -1;
+  for (let i = 0; i < lines.length; i++) {
+    if (/^tiers\s*:\s*(#.*)?$/.test(lines[i])) {
+      tiersIdx = i;
+      break;
+    }
+  }
+  if (tiersIdx === -1) return null;
+
+  // Find `stack_hints:` nested under `tiers:` (indent >= 2, < indent of next
+  // top-level key). We just look line-by-line for a `^(\s+)stack_hints\s*:`
+  // whose indent is > 0 and occurs before any column-0 key after `tiers:`.
+  let hintsIdx = -1;
+  let hintsIndent = -1;
+  for (let i = tiersIdx + 1; i < lines.length; i++) {
+    const l = lines[i];
+    if (l.trim() === "" || l.trimStart().startsWith("#")) continue;
+    const indent = l.length - l.trimStart().length;
+    if (indent === 0) break; // left the tiers: subtree
+    if (/^\s+stack_hints\s*:\s*(#.*)?$/.test(l)) {
+      hintsIdx = i;
+      hintsIndent = indent;
+      break;
+    }
+  }
+  if (hintsIdx === -1) return null;
+
+  // Walk child lines whose indent is > hintsIndent. Stop when indent <= hintsIndent.
+  const warnings = [];
+  const block = {};
+  let currentKey = null;
+  let currentKeyIndent = -1;
+  let currentSubMap = null;
+
+  const recordUnknown = (key) => {
+    warnings.push(
+      `Unknown key 'tiers.stack_hints.${key}'. Accepted keys: ${STACK_HINT_KEYS.join(", ")}.`
+    );
+  };
+
+  for (let i = hintsIdx + 1; i < lines.length; i++) {
+    const rawLine = lines[i];
+    const stripped = rawLine.replace(/#.*$/, "").trimEnd();
+    if (stripped.trim() === "") continue;
+    const indent = stripped.length - stripped.trimStart().length;
+    if (indent <= hintsIndent) break; // left stack_hints subtree
+
+    const trimmed = stripped.trim();
+
+    // Top-level stack_hints key (first indent level beneath stack_hints:).
+    // Track the first child indent we see — any line at that indent is a key.
+    if (currentKeyIndent === -1 || indent === currentKeyIndent) {
+      currentKeyIndent = indent;
+      const colonIdx = trimmed.indexOf(":");
+      if (colonIdx === -1) continue;
+      const key = trimmed.substring(0, colonIdx).trim();
+      const val = trimmed.substring(colonIdx + 1).trim();
+
+      if (!STACK_HINT_KEYS.includes(key)) {
+        recordUnknown(key);
+        currentKey = null;
+        currentSubMap = null;
+        continue;
+      }
+
+      currentKey = key;
+      if (val === "") {
+        // Expect a sub-map on following lines (e.g., gradle_tasks: / flutter_suites:)
+        currentSubMap = {};
+        block[key] = currentSubMap;
+      } else if (val.startsWith("[") && val.endsWith("]")) {
+        // Flow sequence: pytest_markers: [a, b]
+        const items = val
+          .slice(1, -1)
+          .split(",")
+          .map((s) => s.trim().replace(/^['"]|['"]$/g, ""))
+          .filter((s) => s !== "");
+        // Validate shape: string[] only
+        const invalid = items.find((x) => typeof x !== "string");
+        if (invalid !== undefined) {
+          warnings.push(
+            `Invalid shape for 'tiers.stack_hints.${key}': expected array of strings.`
+          );
+        }
+        block[key] = items;
+        currentSubMap = null;
+      } else {
+        // Scalar value where an array or map was expected — shape error.
+        warnings.push(
+          `Invalid shape for 'tiers.stack_hints.${key}': expected ${
+            key === "pytest_markers" || key === "go_build_tags"
+              ? "array of strings"
+              : "map of { unit, integration, e2e }"
+          }, got scalar.`
+        );
+        block[key] = parseScalar(val);
+        currentSubMap = null;
+      }
+      continue;
+    }
+
+    // Nested sub-map entry (gradle_tasks / flutter_suites children).
+    if (indent > currentKeyIndent && currentKey && currentSubMap) {
+      const colonIdx = trimmed.indexOf(":");
+      if (colonIdx === -1) continue;
+      const k = trimmed.substring(0, colonIdx).trim();
+      const v = trimmed.substring(colonIdx + 1).trim();
+      // Only unit / integration / e2e are meaningful for tier maps, but we
+      // record whatever keys appear — downstream adapters pick the ones they need.
+      if (v === "") continue;
+      const parsed = parseScalar(v);
+      // For gradle_tasks / flutter_suites, values must be strings.
+      if (
+        (currentKey === "gradle_tasks" || currentKey === "flutter_suites") &&
+        typeof parsed !== "string"
+      ) {
+        warnings.push(
+          `Invalid shape for 'tiers.stack_hints.${currentKey}.${k}': expected string, got ${typeof parsed}.`
+        );
+      }
+      currentSubMap[k] = parsed;
+    }
+  }
+
+  return { raw: block, warnings };
+}
+
 // ─── Public API ─────────────────────────────────────────────────
 
 /**
@@ -285,8 +461,23 @@ export function validateTestEnvironment(content, options = {}) {
     }
   }
 
+  // E25-S6 / FR-312 / ADR-038 §10.20.11: validate `tiers.stack_hints` block.
+  // The generic parseSimpleYaml above only supports 2-level maps, so the
+  // nested stack_hints block is scanned directly from the raw text.
+  const stackHints = extractStackHints(content);
+  if (stackHints && stackHints.warnings.length > 0) {
+    warnings.push(...stackHints.warnings);
+  }
+
   return {
     valid: warnings.length === 0,
     warnings,
+    // Expose the parsed block for adapter consumers (AC3 wiring). Null when
+    // the block is absent — callers must fall back to adapter defaults.
+    stackHints: stackHints ? stackHints.raw : null,
   };
 }
+
+// E25-S6: exported for unit tests and downstream consumers that need direct
+// access to the scanner without running the full validator.
+export { extractStackHints, STACK_HINT_KEYS };

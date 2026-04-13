@@ -39,6 +39,7 @@ skills:
       - { id: review-checklist, line_range: [14, 59], description: "Universal code review checklist" }
       - { id: solid-principles, line_range: [60, 132], description: "SOLID violation detection" }
       - { id: complexity-metrics, line_range: [133, 226], description: "Cyclomatic and cognitive complexity" }
+      - { id: review-gate-completion, line_range: [228, 276], description: "Review gate completion artifacts and review-summary.md hard gate enforcement" }
 
   - file: documentation-standards.md
     sections:
@@ -53,6 +54,18 @@ skills:
       - { id: input-validation, line_range: [69, 118], description: "Validation at system boundaries" }
       - { id: secrets-management, line_range: [119, 166], description: "Environment-based secrets" }
       - { id: cors-csrf, line_range: [167, 230], description: "CORS and CSRF configuration, protection" }
+
+  - file: edge-cases.md
+    sections:
+      - { id: overview, line_range: [26, 36], description: "Skill purpose, JIT loading mandate, 8K NFR-042 budget" }
+      - { id: when-to-invoke, line_range: [37, 50], description: "When create-story and other workflows load this skill" }
+      - { id: input-contract, line_range: [51, 68], description: "Required input fields and context token limits" }
+      - { id: output-schema, line_range: [69, 105], description: "Structured output: id, scenario, input, expected, category with category enum" }
+      - { id: analysis-heuristics, line_range: [106, 121], description: "Enumeration prompts for boundary, input, state, failure, security, timing, resources, idempotency" }
+      - { id: token-budget, line_range: [122, 135], description: "NFR-042 8K budget enforcement and truncation rules" }
+      - { id: failure-handling, line_range: [136, 152], description: "Non-blocking failure and timeout handling, warn-and-continue contract" }
+      - { id: usage-example, line_range: [153, 194], description: "Sample input/output pair" }
+      - { id: notes, line_range: [195, 201], description: "Notes on persistence, stack-agnostic usage, and related task file" }
 
   - file: figma-integration.md
     sections:
