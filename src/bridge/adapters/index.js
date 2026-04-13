@@ -89,6 +89,109 @@ export function listAdapters() {
   return ADAPTERS;
 }
 
+// ─── E25-S6: per-stack tier mapping resolver ────────────────────────────────
+
+/**
+ * Map a test-environment.yaml `tiers.stack_hints` key to the adapter name
+ * whose hints it targets. (E25-S6, FR-312)
+ */
+const STACK_HINT_ADAPTER_KEY = Object.freeze({
+  python: "pytest_markers",
+  java: "gradle_tasks",
+  go: "go_build_tags",
+  flutter: "flutter_suites",
+});
+
+/**
+ * Resolve tier mappings for every active adapter in the project and return a
+ * namespaced block keyed by adapter name. Each adapter's `resolveTierMapping`
+ * is called with the matching hint block from `tiers.stack_hints` (or no
+ * hints at all, in which case the adapter falls back to its own defaults).
+ *
+ * Adapters that do not expose `resolveTierMapping` (e.g. the JS adapter —
+ * preserved byte-identically per AC5) are skipped silently. Adapters that
+ * are not active (detectionPatterns do not match the project layout) are
+ * reported in an `unusedHints` array so callers can emit an INFO log per the
+ * story's Dev Notes ("unused stack_hints for inactive stack: go").
+ *
+ * Deterministic iteration order (AC4): adapters are processed in the
+ * registry's priority order (javascript → python → java → go → flutter),
+ * so multi-stack gate resolution is reproducible run-to-run.
+ *
+ * Traces: FR-312, ADR-028, ADR-038 §10.20.11.
+ *
+ * @param {string} projectPath - Absolute project root
+ * @param {object} [stackHintsBlock] - Parsed `tiers.stack_hints` object from
+ *   the project's `test-environment.yaml` (may be null / undefined).
+ * @returns {{
+ *   perStack: Object<string, { active: boolean, mapping?: object, entries?: Array }>,
+ *   unusedHints: string[]
+ * }}
+ */
+export function resolveAllTierMappings(projectPath, stackHintsBlock) {
+  const hints = stackHintsBlock && typeof stackHintsBlock === "object" ? stackHintsBlock : {};
+  const perStack = {};
+  const unusedHints = [];
+
+  // Determine which adapters are active by running detection against the
+  // project root — mirrors getAdapter() semantics but returns ALL matching
+  // adapters (a monorepo with two languages gets two active adapters).
+  const isActive = (adapter) => {
+    const mode = adapter.detectionMode === "any" ? "any" : "all";
+    const matcher = (pattern) => existsSync(join(projectPath, pattern));
+    return mode === "any"
+      ? adapter.detectionPatterns.some(matcher)
+      : adapter.detectionPatterns.every(matcher);
+  };
+
+  for (const adapter of ADAPTERS) {
+    const active = isActive(adapter);
+    const hintKey = STACK_HINT_ADAPTER_KEY[adapter.name];
+    const adapterHints = hintKey ? hints[hintKey] : undefined;
+
+    if (!active) {
+      if (adapterHints !== undefined && hintKey) {
+        // Dev Notes edge case: hint present but stack is not active —
+        // silently ignore the hint but record an INFO-level entry so
+        // callers can surface "unused stack_hints for inactive stack: X".
+        unusedHints.push(adapter.name);
+      }
+      perStack[adapter.name] = { active: false };
+      continue;
+    }
+
+    // Active adapter — skip if it does not expose resolveTierMapping
+    // (e.g. the JS adapter, which preserves its E17-S12 byte-identical
+    // gate semantics per AC5).
+    if (typeof adapter.resolveTierMapping !== "function") {
+      perStack[adapter.name] = { active: true, mapping: null, entries: [] };
+      continue;
+    }
+
+    try {
+      const result = adapter.resolveTierMapping(projectPath, {
+        stackHints: adapterHints,
+      });
+      perStack[adapter.name] = {
+        active: true,
+        mapping: result.mapping,
+        entries: result.entries || [],
+      };
+    } catch (err) {
+      // A misbehaving adapter must not break multi-stack resolution for
+      // the rest of the registry — record the failure and continue.
+      perStack[adapter.name] = {
+        active: true,
+        mapping: null,
+        entries: [],
+        error: err?.message ?? String(err),
+      };
+    }
+  }
+
+  return { perStack, unusedHints };
+}
+
 /**
  * Return the first adapter whose detectionPatterns all match the project.
  * Returns null if no adapter matches.

@@ -25,6 +25,7 @@
  */
 
 import { TIERS, normaliseTierName } from "./layer-2-tier-selection.js";
+import { resolveAllTierMappings } from "./adapters/index.js";
 
 // ─── Canonical gate + mapping definitions ──────────────────────────────────
 
@@ -176,4 +177,39 @@ export function formatNudgeSuggestion(gate, mapping = DEFAULT_GATE_TIER_MAPPING)
   });
 
   return `run ${labels.join(" + ")} tests`;
+}
+
+// ─── E25-S6: Multi-stack tier resolution ───────────────────────────────────
+
+/**
+ * Resolve per-stack tier mapping for a multi-stack project and union the
+ * resulting tier lists across all active adapters. The `gateTierMapping`
+ * (default or custom-merged via `resolveGateTierMapping`) is unchanged —
+ * this helper only consults the registry to iterate over adapters and
+ * produce namespaced evidence that downstream consumers (evidence writer,
+ * reviewers) can attach to their records.
+ *
+ * AC4 — multi-stack monorepos: each adapter's gate resolution runs in its
+ * own namespace under the returned `perStack` block. There is no cross-
+ * pollination between stacks: a hint block in one namespace never leaks
+ * into another.
+ *
+ * AC5 — JS byte-identical regression: the JS adapter does not expose
+ * `resolveTierMapping`, so its contribution here is an empty/inactive
+ * entry in `perStack`. The canonical `DEFAULT_GATE_TIER_MAPPING`,
+ * `resolveGateTierMapping`, `getTiersForGate`, and `formatNudgeSuggestion`
+ * are untouched — JS gate resolution output is preserved byte-for-byte.
+ *
+ * Traces: FR-312, ADR-028, ADR-038 §10.20.11.
+ *
+ * @param {string} projectPath - Absolute project root
+ * @param {object} [testEnvironment] - Parsed test-environment.yaml object
+ * @returns {{
+ *   perStack: Object<string, { active: boolean, mapping?: object, entries?: Array }>,
+ *   unusedHints: string[]
+ * }}
+ */
+export function resolvePerStackTierMapping(projectPath, testEnvironment) {
+  const stackHints = testEnvironment?.tiers?.stack_hints ?? null;
+  return resolveAllTierMappings(projectPath, stackHints);
 }

@@ -469,6 +469,49 @@ function parseOutput(stdout, stderr, exitCode, options = {}) {
   return result;
 }
 
+// ─── E25-S6: resolveTierMapping ─────────────────────────────────────────────
+
+const DEFAULT_FLUTTER_SUITES = Object.freeze({
+  unit: "test/",
+  integration: "integration_test/",
+  e2e: "integration_test/",
+});
+
+/**
+ * Resolve per-tier Flutter suite directory mapping. Honours the optional
+ * `stackHints.flutter_suites` override from test-environment.yaml
+ * tiers.stack_hints. Partial hint blocks are merged on top of the defaults
+ * so unset tiers fall back to the directory convention. Each resulting
+ * entry records `tier_source: "stack_hints"` when the hint supplied that
+ * tier, `"adapter_default"` otherwise (E25-S6 FR-312).
+ *
+ * @param {string} _projectPath
+ * @param {object} [options]
+ * @param {{unit?: string, integration?: string, e2e?: string}} [options.stackHints]
+ * @returns {{ mapping: { unit: string, integration: string, e2e: string },
+ *              entries: Array<{ tier: string, suite: string, tier_source: "stack_hints"|"adapter_default" }> }}
+ */
+function resolveTierMapping(_projectPath, options = {}) {
+  const hints =
+    options.stackHints && typeof options.stackHints === "object" ? options.stackHints : {};
+  const mapping = { ...DEFAULT_FLUTTER_SUITES };
+  const entries = [];
+  for (const tier of ["unit", "integration", "e2e"]) {
+    const hint = hints[tier];
+    if (typeof hint === "string" && hint.length > 0) {
+      mapping[tier] = hint;
+      entries.push({ tier, suite: hint, tier_source: "stack_hints" });
+    } else {
+      entries.push({
+        tier,
+        suite: DEFAULT_FLUTTER_SUITES[tier],
+        tier_source: "adapter_default",
+      });
+    }
+  }
+  return { mapping, entries };
+}
+
 // ─── Export ─────────────────────────────────────────────────────────────────
 
 /**
@@ -480,6 +523,8 @@ const flutterAdapter = {
   readinessCheck,
   discoverRunners,
   parseOutput,
+  // E25-S6 — exposed for per-stack tier mapping consumers (FR-312).
+  resolveTierMapping,
 };
 
 export default flutterAdapter;
