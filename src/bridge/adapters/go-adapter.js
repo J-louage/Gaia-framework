@@ -381,13 +381,42 @@ function mapTagsToTier(tags, tagMapping = DEFAULT_BUILD_TAGS) {
  * @returns {{ tierByFile: Map<string,string>, mapping: object }}
  */
 function resolveTierMapping(projectPath, options = {}) {
-  const mapping = options.stackHints || DEFAULT_BUILD_TAGS;
+  // E25-S6: `stackHints` accepts either a tag-mapping object (legacy shape
+  // used internally by this adapter — { integration: "integration", e2e: "e2e" })
+  // or the array form from test-environment.yaml
+  // (`tiers.stack_hints.go_build_tags: ["integration", "e2e"]`). When the
+  // array form is supplied, the first entry is treated as the integration
+  // tag and the second as the e2e tag, matching Dev Notes semantics.
+  let mapping;
+  let tierSource;
+  if (Array.isArray(options.stackHints)) {
+    const hints = options.stackHints;
+    mapping = {
+      integration: hints[0] || DEFAULT_BUILD_TAGS.integration,
+      e2e: hints[1] || DEFAULT_BUILD_TAGS.e2e,
+    };
+    tierSource = "stack_hints";
+  } else if (options.stackHints && typeof options.stackHints === "object") {
+    mapping = { ...DEFAULT_BUILD_TAGS, ...options.stackHints };
+    tierSource = "stack_hints";
+  } else {
+    mapping = DEFAULT_BUILD_TAGS;
+    tierSource = "adapter_default";
+  }
   const tagged = scanProjectBuildTags(projectPath);
   const tierByFile = new Map();
   for (const [file, tags] of tagged.entries()) {
     tierByFile.set(file, mapTagsToTier(tags, mapping));
   }
-  return { tierByFile, mapping };
+  // E25-S6 evidence entries — one per tier with tier_source recorded so
+  // downstream evidence files can record whether the resolution came from a
+  // project hint or the adapter default (ADR-038 §10.20.11).
+  const entries = [
+    { tier: "unit", tag: null, tier_source: tierSource },
+    { tier: "integration", tag: mapping.integration, tier_source: tierSource },
+    { tier: "e2e", tag: mapping.e2e, tier_source: tierSource },
+  ];
+  return { tierByFile, mapping, entries };
 }
 
 // ─── Layer 3: streaming JSON parser ─────────────────────────────────────────

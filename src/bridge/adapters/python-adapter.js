@@ -466,6 +466,54 @@ function parseOutput(stdout, stderr, exitCode, options = {}) {
   };
 }
 
+// ─── E25-S6: resolveTierMapping ─────────────────────────────────────────────
+
+/**
+ * Resolve per-tier pytest marker mapping for a project. Honours the optional
+ * `stackHints.pytest_markers` override (from test-environment.yaml
+ * tiers.stack_hints) and falls back to the markers declared in the project's
+ * pytest config file when no hint is supplied. The returned evidence records
+ * `tier_source: "stack_hints"` when the hint was applied, `"adapter_default"`
+ * otherwise (E25-S6 FR-312, ADR-038 §10.20.11).
+ *
+ * @param {string} projectPath
+ * @param {object} [options]
+ * @param {string[]} [options.stackHints] - marker names declared in
+ *   test-environment.yaml tiers.stack_hints.pytest_markers
+ * @returns {{ mapping: object, entries: Array<{ tier: string, marker: string|null, tier_source: "stack_hints"|"adapter_default" }> }}
+ */
+function resolveTierMapping(projectPath, options = {}) {
+  const hints = Array.isArray(options.stackHints) ? options.stackHints : null;
+
+  if (hints && hints.length > 0) {
+    const entries = hints.map((marker) => ({
+      tier: String(marker),
+      marker: String(marker),
+      tier_source: "stack_hints",
+    }));
+    const mapping = {};
+    for (const e of entries) mapping[e.tier] = { marker: e.marker };
+    return { mapping, entries };
+  }
+
+  // Fallback — read markers from pytest config.
+  const { section } = readPytestConfig(projectPath);
+  const markers = extractMarkers(section);
+  const markerNames = Object.keys(markers);
+  if (markerNames.length === 0) {
+    const entries = [{ tier: "all", marker: null, tier_source: "adapter_default" }];
+    return { mapping: { all: { marker: null } }, entries };
+  }
+  const entries = markerNames.map((name) => ({
+    tier: name,
+    marker: name,
+    tier_source: "adapter_default",
+  }));
+  const mapping = {};
+  for (const e of entries) mapping[e.tier] = { marker: e.marker };
+  return { mapping, entries };
+}
+
 // ─── Export ─────────────────────────────────────────────────────────────────
 
 /**
@@ -479,6 +527,8 @@ const pythonAdapter = {
   readinessCheck,
   discoverRunners,
   parseOutput,
+  // E25-S6 — exposed for per-stack tier mapping consumers (FR-312).
+  resolveTierMapping,
 };
 
 export default pythonAdapter;

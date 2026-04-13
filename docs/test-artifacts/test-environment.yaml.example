@@ -63,6 +63,29 @@ tiers:
   3:
     gates: []
 
+  # Per-stack tier hints (optional, map). E25-S6 / FR-312 / ADR-038 §10.20.11.
+  # Each key is OPTIONAL and consumed by the matching StackAdapter's
+  # `resolveTierMapping()`. Absent block → every adapter falls back to its
+  # built-in defaults with no behavioural drift. Unknown keys under
+  # `stack_hints` are rejected by the validator with a loud error naming the
+  # accepted keys (AC6). Partial blocks are valid: unset tiers fall back to
+  # the adapter default. A hint block targeting an inactive stack
+  # (e.g. `go_build_tags` in a project with no `go.mod`) is silently ignored.
+  #
+  # Uncomment and adapt the keys that apply to your stack(s).
+  #
+  # stack_hints:
+  #   pytest_markers: ["slow", "integration"]
+  #   gradle_tasks:
+  #     unit: test
+  #     integration: integrationTest
+  #     e2e: e2eTest
+  #   go_build_tags: ["integration", "e2e"]
+  #   flutter_suites:
+  #     unit: test/
+  #     integration: integration_test/
+  #     e2e: integration_test/e2e/
+
 # Environment requirements (optional, list of strings).
 # Describes system-level prerequisites for running tests.
 env_requirements:

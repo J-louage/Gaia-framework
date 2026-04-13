@@ -77,9 +77,7 @@ function hasGradleWrapper(projectPath) {
   // gradle/wrapper/gradle-wrapper.properties, but for detection purposes we
   // only need the executable script. Accept either filename on any platform
   // so POSIX fixtures also work on Windows CI.
-  return (
-    existsSync(join(projectPath, "gradlew")) || existsSync(join(projectPath, "gradlew.bat"))
-  );
+  return existsSync(join(projectPath, "gradlew")) || existsSync(join(projectPath, "gradlew.bat"));
 }
 
 function toolAvailable(cmd, execFile) {
@@ -528,6 +526,49 @@ function parseOutput(stdout, stderr, exitCode, options = {}) {
   return { summary, tests: allTests };
 }
 
+// ─── E25-S6: resolveTierMapping ─────────────────────────────────────────────
+
+const DEFAULT_GRADLE_TASKS = Object.freeze({
+  unit: "test",
+  integration: "integrationTest",
+  e2e: "e2eTest",
+});
+
+/**
+ * Resolve per-tier Gradle task mapping. Honours the optional
+ * `stackHints.gradle_tasks` override from test-environment.yaml
+ * tiers.stack_hints. Partial hint blocks are merged on top of the defaults
+ * so that unset tiers fall back cleanly (Dev Notes: "partial hint block").
+ * Each resulting entry records `tier_source: "stack_hints"` when the hint
+ * supplied that tier, `"adapter_default"` otherwise (E25-S6 FR-312).
+ *
+ * @param {string} _projectPath
+ * @param {object} [options]
+ * @param {{unit?: string, integration?: string, e2e?: string}} [options.stackHints]
+ * @returns {{ mapping: { unit: string, integration: string, e2e: string },
+ *              entries: Array<{ tier: string, task: string, tier_source: "stack_hints"|"adapter_default" }> }}
+ */
+function resolveTierMapping(_projectPath, options = {}) {
+  const hints =
+    options.stackHints && typeof options.stackHints === "object" ? options.stackHints : {};
+  const mapping = { ...DEFAULT_GRADLE_TASKS };
+  const entries = [];
+  for (const tier of ["unit", "integration", "e2e"]) {
+    const hint = hints[tier];
+    if (typeof hint === "string" && hint.length > 0) {
+      mapping[tier] = hint;
+      entries.push({ tier, task: hint, tier_source: "stack_hints" });
+    } else {
+      entries.push({
+        tier,
+        task: DEFAULT_GRADLE_TASKS[tier],
+        tier_source: "adapter_default",
+      });
+    }
+  }
+  return { mapping, entries };
+}
+
 // ─── Export ─────────────────────────────────────────────────────────────────
 
 /**
@@ -541,6 +582,8 @@ const javaAdapter = {
   readinessCheck,
   discoverRunners,
   parseOutput,
+  // E25-S6 — exposed for per-stack tier mapping consumers (FR-312).
+  resolveTierMapping,
 };
 
 export default javaAdapter;
