@@ -1,6 +1,6 @@
 {
   "name": "gaia-framework",
-  "version": "1.127.3",
+  "version": "1.127.6-rc.2",
   "description": "GAIA — Generative Agile Intelligence Architecture installer",
   "bin": {
     "gaia-framework": "./bin/gaia-framework.js"
@@ -43,6 +43,7 @@
   "files": [
     "bin/",
     "lib/",
+    "src/",
     "gaia-install.sh",
     "_gaia/",
     ".claude/",

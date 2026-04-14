@@ -9,3 +9,6 @@
 - [ ] Post-toggle summary was displayed with previous state, new state, and next-step suggestion
 - [ ] Summary includes reminder to run `/gaia-build-configs`
 - [ ] For disable mode: post-flip checks section was skipped entirely
+- [ ] Example file is present at `{project-root}/docs/test-artifacts/test-environment.yaml.example` post-install and post-update
+- [ ] 4-option prompt is displayed when test-environment.yaml is absent (not 3 options)
+- [ ] `/gaia-build-configs` required-order block is present in the absent-manifest prompt
