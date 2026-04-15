@@ -195,6 +195,37 @@ Detect and merge duplicate decision entries within a decision log.
 **Output:** List of duplicate pairs with recommended action (auto-archive or review).
 <!-- END SECTION -->
 
+<!-- SECTION: empty-seed-invariant -->
+## Empty-Seed Invariant (Committed Tier 1 Seeds)
+
+Committed Tier 1 product-seed `ground-truth.md` files ship as **empty templates**. They live at:
+
+- `_memory/validator-sidecar/ground-truth.md`
+- `_memory/architect-sidecar/ground-truth.md`
+- `_memory/pm-sidecar/ground-truth.md`
+- `_memory/sm-sidecar/ground-truth.md`
+
+**Invariant (hard rule, enforced by ATDD and a dedicated regression test):**
+
+Every committed Tier 1 seed MUST ship with frontmatter fields:
+
+```yaml
+entry_count: 0
+estimated_tokens: 0
+```
+
+Ground-truth content is populated at **runtime** by `/gaia-refresh-ground-truth` inside the consumer project's `_memory/` — it is never committed to the framework repository. The committed seeds exist only to guarantee directory structure and provide a parseable template for Tier 1 agents to write into at runtime.
+
+**Enforcement:**
+- ATDD tests `test/validation/atdd/e8-s13.test.js`, `e8-s13-automation.test.js`, and `e9-s2.test.js` assert this invariant on the validator seed and the three author seeds.
+- Regression test `test/validation/atdd/e28-s31.test.js` walks all four committed Tier 1 seeds and asserts both frontmatter values are `0`. Introduced by E28-S31 after E28-S3 finding #5 (Val had suggested regenerating the committed seed with full runtime content, which broke CI on macOS).
+
+**Authoring rules for agents that edit committed seeds:**
+- NEVER raise `entry_count` or `estimated_tokens` above `0` in any committed Tier 1 seed.
+- Static invariant sections and permanent rules MAY live in the seed body — they are shipping-template contracts, not runtime-populated entries, and do not count toward `entry_count` / `estimated_tokens`.
+- Plans that propose "regenerate the committed seed", "populate ground-truth.md with runtime content", "fill the seed with verified facts", or equivalent phrasing MUST be rejected during `val-validate-plan` with a CRITICAL finding. See `validator-sidecar/ground-truth.md` → "Invariants" for the anti-pattern detection rule.
+<!-- END SECTION -->
+
 <!-- Cross-agent extensions (cross-reference-loading) are in memory-management-cross-agent.md -->
 
 <!-- SECTION: budget-monitoring -->

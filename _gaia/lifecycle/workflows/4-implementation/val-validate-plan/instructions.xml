@@ -69,6 +69,24 @@
   <action>For each missing related file: WARNING "Plan does not mention updating {file}"</action>
 </step>
 
+<step n="4b" title="Empty-Seed Invariant Anti-Pattern Detection (E28-S31)">
+  <action>Load the empty-seed-invariant section JIT from {project-root}/_gaia/lifecycle/skills/memory-management.md — this section lists the four committed Tier 1 seeds and the forbidden authoring patterns.</action>
+  <action>Define the committed-seed paths (any match, case-insensitive, path-normalized):
+    - `_memory/validator-sidecar/ground-truth.md`
+    - `_memory/architect-sidecar/ground-truth.md`
+    - `_memory/pm-sidecar/ground-truth.md`
+    - `_memory/sm-sidecar/ground-truth.md`
+  </action>
+  <action>Scan the plan text and each file_target for two signals combined:
+    1. The plan targets or references one of the four committed seed paths above (substring match on the plan body OR a file_target whose path ends with one of the four suffixes)
+    2. The plan description near that reference contains any of the anti-pattern trigger phrases (case-insensitive): "regenerate committed seed", "regenerate the committed seed", "regenerate seed with", "populate ground-truth.md with", "populate the committed seed", "fill the seed with", "fill ground-truth.md", "copy runtime ground truth into", "bake runtime content into", "commit runtime ground truth", "raise entry_count", "set entry_count to", "set estimated_tokens to"
+  </action>
+  <action>Additional frontmatter signal: if the plan proposes edits to frontmatter fields `entry_count` or `estimated_tokens` on any committed seed with a numeric value greater than `0`, treat that as a match regardless of trigger-phrase presence.</action>
+  <action>Scope exclusion: if the plan exclusively describes the runtime `/gaia-refresh-ground-truth` workflow writing to a consumer project's `_memory/` (outside the framework repo) and does NOT touch the four committed framework seeds, this rule does NOT fire. The rule targets only commits to the framework repo.</action>
+  <check if="match found">Record a CRITICAL finding: "Plan proposes to populate or regenerate committed Tier 1 seed `{seed_path}` with runtime content — this violates the empty-seed invariant enforced by ATDD tests `e8-s13.test.js`, `e8-s13-automation.test.js`, `e9-s2.test.js`, and the E28-S31 regression test. Committed Tier 1 seeds MUST ship with `entry_count: 0` and `estimated_tokens: 0`. Ground-truth content is populated at runtime by `/gaia-refresh-ground-truth`, never committed. Revise the plan to either (a) restrict edits to the seed body (invariants / static rules allowed) while keeping the two frontmatter fields at `0`, or (b) move the runtime-population work out of the committed seed entirely."</check>
+  <check if="no match">No finding — proceed.</check>
+</step>
+
 <step n="5" title="Architecture Cross-Reference">
   <action>Check if ground truth exists at {memory_path}/validator-sidecar/ground-truth.md</action>
   <check if="ground truth not seeded">INFO "Ground truth not available — cross-reference verification skipped". Skip remainder of this step.</check>
@@ -83,7 +101,7 @@
 
 <step n="6" title="Classify and Present Findings">
   <action>Load validation-patterns:severity-classification section JIT</action>
-  <action>Compile all findings from Steps 2-5 into a single list, sorted by severity (CRITICAL first, then WARNING, then INFO)</action>
+  <action>Compile all findings from Steps 2, 3, 4, 4b, and 5 into a single list, sorted by severity (CRITICAL first, then WARNING, then INFO)</action>
   <check if="zero findings">Present: "Plan validation complete — no findings. Plan looks clean." Then skip to Step 7 (which will write a clean validation confirmation instead of a findings table).</check>
   <action>Present findings in a concise summary (one line per finding):
 

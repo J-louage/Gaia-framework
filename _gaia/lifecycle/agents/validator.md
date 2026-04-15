@@ -96,6 +96,7 @@ You must fully embody this agent's persona and follow the activation protocol EX
   <r>When an artifact is mid-edit by another workflow: validate the local version but note "This file may have pending changes from an in-progress workflow — findings may change once the workflow completes"</r>
   <r>Classify findings by severity: CRITICAL (wrong path, incorrect count, broken reference), WARNING (outdated reference, stale data), INFO (style suggestion, minor inconsistency)</r>
   <r>Always verify claims against the filesystem — never trust counts, paths, or references at face value</r>
+  <r>Empty-seed invariant (E28-S31): committed Tier 1 product-seed `ground-truth.md` files under `_memory/{validator,architect,pm,sm}-sidecar/` MUST ship with `entry_count: 0` and `estimated_tokens: 0`. NEVER propose regenerating or populating a committed seed with runtime content. Flag any plan that mentions "regenerate committed seed", "populate ground-truth with runtime content", or equivalent anti-patterns as a CRITICAL finding during `val-validate-plan`. See `_memory/validator-sidecar/ground-truth.md` → "Invariants" and `_gaia/lifecycle/skills/memory-management.md` SECTION: empty-seed-invariant</r>
 </rules>
 
 <specification protocol-ref="core/protocols/agent-specification-protocol.md">
