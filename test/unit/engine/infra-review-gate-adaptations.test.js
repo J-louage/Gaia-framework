@@ -5,7 +5,6 @@ import { resolve } from "path";
 const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
 
 const REVIEW_GATE_CHECK_PATH = `${PROJECT_ROOT}/_gaia/core/protocols/review-gate-check.xml`;
-const CLAUDE_MD_PATH = `${PROJECT_ROOT}/CLAUDE.md`;
 
 describe("E12-S8: Infra Review Gate Adaptations", () => {
   // ── AC1: Infra review gate substitutions ──
@@ -107,34 +106,40 @@ describe("E12-S8: Infra Review Gate Adaptations", () => {
   });
 
   // ── AC5: Sprint state machine documentation updated ──
+  //
+  // E28-S166 moved the infra review gate narrative out of CLAUDE.md (per
+  // ADR-048 / FR-327) and into the review-gate-check protocol file — which
+  // is where the detection mechanism and gate substitutions are actually
+  // implemented. These assertions now read from the protocol file directly
+  // so the documentation-enforcement checks track the canonical source.
   describe("AC5: Sprint state machine documentation updated", () => {
-    it("CLAUDE.md exists", () => {
-      expect(existsSync(CLAUDE_MD_PATH), `CLAUDE.md not found at ${CLAUDE_MD_PATH}`).toBe(true);
+    it("review-gate-check protocol exists", () => {
+      expect(
+        existsSync(REVIEW_GATE_CHECK_PATH),
+        `Protocol not found at ${REVIEW_GATE_CHECK_PATH}`
+      ).toBe(true);
     });
 
-    it("CLAUDE.md documents infra review gate substitutions", () => {
-      const content = readFileSync(CLAUDE_MD_PATH, "utf8");
-      expect(content).toContain("Infra Review Gate");
+    it("review-gate-check protocol documents infra review gate substitutions", () => {
+      const content = readFileSync(REVIEW_GATE_CHECK_PATH, "utf8");
+      expect(content).toMatch(/infra.review.gate|infra.gate/i);
     });
 
-    it("CLAUDE.md documents Policy-as-Code Validation gate", () => {
-      const content = readFileSync(CLAUDE_MD_PATH, "utf8");
+    it("review-gate-check protocol documents Policy-as-Code Validation gate", () => {
+      const content = readFileSync(REVIEW_GATE_CHECK_PATH, "utf8");
       expect(content).toContain("Policy-as-Code Validation");
     });
 
-    it("CLAUDE.md documents detection mechanism via ID prefix", () => {
-      const content = readFileSync(CLAUDE_MD_PATH, "utf8");
-      // Must explain the detection mechanism
+    it("review-gate-check protocol documents detection mechanism via ID prefix", () => {
+      const content = readFileSync(REVIEW_GATE_CHECK_PATH, "utf8");
       expect(content).toMatch(/IR-|OR-|SR-/);
       expect(content).toMatch(/traces_to|requirement.*prefix|ID prefix/i);
     });
 
-    it("CLAUDE.md documents that Code Review and Security Review are unchanged", () => {
-      const content = readFileSync(CLAUDE_MD_PATH, "utf8");
-      // In the infra gates section, must note unchanged gates
-      const infraSection = content.slice(content.indexOf("Infra Review Gate"));
-      expect(infraSection).toMatch(/Code Review.*unchanged|unchanged.*Code Review/is);
-      expect(infraSection).toMatch(/Security Review.*unchanged|unchanged.*Security Review/is);
+    it("review-gate-check protocol documents that Code Review and Security Review are unchanged", () => {
+      const content = readFileSync(REVIEW_GATE_CHECK_PATH, "utf8");
+      expect(content).toMatch(/Code Review.*unchanged|unchanged.*Code Review/is);
+      expect(content).toMatch(/Security Review.*unchanged|unchanged.*Security Review/is);
     });
   });
 });
