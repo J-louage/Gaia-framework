@@ -25,15 +25,20 @@ const LAYER2_LOCAL_REL = "../../../_gaia/core/bridge/layer-2-local-execution.js"
 const LAYER2_CI_REL = "../../../_gaia/core/bridge/layer-2-ci-execution.js";
 
 // ─── AC1 — Documentation (scope constraint stated) ─────────────────────────
+//
+// E28-S166 moved the Bridge Scope narrative out of CLAUDE.md (per ADR-048 /
+// FR-327) and into the bridge-scope-guard module header — where the
+// constraint now lives next to the code that enforces it. The assertion
+// reads from that module so it cannot silently regress if the module is
+// rewritten without the scope language.
 
 describe("AC1: Bridge scope constraint is documented", () => {
-  it("Gaia-framework/CLAUDE.md contains a Bridge Scope section stating the constraint", () => {
-    const claudeMd = readFileSync(join(__dirname, "../../../CLAUDE.md"), "utf8");
-    expect(claudeMd).toMatch(/##\s+Bridge Scope/i);
-    expect(claudeMd.toLowerCase()).toContain("orchestrate");
-    expect(claudeMd.toLowerCase()).toContain("test");
-    expect(claudeMd.toLowerCase()).toMatch(/does not deploy|never deploy/);
-    expect(claudeMd.toLowerCase()).toMatch(/infrastructure|database/);
+  it("bridge-scope-guard module states the bridge scope constraint", () => {
+    const guardSource = readFileSync(GUARD_PATH, "utf8");
+    expect(guardSource.toLowerCase()).toContain("orchestrate");
+    expect(guardSource.toLowerCase()).toContain("test");
+    expect(guardSource.toLowerCase()).toMatch(/does not deploy|never deploy/);
+    expect(guardSource.toLowerCase()).toMatch(/infrastructure|database/);
   });
 });
 
@@ -157,18 +162,20 @@ describe("AC3: Layer 2 CI only triggers whitelisted workflows", () => {
 // absent from CI runners entirely. AC4 is enforced two ways:
 //   1. Locally: if the framework-instance architecture.md is present, verify
 //      it contains §10.20.10 and T20–T24.
-//   2. Everywhere (including CI): CLAUDE.md (shipped with the product) must
-//      reference the threat model so reviewers can find it. This ensures
-//      AC4 cannot silently regress even when the architecture file is not
-//      available to the test runner.
+//   2. Everywhere (including CI): the bridge-scope-guard module (shipped
+//      with the product) must reference the threat model so reviewers can
+//      find it. Previously this pointer lived in CLAUDE.md, but E28-S166
+//      slimmed CLAUDE.md per ADR-048 / FR-327 — the threat model reference
+//      now lives in the guard module's header (traces-to block).
 
 describe("AC4: Threat model T20–T24 is documented in architecture §10.20", () => {
-  it("CLAUDE.md references the §10.20.10 threat model and T20–T24", () => {
-    const claudeMd = readFileSync(join(__dirname, "../../../CLAUDE.md"), "utf8");
-    expect(claudeMd).toMatch(/§10\.20\.10|10\.20\.10/);
-    for (const id of ["T20", "T21", "T22", "T23", "T24"]) {
-      expect(claudeMd).toContain(id);
-    }
+  it("bridge-scope-guard module references the T20–T24 threat range", () => {
+    const guardSource = readFileSync(GUARD_PATH, "utf8");
+    // The guard header carries a "Traces to: ... Threats T20–T24" line and
+    // calls out T23 (shell-injection) explicitly inside the assertInScope
+    // docstring. The range reference is the canonical pointer.
+    expect(guardSource).toMatch(/T20[–-]T24/);
+    expect(guardSource).toContain("T23");
   });
 
   it("architecture.md has a §10.20.10 threat model subsection with T20–T24 (local only)", () => {
